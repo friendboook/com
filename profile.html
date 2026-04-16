@@ -6,8 +6,14 @@
     <title>FriendBook - Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #000a05; color: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* ফেসবুকের ডিফল্ট সিস্টেম ফন্ট স্টাইল যুক্ত করা হয়েছে */
+        body { 
+            background-color: #000a05; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
         header {
             background-color: #01160b;
@@ -91,13 +97,15 @@
             z-index: 60;
         }
 
+        /* নামের ফন্ট ফেসবুকের মতো পারফেক্ট করা হয়েছে */
         .profile-name { 
-            margin-top: 10px; 
-            font-size: 26px; 
-            font-weight: bold; 
+            margin-top: 12px; 
+            font-size: 24px; 
+            font-weight: 600; /* অতিরিক্ত বোল্ড কমানো হয়েছে */
             color: #ffffff;
             display: flex;
             align-items: center;
+            letter-spacing: -0.3px; /* ফন্টগুলো একটু কাছাকাছি আনা হয়েছে */
         }
         
         input[type="file"] { display: none; }
@@ -168,10 +176,10 @@
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     
-                    // ভেরিফাইড স্টারবার্স্ট ব্যাজ লজিক
+                    // ভেরিফাইড ব্যাজ এবং চ্যাপ্টা হওয়ার সমস্যা সমাধান (flex-shrink: 0)
                     let verifiedBadge = "";
-                    if (userData.displayName === "Sobuj Mia" || userData.displayName === "sobuj mia") {
-                        verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" width="24" height="24" style="margin-left: 6px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+                    if (userData.displayName.toLowerCase() === "sobuj mia") {
+                        verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 20px; height: 20px; min-width: 20px; margin-left: 6px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
                     }
                     
                     document.getElementById('userNameDisplay').innerHTML = userData.displayName + verifiedBadge;
