@@ -51,7 +51,6 @@
         .post-text { color: #ffffff; font-size: 16px; margin-bottom: 15px; white-space: pre-wrap; line-height: 1.5; }
         .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid #0a2e1a; }
         
-        /* প্রোফাইলের পোস্টের রিয়েকশন স্টাইল */
         .post-stats { display: flex; justify-content: space-between; font-size: 14px; color: #8c9e94; padding-bottom: 10px; border-bottom: 1px solid #0a2e1a; margin-bottom: 10px; }
         .post-footer { display: flex; justify-content: space-around; position: relative; }
         .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; transition: 0.2s;}
@@ -250,7 +249,24 @@
             document.getElementById('messageBtn').onclick = () => { window.location.href = "messages.html"; };
         }
 
-        async function sendRequest() { document.getElementById('friendBtn').innerText = "Sending..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
+        async function sendRequest() { 
+            document.getElementById('friendBtn').innerText = "Sending..."; 
+            await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); 
+            await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); 
+            
+            // রিকুয়েস্ট পাঠালে নোটিফিকেশন ফোল্ডারে ডেটা সেভ হবে
+            await setDoc(doc(db, "users", targetUserId, "notifications", `req_${currentUser.uid}`), {
+                type: 'friend_request', 
+                senderId: currentUser.uid, 
+                senderName: currentUserName, 
+                senderPhoto: currentUserPhoto, 
+                isRead: false, 
+                timestamp: serverTimestamp()
+            });
+
+            checkFriendStatus(); 
+        }
+
         async function cancelRequest() { document.getElementById('friendBtn').innerText = "Canceling..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) }); checkFriendStatus(); }
         async function acceptRequest() { document.getElementById('friendBtn').innerText = "Accepting..."; await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(targetUserId), friends: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
 
@@ -274,7 +290,7 @@
             input.value = "";
         };
 
-        // প্রোফাইলের টাইমলাইনে পোস্ট লোড করা (সব বাটন সহ)
+        // প্রোফাইলের টাইমলাইনে পোস্ট লোড করা
         function loadProfilePosts() {
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -288,7 +304,6 @@
                         const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
                         const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
 
-                        // সেফটি লজিক
                         const reactions = post.reactions || {};
                         const comments = post.comments || [];
                         const reactionCount = Object.keys(reactions).length;
