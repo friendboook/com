@@ -8,13 +8,10 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* স্ক্রিন সাইজ ফিক্সড করার ম্যাজিক কোড */
         html, body { 
-            background-color: #000a05; 
-            color: #ffffff; 
+            background-color: #000a05; color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0; 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             display: flex; flex-direction: column; overflow: hidden; 
         }
 
@@ -107,7 +104,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        // setDoc অ্যাড করা হলো যাতে ইউজার ডিলিট করলেও এরর না আসে
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
@@ -129,10 +127,11 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                await updateDoc(doc(db, "users", user.uid), { isOnline: true, lastActive: serverTimestamp() });
+                // setDoc (merge: true) ব্যবহার করা হয়েছে যাতে প্রোফাইল ডিলিট করলেও ক্র্যাশ না করে
+                await setDoc(doc(db, "users", user.uid), { isOnline: true, lastActive: serverTimestamp() }, { merge: true });
                 
                 window.addEventListener("beforeunload", () => {
-                    updateDoc(doc(db, "users", currentUser.uid), { isOnline: false });
+                    updateDoc(doc(db, "users", currentUser.uid), { isOnline: false }).catch(e=>console.log(e));
                 });
 
                 loadUserList();
@@ -145,9 +144,12 @@
                 const userListDiv = document.getElementById('userList');
                 userListDiv.innerHTML = "";
                 
+                let hasOtherUsers = false; // চেক করার জন্য যে অন্য কেউ আছে কিনা
+                
                 snapshot.forEach((docSnap) => {
                     const user = docSnap.data();
-                    if(user.uid !== currentUser.uid) { 
+                    if(user.uid && user.uid !== currentUser.uid) { 
+                        hasOtherUsers = true;
                         const avatar = user.profilePic ? `<img src="${user.profilePic}">` : user.displayName.charAt(0);
                         const isOnline = user.isOnline ? "active" : "";
                         
@@ -171,6 +173,17 @@
                         userListDiv.innerHTML += userHTML;
                     }
                 });
+
+                // যদি আপনি ছাড়া আর কেউ না থাকে, তবে এই মেসেজটি দেখাবে
+                if (!hasOtherUsers) {
+                    userListDiv.innerHTML = `
+                        <div style="padding: 40px 20px; text-align: center; color: #8c9e94; font-size: 16px;">
+                            <i class="fa-solid fa-users-slash" style="font-size: 50px; margin-bottom: 15px; color: #2ecc71; opacity: 0.5;"></i><br>
+                            <b>আপনার ফ্রেন্ডলিস্ট ফাঁকা!</b><br><br>
+                            নতুন কেউ অ্যাকাউন্ট খুললে আপনি তাকে এখানে দেখতে পাবেন এবং চ্যাট করতে পারবেন।
+                        </div>
+                    `;
+                }
             });
         }
 
@@ -224,7 +237,6 @@
                 const msgContainer = document.getElementById('messagesContainer');
                 msgContainer.innerHTML = "";
                 
-                // যদি মেসেজ না থাকে তবে এই লেখাটি দেখাবে
                 if(snapshot.empty) {
                     msgContainer.innerHTML = `<div style="text-align: center; color: #8c9e94; margin-top: 50px;">এখনো কোনো কথা হয়নি। প্রথম মেসেজটি পাঠান!</div>`;
                     return;
