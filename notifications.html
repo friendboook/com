@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FriendBook - Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #000a05; color: #ffffff; font-family: -apple-system, sans-serif; padding-bottom: 30px; }
+        header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo { color: #2ecc71; font-size: 20px; font-weight: bold; }
+        
+        .main-content { max-width: 600px; margin: 0 auto; background-color: #01160b; min-height: 100vh; border-left: 1px solid #0a2e1a; border-right: 1px solid #0a2e1a; }
+        .notif-item { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #0a2e1a; transition: 0.3s; }
+        /* আনরিড নোটিফিকেশনের কালার হালকা সবুজ হবে */
+        .notif-item.unread { background-color: rgba(46, 204, 113, 0.1); }
+        
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; overflow: hidden; flex-shrink: 0; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .notif-text { font-size: 15px; line-height: 1.4; color: #e4e6eb; }
+        .notif-text b { color: #ffffff; }
+        .notif-time { font-size: 12px; color: #8c9e94; margin-top: 5px; }
+        .accept-btn { background-color: #1877F2; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .accept-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> হোম</a>
+        <div class="logo">Notifications</div>
+    </header>
+    
+    <div class="main-content" id="notifList">
+        <div style="text-align: center; padding: 50px; color: #8c9e94;">লোড হচ্ছে...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
+            authDomain: "friendbook-e9569.firebaseapp.com",
+            projectId: "friendbook-e9569",
+            storageBucket: "friendbook-e9569.firebasestorage.app",
+            messagingSenderId: "459682436919",
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+        let currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) { currentUser = user; loadNotifications(); } 
+            else { window.location.href = "index.html"; }
+        });
+
+        function loadNotifications() {
+            const q = query(collection(db, "users", currentUser.uid, "notifications"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('notifList');
+                list.innerHTML = "";
+                if(snapshot.empty) { list.innerHTML = `<div style="text-align: center; padding: 50px; color: #8c9e94;"><i class="fa-solid fa-bell-slash" style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;"></i><br>কোনো নতুন নোটিফিকেশন নেই</div>`; return; }
+
+                snapshot.forEach((docSnap) => {
+                    const notif = docSnap.data();
+                    const nid = docSnap.id;
+                    let actionHtml = ""; let text = "";
+                    
+                    if(notif.type === 'friend_request') {
+                        text = "আপনাকে ফ্রেন্ড রিকুয়েস্ট পাঠিয়েছে।";
+                        actionHtml = `<button class="accept-btn" onclick="acceptReq('${notif.senderId}', '${nid}')">Accept Request</button>`;
+                    } else if(notif.type === 'like') {
+                        text = "আপনার পোস্টে লাইক দিয়েছে। 👍";
+                    } else if(notif.type === 'comment') {
+                        text = `আপনার পোস্টে কমেন্ট করেছে: "${notif.commentText}"`;
+                    } else if(notif.type === 'accepted') {
+                        text = notif.text;
+                    }
+
+                    const avatar = notif.senderPhoto ? `<img src="${notif.senderPhoto}">` : notif.senderName.charAt(0);
+                    const unreadClass = notif.isRead ? "" : "unread";
+
+                    list.innerHTML += `
+                        <div class="notif-item ${unreadClass}">
+                            <div class="avatar">${avatar}</div>
+                            <div>
+                                <div class="notif-text"><b>${notif.senderName}</b> ${text}</div>
+                                <div class="notif-time">সবেমাত্র</div>
+                                ${actionHtml}
+                            </div>
+                        </div>
+                    `;
+
+                    // পেজে ঢুকলেই আনরিড গুলো রিড হয়ে যাবে
+                    if(!notif.isRead) { updateDoc(doc(db, "users", currentUser.uid, "notifications", nid), { isRead: true }); }
+                });
+            });
+        }
+
+        // ফ্রেন্ড রিকুয়েস্ট একসেপ্ট করার লজিক
+        window.acceptReq = async (senderId, notifId) => {
+            await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(senderId), friends: arrayUnion(senderId) });
+            await updateDoc(doc(db, "users", senderId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) });
+            await updateDoc(doc(db, "users", currentUser.uid, "notifications", notifId), { type: 'accepted', text: 'আপনি ফ্রেন্ড রিকুয়েস্ট একসেপ্ট করেছেন। আপনারা এখন ফ্রেন্ড!' });
+        };
+    </script>
+</body>
+</html>
