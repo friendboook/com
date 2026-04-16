@@ -14,10 +14,73 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; max-width: 1200px; margin: 0 auto; }
         .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
         .search-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
-        .search-container input { width: 100%; padding: 10px 18px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; }
-        .header-tabs { display: flex; justify-content: space-around; border-top: 1px solid #0a2e1a; max-width: 600px; margin: 0 auto; }
-        .tab-item { padding: 12px 0; flex: 1; text-align: center; font-size: 20px; color: #a3b1a9; cursor: pointer; }
-        .tab-item.active { color: #2ecc71; border-bottom: 3px solid #2ecc71; }
+        .search-container input { width: 100%; padding: 10px 18px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; transition: 0.3s; }
+        .search-container input:focus { border-color: #2ecc71; box-shadow: 0 0 8px rgba(46, 204, 113, 0.2); }
+        
+        /* --- প্রিমিয়াম মেনু আইকন স্টাইল --- */
+        .header-tabs { display: flex; justify-content: space-around; border-top: 1px solid #0a2e1a; max-width: 600px; margin: 0 auto; padding: 5px 10px; }
+        
+        .tab-item { 
+            position: relative; 
+            padding: 12px 0; 
+            flex: 1; 
+            text-align: center; 
+            font-size: 22px; 
+            color: #a3b1a9; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .tab-item:hover { 
+            background-color: rgba(255, 255, 255, 0.08); 
+            color: #e4e6eb; 
+            transform: translateY(-2px); 
+        }
+        
+        .tab-item.active { color: #2ecc71; }
+        
+        /* অ্যাক্টিভ মেনুর গ্লোয়িং আন্ডারলাইন */
+        .tab-item.active::after {
+            content: ''; 
+            position: absolute; 
+            bottom: -5px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 45px; 
+            height: 4px; 
+            background-color: #2ecc71; 
+            border-radius: 5px;
+            box-shadow: 0 -2px 10px rgba(46, 204, 113, 0.6);
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { width: 0; opacity: 0; }
+            to { width: 45px; opacity: 1; }
+        }
+
+        /* লাল রঙের নোটিফিকেশন ব্যাজ */
+        .nav-badge {
+            position: absolute;
+            top: 2px;
+            right: calc(50% - 22px);
+            background-color: #e41e3f;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50px;
+            border: 2px solid #01160b;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            animation: pulseBadge 2s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
 
         .main-content { max-width: 600px; margin: 20px auto; padding: 0 10px; }
 
@@ -26,15 +89,19 @@
         .post-input-top { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .user-avatar { width: 42px; height: 42px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #01160b; flex-shrink: 0; overflow: hidden; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .create-post-box textarea { flex-grow: 1; background: #022112; border: 1px solid #0f4024; border-radius: 25px; padding: 10px 18px; color: #ffffff; resize: none; height: 45px; outline: none; }
+        .create-post-box textarea { flex-grow: 1; background: #022112; border: 1px solid #0f4024; border-radius: 25px; padding: 10px 18px; color: #ffffff; resize: none; height: 45px; outline: none; transition: 0.3s; }
+        .create-post-box textarea:focus { border-color: #2ecc71; }
         
         #post-image-preview { display: none; margin-bottom: 10px; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #0a2e1a; }
         #post-image-preview img { width: 100%; display: block; }
-        #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+        #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        #remove-preview-btn:hover { background: #e41e3f; }
 
         .post-actions { border-top: 1px solid #0a2e1a; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .upload-photo-btn { color: #45bd62; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; padding: 5px 10px; border-radius: 6px; }
-        .post-submit-btn { background-color: #27ae60; color: #ffffff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .upload-photo-btn { color: #45bd62; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; padding: 5px 10px; border-radius: 6px; transition: 0.2s; }
+        .upload-photo-btn:hover { background-color: rgba(255,255,255,0.05); }
+        .post-submit-btn { background-color: #27ae60; color: #ffffff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .post-submit-btn:hover { background-color: #2ecc71; transform: scale(1.05); }
 
         /* --- টাইমলাইন পোস্ট কার্ড --- */
         .feed-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
@@ -46,7 +113,8 @@
         
         .post-stats { display: flex; justify-content: space-between; font-size: 14px; color: #8c9e94; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #0a2e1a; }
         .post-footer { display: flex; justify-content: space-around; position: relative; }
-        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 6px; }
+        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 6px; transition: 0.2s; }
+        .footer-item:hover { background-color: rgba(255,255,255,0.05); }
         
         /* --- রিয়েকশন পপ-আপ --- */
         .like-container { position: relative; display: inline-flex; -webkit-touch-callout: none; user-select: none; }
@@ -60,8 +128,10 @@
         /* --- কমেন্ট সেকশন --- */
         .comments-section { display: none; margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
-        .comment-input-area input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px; }
-        .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .comment-input-area input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px; transition: 0.3s; }
+        .comment-input-area input:focus { border-color: #2ecc71; }
+        .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .comment-btn:hover { background: #2ecc71; }
         .comment-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .comment-item { display: flex; gap: 10px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; }
         .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: #2ecc71; overflow: hidden; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; font-size:14px; flex-shrink: 0;}
@@ -71,7 +141,7 @@
 
         .hidden { display: none; }
         input[type="file"] { display: none; }
-        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; font-weight: bold; display: none; z-index: 2000; }
+        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -80,12 +150,16 @@
         <div class="header-top">
             <a href="home.html" class="logo">FriendBook</a>
             <div class="search-container"><input type="text" placeholder="সার্চ করুন..."></div>
-            <div class="menu-btn"><i class="fa-solid fa-bars" style="color: white; font-size: 20px;"></i></div>
+            <div class="menu-btn"><i class="fa-solid fa-bars" style="color: white; font-size: 20px; cursor: pointer;"></i></div>
         </div>
+        
         <div class="header-tabs">
-            <div class="tab-item active"><i class="fa-solid fa-house"></i></div>
-            <div class="tab-item"><i class="fa-solid fa-comment-dots"></i></div>
-            <div class="tab-item"><i class="fa-solid fa-bell"></i></div>
+            <div class="tab-item active" onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i></div>
+            
+            <div class="tab-item"><i class="fa-solid fa-comment-dots"></i><span class="nav-badge">3</span></div>
+            
+            <div class="tab-item"><i class="fa-solid fa-bell"></i><span class="nav-badge">9+</span></div>
+            
             <div class="tab-item" onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i></div>
         </div>
     </header>
