@@ -6,267 +6,62 @@
     <title>FriendBook - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-
-        /* একদম ডিপ ডার্ক ব্যাকগ্রাউন্ড */
-        body {
-            background-color: #000a05; 
-            color: #ffffff; /* উজ্জ্বল সাদা টেক্সট */
-            line-height: 1.6;
-        }
-
-        /* হেডার সেকশন */
-        header {
-            background-color: #01160b; /* খুব গাঢ় সবুজ */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid #0a2e1a; /* হালকা বর্ডার যাতে আলাদা বোঝা যায় */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 16px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            color: #2ecc71; /* লোগোর ব্রাইট সবুজ রঙ */
-            font-size: 26px;
-            font-weight: 800;
-            text-decoration: none;
-            letter-spacing: 1px;
-        }
-
-        .search-container {
-            flex-grow: 1;
-            max-width: 400px;
-            margin: 0 20px;
-        }
-
-        .search-container input {
-            width: 100%;
-            padding: 10px 18px;
-            border-radius: 20px;
-            border: 1px solid #0f4024;
-            background-color: #022112;
-            color: #ffffff;
-            outline: none;
-            font-size: 15px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #000a05; color: #ffffff; line-height: 1.6; }
+        header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; max-width: 1200px; margin: 0 auto; }
+        .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
+        .search-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
+        .search-container input { width: 100%; padding: 10px 18px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; }
+        .header-tabs { display: flex; justify-content: space-around; border-top: 1px solid #0a2e1a; max-width: 600px; margin: 0 auto; }
+        .tab-item { padding: 12px 0; flex: 1; text-align: center; font-size: 20px; color: #a3b1a9 !important; cursor: pointer; }
+        .tab-item.active { color: #2ecc71 !important; border-bottom: 3px solid #2ecc71; }
+        .main-content { max-width: 600px; margin: 20px auto; padding: 0 10px; }
+        .create-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
         
-        .search-container input::placeholder {
-            color: #8c9e94; /* স্পষ্ট প্লেসহোল্ডার */
-        }
+        /* প্রোফাইল আইকন ডিজাইন */
+        .user-avatar { width: 42px; height: 42px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #000a05; flex-shrink: 0; overflow: hidden; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* আইকনগুলোর রঙ সাদা */
-        .menu-btn, .tab-item {
-            color: #ffffff !important; 
-            cursor: pointer;
-        }
-
-        .header-tabs {
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid #0a2e1a;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .tab-item {
-            padding: 12px 0;
-            flex: 1;
-            text-align: center;
-            font-size: 20px;
-            transition: 0.3s;
-            color: #a3b1a9 !important; /* আনসিলেক্টেড আইকনের রঙ */
-        }
-
-        .tab-item:hover {
-            color: #ffffff !important;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .tab-item.active {
-            color: #2ecc71 !important; 
-            border-bottom: 3px solid #2ecc71;
-        }
-
-        /* মেইন কন্টেন্ট */
-        .main-content {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 10px;
-        }
-
-        /* এক লাইনে পোস্ট সেকশন */
-        .create-post {
-            background-color: #01160b; /* ডার্ক কার্ড */
-            border: 1px solid #0a2e1a;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex; 
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .user-avatar {
-            width: 42px;
-            height: 42px;
-            background-color: #2ecc71;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: #000a05;
-            flex-shrink: 0; 
-        }
-
-        .create-post textarea {
-            flex-grow: 1; 
-            background: #022112; /* ইনপুট ফিল্ডের ডার্ক রঙ */
-            border: 1px solid #0f4024;
-            border-radius: 25px;
-            padding: 10px 18px;
-            color: #ffffff;
-            resize: none;
-            height: 42px; 
-            outline: none;
-            font-size: 15px;
-            line-height: 20px;
-        }
+        .create-post textarea { flex-grow: 1; background: #022112; border: 1px solid #0f4024; border-radius: 25px; padding: 10px 18px; color: #ffffff; resize: none; height: 42px; outline: none; }
+        .post-btn { background-color: #27ae60; color: #ffffff; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
         
-        .create-post textarea::placeholder {
-            color: #8c9e94;
-        }
-
-        .post-btn {
-            background-color: #27ae60;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            white-space: nowrap; 
-            transition: 0.3s;
-        }
-
-        .post-btn:hover {
-            background-color: #2ecc71;
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
-        }
-
-        /* নিউজফিড পোস্ট কার্ড */
-        .feed-post {
-            background-color: #01160b;
-            border: 1px solid #0a2e1a;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .post-author {
-            font-weight: bold;
-            color: #2ecc71;
-            font-size: 17px;
-            letter-spacing: 0.5px;
-        }
-
-        .post-time {
-            font-size: 13px;
-            color: #8c9e94;
-        }
-
-        /* পোস্টের মূল লেখা (সবচেয়ে স্পষ্ট) */
-        .post-text {
-            color: #ffffff;
-            font-size: 16px;
-            line-height: 1.5;
-            letter-spacing: 0.3px;
-            margin-bottom: 15px;
-            white-space: pre-wrap; /* লাইন ব্রেক ঠিক রাখার জন্য */
-        }
-
-        .post-footer {
-            border-top: 1px solid #0a2e1a;
-            padding-top: 12px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .footer-item {
-            color: #a3b1a9; 
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .footer-item:hover {
-            color: #ffffff;
-        }
-        
-        .footer-item i {
-            font-size: 18px;
-        }
+        .feed-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .post-author { font-weight: bold; color: #2ecc71; font-size: 17px; }
+        .post-time { font-size: 13px; color: #8c9e94; }
+        .post-text { color: #ffffff; font-size: 16px; margin-bottom: 15px; white-space: pre-wrap; }
+        .post-footer { border-top: 1px solid #0a2e1a; padding-top: 12px; display: flex; justify-content: space-around; }
+        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-top">
-            <a href="#" class="logo">FriendBook</a>
+            <a href="home.html" class="logo">FriendBook</a>
             <div class="search-container">
                 <input type="text" placeholder="সার্চ করুন...">
             </div>
-            <div class="menu-btn">
-                <i class="fa-solid fa-bars"></i>
-            </div>
+            <div class="menu-btn"><i class="fa-solid fa-bars" style="color: white;"></i></div>
         </div>
-
         <div class="header-tabs">
             <div class="tab-item active"><i class="fa-solid fa-house"></i></div>
             <div class="tab-item"><i class="fa-solid fa-comment-dots"></i></div>
             <div class="tab-item"><i class="fa-solid fa-bell"></i></div>
-            <div class="tab-item"><i class="fa-solid fa-user-group"></i></div>
+            <div class="tab-item" onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i></div>
         </div>
     </header>
 
     <div class="main-content">
         <div class="create-post">
-            <div class="user-avatar" id="profileInitial">U</div>
+            <a href="profile.html" style="text-decoration: none;">
+                <div class="user-avatar" id="profileDisplay">U</div>
+            </a>
             <textarea id="postText" placeholder="আপনার মনে কি আছে?"></textarea>
             <button class="post-btn" id="btnPost">পোস্ট</button>
         </div>
-
-        <div id="newsfeed">
-            </div>
+        <div id="newsfeed"></div>
     </div>
 
     <script type="module">
@@ -289,37 +84,37 @@
         const db = getFirestore(app);
 
         let currentUserName = "User";
+        let currentUserPhoto = "";
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
-                    currentUserName = userDoc.data().displayName;
-                    document.getElementById('profileInitial').innerText = currentUserName.charAt(0);
+                    const data = userDoc.data();
+                    currentUserName = data.displayName;
+                    currentUserPhoto = data.profilePic || "";
+                    
+                    const display = document.getElementById('profileDisplay');
+                    if(currentUserPhoto) {
+                        display.innerHTML = `<img src="${currentUserPhoto}">`;
+                    } else {
+                        display.innerText = currentUserName.charAt(0);
+                    }
                 }
                 loadPosts();
-            } else {
-                window.location.href = "index.html";
-            }
+            } else { window.location.href = "index.html"; }
         });
 
         document.getElementById('btnPost').onclick = async () => {
             const text = document.getElementById('postText').value;
             if(!text.trim()) return;
-
-            const btn = document.getElementById('btnPost');
-            btn.innerText = "...";
-            btn.disabled = true;
-
             await addDoc(collection(db, "posts"), {
                 author: currentUserName,
+                authorPhoto: currentUserPhoto,
                 content: text,
                 timestamp: serverTimestamp()
             });
-            
             document.getElementById('postText').value = "";
-            btn.innerText = "পোস্ট";
-            btn.disabled = false;
         };
 
         function loadPosts() {
@@ -329,11 +124,15 @@
                 feed.innerHTML = "";
                 snapshot.forEach((doc) => {
                     const post = doc.data();
+                    const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
                     const postHTML = `
                         <div class="feed-post">
                             <div class="post-header">
-                                <span class="post-author">${post.author}</span>
-                                <span class="post-time">সবেমাত্র</span>
+                                <div class="user-avatar">${avatar}</div>
+                                <div>
+                                    <div class="post-author">${post.author}</div>
+                                    <div class="post-time">সবেমাত্র</div>
+                                </div>
                             </div>
                             <div class="post-text">${post.content}</div>
                             <div class="post-footer">
