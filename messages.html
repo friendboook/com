@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FriendBook - Messages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { background-color: #000a05; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background-color: #01160b; border-bottom: 1px solid #0a2e1a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10; }
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo { color: #2ecc71; font-size: 20px; font-weight: bold; }
+
+        .chat-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+        /* --- ইউজার লিস্ট সেকশন --- */
+        .user-list-sidebar { width: 100%; height: 100%; background-color: #01160b; border-right: 1px solid #0a2e1a; overflow-y: auto; transition: 0.3s; }
+        
+        .user-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer; border-bottom: 1px solid rgba(10, 46, 26, 0.5); transition: 0.2s; }
+        .user-item:hover { background-color: rgba(46, 204, 113, 0.1); }
+        
+        .avatar-wrapper { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
+        .chat-avatar { width: 100%; height: 100%; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; color: #01160b; font-weight: bold; font-size: 20px; overflow: hidden; border: 2px solid #01160b; }
+        .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* অনলাইন সবুজ বাতি */
+        .online-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background-color: #31a24c; border-radius: 50%; border: 2px solid #01160b; display: none; }
+        .online-dot.active { display: block; }
+
+        .user-info { flex-grow: 1; }
+        .user-name { font-size: 16px; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 5px; }
+        .last-msg { font-size: 13px; color: #8c9e94; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+
+        /* --- চ্যাট বক্স সেকশন --- */
+        .chat-box-area { position: absolute; top: 0; left: 100%; width: 100%; height: 100%; background-color: #000a05; display: flex; flex-direction: column; transition: 0.3s; z-index: 20; }
+        .chat-box-area.active { left: 0; }
+
+        .chat-header { background-color: #01160b; padding: 12px 16px; border-bottom: 1px solid #0a2e1a; display: flex; align-items: center; gap: 15px; }
+        .close-chat-btn { color: #2ecc71; font-size: 20px; cursor: pointer; padding: 5px; }
+        
+        .messages-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .msg-bubble { max-width: 75%; padding: 10px 15px; border-radius: 20px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .msg-received { background-color: #1a1a1a; color: #e4e6eb; border-bottom-left-radius: 5px; align-self: flex-start; border: 1px solid #0a2e1a; }
+        .msg-sent { background-color: #27ae60; color: #ffffff; border-bottom-right-radius: 5px; align-self: flex-end; }
+
+        .chat-input-area { background-color: #01160b; padding: 12px 15px; border-top: 1px solid #0a2e1a; display: flex; align-items: center; gap: 10px; }
+        .media-btn { color: #2ecc71; font-size: 22px; cursor: pointer; transition: 0.2s; }
+        .media-btn:hover { color: #ffffff; }
+        .chat-input { flex-grow: 1; background-color: #022112; border: 1px solid #0f4024; color: white; padding: 12px 15px; border-radius: 25px; outline: none; font-size: 15px; }
+        .send-btn { color: #2ecc71; font-size: 22px; cursor: pointer; background: none; border: none; outline: none; }
+        
+        /* ডেক্সটপ ভিউয়ের জন্য */
+        @media (min-width: 768px) {
+            .user-list-sidebar { width: 350px; border-right: 1px solid #0a2e1a; }
+            .chat-box-area { position: static; flex: 1; left: 0; }
+            .close-chat-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> হোম</a>
+        <div class="logo">Messages</div>
+    </header>
+
+    <div class="chat-container">
+        <div class="user-list-sidebar" id="userList">
+            <div style="padding: 20px; text-align: center; color: #8c9e94;">লোড হচ্ছে...</div>
+        </div>
+
+        <div class="chat-box-area" id="chatBox">
+            <div class="chat-header">
+                <i class="fa-solid fa-arrow-left close-chat-btn" id="closeChatBtn"></i>
+                <div class="avatar-wrapper" style="width: 40px; height: 40px;">
+                    <div class="chat-avatar" id="activeChatAvatar">U</div>
+                    <div class="online-dot active" id="activeChatOnlineStatus"></div>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="activeChatName">Select a user</div>
+                    <div class="last-msg" id="activeChatStatus" style="color: #2ecc71; font-size: 12px;">Active now</div>
+                </div>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer">
+                <div style="text-align: center; color: #8c9e94; margin-top: 50px;">চ্যাট শুরু করতে বাম পাশ থেকে একজন ইউজার সিলেক্ট করুন।</div>
+            </div>
+
+            <div class="chat-input-area">
+                <i class="fa-solid fa-image media-btn" title="Image (Coming soon)"></i>
+                <i class="fa-solid fa-microphone media-btn" title="Voice (Coming soon)"></i>
+                <input type="text" class="chat-input" id="messageInput" placeholder="মেসেজ লিখুন (ইমোজি সহ)...">
+                <button class="send-btn" id="sendMessageBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
+            authDomain: "friendbook-e9569.firebaseapp.com",
+            projectId: "friendbook-e9569",
+            storageBucket: "friendbook-e9569.firebasestorage.app",
+            messagingSenderId: "459682436919",
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let activeChatUserId = null;
+        let unsubscribeMessages = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                // ইউজার লগইন করলেই ডাটাবেসে isOnline: true করে দেওয়া হলো (সবুজ বাতির জন্য)
+                await updateDoc(doc(db, "users", user.uid), { isOnline: true, lastActive: serverTimestamp() });
+                
+                // ব্রাউজার বন্ধ করলে অফলাইন দেখানোর লজিক
+                window.addEventListener("beforeunload", () => {
+                    updateDoc(doc(db, "users", currentUser.uid), { isOnline: false });
+                });
+
+                loadUserList();
+            } else { window.location.href = "index.html"; }
+        });
+
+        // ১. সব ইউজারদের লিস্ট লোড করা
+        function loadUserList() {
+            const q = query(collection(db, "users"));
+            onSnapshot(q, (snapshot) => {
+                const userListDiv = document.getElementById('userList');
+                userListDiv.innerHTML = "";
+                
+                snapshot.forEach((docSnap) => {
+                    const user = docSnap.data();
+                    if(user.uid !== currentUser.uid) { // নিজেকে বাদে সবাইকে দেখাবে
+                        const avatar = user.profilePic ? `<img src="${user.profilePic}">` : user.displayName.charAt(0);
+                        const isOnline = user.isOnline ? "active" : "";
+                        
+                        let badge = "";
+                        if (user.displayName.toLowerCase().includes("sobuj mia")) {
+                            badge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+                        }
+
+                        const userHTML = `
+                            <div class="user-item" onclick="openChat('${user.uid}', '${user.displayName}', '${user.profilePic || ""}', ${user.isOnline})">
+                                <div class="avatar-wrapper">
+                                    <div class="chat-avatar">${avatar}</div>
+                                    <div class="online-dot ${isOnline}"></div>
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">${user.displayName}${badge}</div>
+                                    <div class="last-msg">Click to chat</div>
+                                </div>
+                            </div>
+                        `;
+                        userListDiv.innerHTML += userHTML;
+                    }
+                });
+            });
+        }
+
+        // ২. চ্যাট বক্স ওপেন করা
+        window.openChat = (uid, name, photo, isOnline) => {
+            activeChatUserId = uid;
+            document.getElementById('activeChatName').innerText = name;
+            document.getElementById('activeChatAvatar').innerHTML = photo ? `<img src="${photo}">` : name.charAt(0);
+            
+            const statusDot = document.getElementById('activeChatOnlineStatus');
+            const statusText = document.getElementById('activeChatStatus');
+            if(isOnline) {
+                statusDot.classList.add('active');
+                statusText.innerText = "Active now"; statusText.style.color = "#2ecc71";
+            } else {
+                statusDot.classList.remove('active');
+                statusText.innerText = "Offline"; statusText.style.color = "#8c9e94";
+            }
+
+            document.getElementById('chatBox').classList.add('active'); // মোবাইলে স্লাইড করে চ্যাটবক্স আসবে
+            loadMessages(uid);
+        };
+
+        // মোবাইল ভিউতে চ্যাটবক্স বন্ধ করা
+        document.getElementById('closeChatBtn').onclick = () => {
+            document.getElementById('chatBox').classList.remove('active');
+            activeChatUserId = null;
+            if(unsubscribeMessages) unsubscribeMessages();
+        };
+
+        // ৩. মেসেজ পাঠানো
+        document.getElementById('sendMessageBtn').onclick = async () => {
+            const input = document.getElementById('messageInput');
+            const text = input.value;
+            if(!text.trim() || !activeChatUserId) return;
+
+            input.value = ""; // সাথে সাথে ইনপুট ফাঁকা করে দেওয়া
+
+            // ডাটাবেসে মেসেজ সেভ করা
+            const chatId = currentUser.uid < activeChatUserId ? `${currentUser.uid}_${activeChatUserId}` : `${activeChatUserId}_${currentUser.uid}`;
+            
+            await addDoc(collection(db, "chats", chatId, "messages"), {
+                senderId: currentUser.uid,
+                text: text,
+                timestamp: serverTimestamp()
+            });
+        };
+
+        // ৪. রিয়েল-টাইম মেসেজ লোড করা
+        function loadMessages(otherUserId) {
+            if(unsubscribeMessages) unsubscribeMessages(); // আগের লিসেনার বন্ধ করা
+
+            const chatId = currentUser.uid < otherUserId ? `${currentUser.uid}_${otherUserId}` : `${otherUserId}_${currentUser.uid}`;
+            const q = query(collection(db, "chats", chatId, "messages"), orderBy("timestamp", "asc"));
+            
+            unsubscribeMessages = onSnapshot(q, (snapshot) => {
+                const msgContainer = document.getElementById('messagesContainer');
+                msgContainer.innerHTML = "";
+                
+                snapshot.forEach((doc) => {
+                    const msg = doc.data();
+                    const isMe = msg.senderId === currentUser.uid;
+                    const msgClass = isMe ? "msg-sent" : "msg-received";
+                    
+                    msgContainer.innerHTML += `<div class="msg-bubble ${msgClass}">${msg.text}</div>`;
+                });
+                
+                // স্ক্রল করে একদম নিচে নিয়ে যাওয়া
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
