@@ -156,9 +156,21 @@
             if (user) {
                 currentUser = user;
                 const userDoc = await getDoc(doc(db, "users", user.uid));
+                
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    document.getElementById('userNameDisplay').innerText = userData.displayName;
+                    
+                    // --- ব্লু ভেরিফাই টিক চিহ্ন লজিক শুরু ---
+                    let verifiedBadge = "";
+                    // যদি ইউজারের নাম Sobuj Mia হয়, তবেই ব্লু টিক দেখাবে!
+                    if (userData.displayName === "Sobuj Mia" || userData.displayName === "sobuj mia") {
+                        verifiedBadge = ` <i class="fa-solid fa-circle-check" title="Verified Account" style="color: #1877F2; font-size: 22px; margin-left: 5px; vertical-align: middle;"></i>`;
+                    }
+                    
+                    // নামের সাথে ব্লু টিক যুক্ত করে প্রোফাইলে দেখানো
+                    document.getElementById('userNameDisplay').innerHTML = userData.displayName + verifiedBadge;
+                    // --- ব্লু ভেরিফাই টিক চিহ্ন লজিক শেষ ---
+
                     if (userData.profilePic) {
                         document.getElementById('profilePicDisplay').innerHTML = `<img src="${userData.profilePic}">`;
                     } else {
