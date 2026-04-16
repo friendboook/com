@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FriendBook - Premium Connect</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0b192c 0%, #1a365d 100%);
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        #networkCanvas, #flowerCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #networkCanvas { z-index: 0; }
+        #flowerCanvas { z-index: 10; pointer-events: none; }
+
+        .wrapper {
+            position: relative;
+            z-index: 2; 
+            width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: height 0.3s ease;
+        }
+
+        .form-box { display: none; }
+        .form-box.active { display: block; animation: fadeIn 0.6s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #2ecc71; 
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 5px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            animation: textGlow 2s ease-in-out infinite alternate; 
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px rgba(46, 204, 113, 0.2), 0 0 10px rgba(46, 204, 113, 0.2); }
+            to { text-shadow: 0 0 10px rgba(46, 204, 113, 0.7), 0 0 20px rgba(46, 204, 113, 0.5); }
+        }
+
+        h2 { font-size: 1.1em; color: #e0e0e0; text-align: center; margin-bottom: 25px; font-weight: 400; }
+
+        .input-group { margin-bottom: 20px; }
+        .name-group { display: flex; gap: 15px; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none; background: rgba(255, 255, 255, 0.15); border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+        .primary-btn {
+            width: 100%; padding: 15px; background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: #ffffff; border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
+            letter-spacing: 1px; text-transform: uppercase; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); transition: all 0.3s ease;
+        }
+        .primary-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(46, 204, 113, 0.6); }
+
+        .switch-link { text-align: center; margin-top: 25px; font-size: 14px; }
+        .switch-link p { color: #cfcfcf; }
+        .switch-link a { color: #2ecc71; text-decoration: none; font-weight: bold; transition: color 0.3s ease; }
+        .switch-link a:hover { color: #ffffff; text-decoration: underline; }
+
+        /* --- কাস্টম টোস্ট নোটিফিকেশন ডিজাইন --- */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: -400px; /* শুরুতে লুকিয়ে থাকবে */
+            background: rgba(46, 204, 113, 0.9); /* সফল হলে সবুজ */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            z-index: 9999;
+            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* চমৎকার স্লাইড এনিমেশন */
+        }
+        .toast.show { right: 30px; } /* শো করার সময় স্ক্রিনে আসবে */
+        .toast.error { background: rgba(231, 76, 60, 0.9); } /* এরর হলে লাল দেখাবে */
+
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast">মেসেজ এখানে দেখাবে</div>
+
+    <canvas id="networkCanvas"></canvas>
+    <canvas id="flowerCanvas"></canvas>
+
+    <div class="wrapper">
+        <div class="form-box register active" id="register-box">
+            <h1>FriendBook</h1>
+            <h2>নতুন একাউন্ট তৈরি করুন</h2>
+            <form id="register-form">
+                <div class="input-group name-group">
+                    <input type="text" id="reg-fname" placeholder="নামের প্রথম অংশ" required>
+                    <input type="text" id="reg-lname" placeholder="নামের শেষ অংশ" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" placeholder="ইমেইল অ্যাড্রেস" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-password" placeholder="নতুন পাসওয়ার্ড (অন্তত ৬ অক্ষর)" required>
+                </div>
+                <button type="submit" class="primary-btn">Sign Up</button>
+            </form>
+            <div class="switch-link">
+                <p>ইতিমধ্যেই অ্যাকাউন্ট আছে? <a href="#" onclick="showLogin()">লগইন করুন</a></p>
+            </div>
+        </div>
+
+        <div class="form-box login" id="login-box">
+            <h1>FriendBook</h1>
+            <h2>ফিরে আসার জন্য স্বাগতম</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="email" id="login-email" placeholder="ইমেইল অ্যাড্রেস" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="পাসওয়ার্ড" required>
+                </div>
+                <button type="submit" class="primary-btn">Login</button>
+            </form>
+            <div class="switch-link">
+                <p>অ্যাকাউন্ট নেই? <a href="#" onclick="showRegister()">নতুন তৈরি করুন</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Network Animation
+        const networkCanvas = document.getElementById("networkCanvas");
+        const networkCtx = networkCanvas.getContext("2d");
+        networkCanvas.width = window.innerWidth; networkCanvas.height = window.innerHeight;
+        let particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * networkCanvas.width; this.y = Math.random() * networkCanvas.height;
+                this.size = Math.random() * 2 + 1; this.speedX = (Math.random() * 1) - 0.5; this.speedY = (Math.random() * 1) - 0.5;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > networkCanvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > networkCanvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            draw() {
+                networkCtx.fillStyle = 'rgba(46, 204, 113, 0.8)'; networkCtx.beginPath();
+                networkCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); networkCtx.fill();
+            }
+        }
+        function initNetwork() { particlesArray = []; for (let i = 0; i < (networkCanvas.height * networkCanvas.width)/9000; i++) particlesArray.push(new Particle()); }
+        function animateNetwork() {
+            requestAnimationFrame(animateNetwork); networkCtx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update(); particlesArray[i].draw();
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x; const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        networkCtx.beginPath(); networkCtx.strokeStyle = 'rgba(46, 204, 113, ' + (1 - distance/120) + ')';
+                        networkCtx.lineWidth = 1; networkCtx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        networkCtx.lineTo(particlesArray[j].x, particlesArray[j].y); networkCtx.stroke();
+                    }
+                }
+            }
+        }
+        initNetwork(); animateNetwork();
+
+        // Flower Animation
+        const flowerCanvas = document.getElementById("flowerCanvas");
+        const flowerCtx = flowerCanvas.getContext("2d");
+        flowerCanvas.width = window.innerWidth; flowerCanvas.height = window.innerHeight;
+        let flowersArray = [];
+        class FlowerParticle {
+            constructor() {
+                this.x = Math.random() * flowerCanvas.width; this.y = Math.random() * flowerCanvas.height - flowerCanvas.height; 
+                this.size = Math.random() * 15 + 10; this.speedY = Math.random() * 2 + 1; this.speedX = Math.random() * 0.5 - 0.25; 
+                this.angle = Math.random() * Math.PI * 2; this.angleSpeed = Math.random() * 0.02 - 0.01; this.alpha = Math.random() * 0.5 + 0.1; 
+            }
+            update() {
+                this.y += this.speedY; this.x += this.speedX; this.angle += this.angleSpeed;
+                if (this.y > flowerCanvas.height) {
+                    this.y = -this.size; this.x = Math.random() * flowerCanvas.width;
+                    this.speedY = Math.random() * 2 + 1; this.speedX = Math.random() * 0.5 - 0.25;
+                    this.angle = Math.random() * Math.PI * 2; this.alpha = Math.random() * 0.5 + 0.1;
+                }
+            }
+            draw() {
+                flowerCtx.save(); flowerCtx.translate(this.x, this.y); flowerCtx.rotate(this.angle);
+                flowerCtx.fillStyle = `rgba(46, 204, 113, ${this.alpha})`; flowerCtx.font = `${this.size}px 'Segoe UI'`; 
+                flowerCtx.textAlign = 'center'; flowerCtx.textBaseline = 'middle'; flowerCtx.fillText('❀', 0, 0); flowerCtx.restore();
+            }
+        }
+        function initFlowers() { flowersArray = []; for (let i = 0; i < (flowerCanvas.height * flowerCanvas.width)/15000; i++) flowersArray.push(new FlowerParticle()); }
+        function animateFlowers() { requestAnimationFrame(animateFlowers); flowerCtx.clearRect(0, 0, flowerCanvas.width, flowerCanvas.height); flowersArray.forEach(f => { f.update(); f.draw(); }); }
+        initFlowers(); animateFlowers();
+
+        window.addEventListener('resize', () => { 
+            networkCanvas.width = window.innerWidth; networkCanvas.height = window.innerHeight; initNetwork(); 
+            flowerCanvas.width = window.innerWidth; flowerCanvas.height = window.innerHeight; initFlowers(); 
+        });
+
+        window.showLogin = function() { document.getElementById('register-box').classList.remove('active'); document.getElementById('login-box').classList.add('active'); }
+        window.showRegister = function() { document.getElementById('login-box').classList.remove('active'); document.getElementById('register-box').classList.add('active'); }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
+            authDomain: "friendbook-e9569.firebaseapp.com",
+            projectId: "friendbook-e9569",
+            storageBucket: "friendbook-e9569.firebasestorage.app",
+            messagingSenderId: "459682436919",
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2",
+            measurementId: "G-CQCWVWTW5W"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- কাস্টম টোস্ট মেসেজ দেখানোর ফাংশন ---
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            if(isError) toast.classList.add('error');
+            else toast.classList.remove('error');
+            
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // রেজিস্ট্রেশন লজিক
+        const registerForm = document.getElementById('register-form');
+        if(registerForm) {
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); 
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+                const firstName = document.getElementById('reg-fname').value;
+                const lastName = document.getElementById('reg-lname').value;
+                
+                const btn = document.querySelector('#register-form .primary-btn');
+                btn.innerText = "অ্যাকাউন্ট তৈরি হচ্ছে...";
+                btn.disabled = true;
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    try {
+                        await setDoc(doc(db, "users", user.uid), {
+                            uid: user.uid, email: email, firstName: firstName, lastName: lastName,
+                            displayName: firstName + " " + lastName, createdAt: new Date()
+                        });
+                    } catch (dbError) { console.log("Firestore Warning"); }
+
+                    // ডিফল্ট অ্যালার্টের বদলে কাস্টম টোস্ট এবং অটো-সুইচ
+                    showToast("অভিনন্দন! অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
+                    registerForm.reset(); 
+                    
+                    // ১ সেকেন্ড পর অটোমেটিক লগইন পেজে চলে যাবে
+                    setTimeout(() => { showLogin(); }, 1000); 
+
+                } catch (error) {
+                    if(error.code === 'auth/email-already-in-use') {
+                        showToast("এই ইমেইল দিয়ে ইতিমধ্যেই অ্যাকাউন্ট আছে!", true);
+                    } else {
+                        showToast("সমস্যা হয়েছে: " + error.message, true);
+                    }
+                } finally {
+                    btn.innerText = "Sign Up"; btn.disabled = false;
+                }
+            });
+        }
+
+        // লগইন লজিক
+        const loginForm = document.getElementById('login-form');
+        if(loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const btn = document.querySelector('#login-form .primary-btn');
+                
+                btn.innerText = "লগইন হচ্ছে..."; btn.disabled = true;
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        window.location.href = "home.html"; 
+                    })
+                    .catch((error) => {
+                        showToast("ভুল ইমেইল বা পাসওয়ার্ড!", true); // ডিফল্ট অ্যালার্টের বদলে কাস্টম টোস্ট
+                        btn.innerText = "Login"; btn.disabled = false;
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
