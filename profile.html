@@ -45,7 +45,6 @@
             position: relative;
         }
 
-        /* কভার বাটন ফিক্স */
         .edit-cover-btn {
             position: absolute;
             bottom: 15px;
@@ -58,7 +57,7 @@
             font-size: 14px;
             font-weight: bold;
             border: 1px solid rgba(255,255,255,0.3);
-            z-index: 100; /* যেন বাটনটি সবার উপরে থাকে */
+            z-index: 100;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -92,8 +91,17 @@
             z-index: 60;
         }
 
-        .profile-name { margin-top: 10px; font-size: 26px; font-weight: bold; color: #ffffff; }
+        .profile-name { 
+            margin-top: 10px; 
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+        }
+        
         input[type="file"] { display: none; }
+        
         #upload-status { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px;
@@ -135,6 +143,7 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
+        // ফায়ারবেস কনফিগ
         const firebaseConfig = {
             apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
             authDomain: "friendbook-e9569.firebaseapp.com",
@@ -152,22 +161,19 @@
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
         let currentUser = null;
 
-       onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-                
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     
-                    // --- অরিজিনাল ফেসবুক স্টাইল ব্লু ভেরিফাই টিক চিহ্ন ---
+                    // ভেরিফাইড স্টারবার্স্ট ব্যাজ লজিক
                     let verifiedBadge = "";
                     if (userData.displayName === "Sobuj Mia" || userData.displayName === "sobuj mia") {
-                        // এই SVG কোডটি হুবহু আপনার দেওয়া ছবির মতো ব্যাজ তৈরি করবে
-                        verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" width="24" height="24" style="vertical-align: text-bottom; margin-left: 4px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+                        verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" width="24" height="24" style="margin-left: 6px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
                     }
                     
-                    // নামের সাথে ব্যাজ যুক্ত করা
                     document.getElementById('userNameDisplay').innerHTML = userData.displayName + verifiedBadge;
 
                     if (userData.profilePic) {
@@ -219,7 +225,6 @@
             }
         }
 
-        // ইভেন্ট লিসেনারগুলো পুনরায় নিশ্চিত করা হলো
         document.getElementById('profileUpload').addEventListener('change', (e) => {
             if (e.target.files.length > 0) uploadImage(e.target.files[0], 'profile');
         });
