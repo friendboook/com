@@ -9,8 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            background-color: #000a05; 
-            color: #ffffff; 
+            background-color: #000a05; color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             padding-bottom: 30px;
         }
@@ -25,11 +24,7 @@
         .back-btn:hover { color: #2ecc71; }
         .logo { color: #2ecc71; font-size: 20px; font-weight: bold; }
 
-        .profile-container {
-            max-width: 600px; margin: 0 auto; background-color: #01160b;
-            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border: 1px solid #0a2e1a;
-        }
-
+        .profile-container { max-width: 600px; margin: 0 auto; background-color: #01160b; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border: 1px solid #0a2e1a; }
         .cover-photo { width: 100%; height: 220px; background-color: #022112; background-size: cover; background-position: center; position: relative; }
 
         .edit-cover-btn {
@@ -38,11 +33,7 @@
             font-size: 14px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); z-index: 100; display: flex; align-items: center; gap: 8px;
         }
 
-        .profile-header {
-            position: relative; padding: 0 20px; margin-top: -60px; 
-            display: flex; flex-direction: column; align-items: center; z-index: 50; text-align: center;
-        }
-
+        .profile-header { position: relative; padding: 0 20px; margin-top: -60px; display: flex; flex-direction: column; align-items: center; z-index: 50; text-align: center; }
         .profile-pic-container { position: relative; width: 140px; height: 140px; }
         .profile-pic {
             width: 100%; height: 100%; border-radius: 50%; border: 5px solid #01160b; background-color: #2ecc71;
@@ -64,10 +55,7 @@
         .bio-section { text-align: center; margin-bottom: 20px; }
         .bio-text { font-size: 15px; color: #e4e6eb; margin-bottom: 10px; white-space: pre-wrap; }
         
-        .edit-action-btn {
-            background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%;
-            border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s;
-        }
+        .edit-action-btn { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .edit-action-btn:hover { background-color: rgba(255, 255, 255, 0.15); }
         .primary-save-btn { background-color: #2ecc71; color: #01160b; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
 
@@ -75,7 +63,6 @@
         textarea { resize: none; height: 60px; text-align: center; }
 
         .divider { height: 1px; background-color: #0a2e1a; margin: 15px 0; }
-
         .details-section { margin-top: 15px; }
         .details-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #ffffff; }
         .details-list { list-style: none; }
@@ -183,15 +170,14 @@
 
         <div class="post-actions">
             <label for="postImageUpload" class="upload-photo-btn">
-                <i class="fa-solid fa-image" style="font-size: 20px;"></i> Photo / Video
+                <i class="fa-solid fa-image" style="font-size: 20px;"></i> Photo
             </label>
             <input type="file" id="postImageUpload" accept="image/*">
             <button class="post-submit-btn" id="submitPostBtn">Post</button>
         </div>
     </div>
 
-    <div id="profile-posts-feed">
-        </div>
+    <div id="profile-posts-feed"></div>
 
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
@@ -218,49 +204,62 @@
         let currentUser = null;
         let currentUserName = "User";
         let currentUserPhoto = "";
-        let postImageFile = null; // পোস্ট করার জন্য সিলেক্ট করা ছবি
+        let postImageFile = null;
 
+        // ডেটা লোড করার সময় যাতে ক্র্যাশ না করে তাই ট্রাই-ক্যাচ ব্যবহার করা হলো
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    currentUserName = userData.displayName;
-                    currentUserPhoto = userData.profilePic || "";
-                    
-                    let verifiedBadge = "";
-                    let followerHTML = "";
-                    if (userData.displayName.toLowerCase() === "sobuj mia") {
-                        verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; margin-left: 6px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
-                        followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
-                    }
-                    
-                    document.getElementById('userNameDisplay').innerHTML = userData.displayName + verifiedBadge;
-                    document.getElementById('followerCountDisplay').innerHTML = followerHTML;
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        
+                        // যদি কোনো কারণে নাম না থাকে, তাহলে ডিফল্ট নাম বসবে
+                        const displayName = userData.displayName || "Unknown User";
+                        currentUserName = displayName;
+                        currentUserPhoto = userData.profilePic || "";
+                        
+                        let verifiedBadge = "";
+                        let followerHTML = "";
+                        
+                        // নামের ভেতরে sobuj mia থাকলেই ব্লু টিক!
+                        if (displayName.toLowerCase().includes("sobuj mia")) {
+                            verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; margin-left: 6px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+                            followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
+                        }
+                        
+                        document.getElementById('userNameDisplay').innerHTML = displayName + verifiedBadge;
+                        document.getElementById('followerCountDisplay').innerHTML = followerHTML;
 
-                    if (currentUserPhoto) {
-                        document.getElementById('profilePicDisplay').innerHTML = `<img src="${currentUserPhoto}">`;
-                        document.getElementById('postSmallAvatar').innerHTML = `<img src="${currentUserPhoto}">`;
-                    } else {
-                        document.getElementById('profilePicDisplay').innerText = currentUserName.charAt(0);
-                        document.getElementById('postSmallAvatar').innerText = currentUserName.charAt(0);
-                    }
-                    
-                    if (userData.coverPic) document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
+                        // প্রোফাইল পিকচার
+                        if (currentUserPhoto) {
+                            document.getElementById('profilePicDisplay').innerHTML = `<img src="${currentUserPhoto}">`;
+                            document.getElementById('postSmallAvatar').innerHTML = `<img src="${currentUserPhoto}">`;
+                        } else {
+                            document.getElementById('profilePicDisplay').innerText = displayName.charAt(0);
+                            document.getElementById('postSmallAvatar').innerText = displayName.charAt(0);
+                        }
+                        
+                        // কভার ফটো
+                        if (userData.coverPic) document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
 
-                    // বায়ো ও ডিটেইলস লোড...
-                    if (userData.bio) { document.getElementById('bio-text').innerText = userData.bio; document.getElementById('bio-input').value = userData.bio; }
-                    if (userData.work) { document.getElementById('work-text').innerText = userData.work; document.getElementById('work-input').value = userData.work; }
-                    if (userData.edu) { document.getElementById('edu-text').innerText = userData.edu; document.getElementById('edu-input').value = userData.edu; }
-                    if (userData.loc) { document.getElementById('loc-text').innerText = userData.loc; document.getElementById('loc-input').value = userData.loc; }
-                    
-                    loadProfilePosts(); // টাইমলাইন লোড করা
+                        // বায়ো ও ডিটেইলস
+                        if (userData.bio) { document.getElementById('bio-text').innerText = userData.bio; document.getElementById('bio-input').value = userData.bio; }
+                        if (userData.work) { document.getElementById('work-text').innerText = userData.work; document.getElementById('work-input').value = userData.work; }
+                        if (userData.edu) { document.getElementById('edu-text').innerText = userData.edu; document.getElementById('edu-input').value = userData.edu; }
+                        if (userData.loc) { document.getElementById('loc-text').innerText = userData.loc; document.getElementById('loc-input').value = userData.loc; }
+                        
+                        // টাইমলাইন লোড করা
+                        loadProfilePosts(); 
+                    }
+                } catch (error) {
+                    console.log("Error loading profile data: ", error);
                 }
             } else { window.location.href = "index.html"; }
         });
 
-        // --- বায়ো এবং ডিটেইলস সেভ লজিক (আগের মতোই) ---
+        // --- বায়ো এবং ডিটেইলস সেভ লজিক ---
         document.getElementById('edit-bio-btn').onclick = () => { document.getElementById('bio-display-area').classList.add('hidden'); document.getElementById('bio-edit-area').classList.remove('hidden'); };
         document.getElementById('save-bio-btn').onclick = async () => {
             const newBio = document.getElementById('bio-input').value;
@@ -292,6 +291,7 @@
                         await updateDoc(userRef, { profilePic: imageUrl });
                         document.getElementById('profilePicDisplay').innerHTML = `<img src="${imageUrl}">`;
                         document.getElementById('postSmallAvatar').innerHTML = `<img src="${imageUrl}">`;
+                        currentUserPhoto = imageUrl;
                     } else if (type === 'cover') {
                         await updateDoc(userRef, { coverPic: imageUrl });
                         document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${imageUrl})`;
@@ -305,8 +305,6 @@
         document.getElementById('coverUpload').addEventListener('change', (e) => { if (e.target.files.length > 0) uploadProfileCoverImage(e.target.files[0], 'cover'); });
 
         // --- নতুন পোস্ট করার লজিক ---
-        
-        // ছবি সিলেক্ট করলে প্রিভিউ দেখানো
         document.getElementById('postImageUpload').addEventListener('change', function(e) {
             if(e.target.files.length > 0) {
                 postImageFile = e.target.files[0];
@@ -319,7 +317,6 @@
             }
         });
 
-        // প্রিভিউ থেকে ছবি রিমুভ করা
         document.getElementById('remove-preview-btn').addEventListener('click', function() {
             postImageFile = null;
             document.getElementById('postImageUpload').value = "";
@@ -327,10 +324,9 @@
             document.getElementById('preview-img').src = "";
         });
 
-        // পোস্ট সাবমিট করা
         document.getElementById('submitPostBtn').onclick = async () => {
             const text = document.getElementById('newPostText').value;
-            if(!text.trim() && !postImageFile) return; // টেক্সট বা ছবি কিছুই না থাকলে কাজ করবে না
+            if(!text.trim() && !postImageFile) return; 
 
             const btn = document.getElementById('submitPostBtn');
             const statusText = document.getElementById('upload-status');
@@ -340,7 +336,6 @@
             let finalImageUrl = null;
 
             try {
-                // যদি ছবি থাকে, আগে ImgBB তে আপলোড করবে
                 if(postImageFile) {
                     const formData = new FormData();
                     formData.append("image", postImageFile);
@@ -352,17 +347,15 @@
                     }
                 }
 
-                // ডাটাবেসে পোস্ট সেভ করা
                 await addDoc(collection(db, "posts"), {
-                    uid: currentUser.uid, // ইউজারের আইডি সেভ করে রাখছি যেন পরে খুঁজে পাওয়া যায়
+                    uid: currentUser.uid, 
                     author: currentUserName,
                     authorPhoto: currentUserPhoto,
                     content: text,
-                    image: finalImageUrl, // ছবি থাকলে লিংক সেভ হবে, না থাকলে null
+                    image: finalImageUrl, 
                     timestamp: serverTimestamp()
                 });
                 
-                // সবকিছু রিসেট করা
                 document.getElementById('newPostText').value = "";
                 document.getElementById('remove-preview-btn').click();
                 statusText.innerText = "পোস্ট সফল হয়েছে!";
@@ -386,11 +379,41 @@
                 snapshot.forEach((doc) => {
                     const post = doc.data();
                     
-                    // শুধুমাত্র এই প্রোফাইলের মালিকের পোস্টগুলোই দেখাবে
                     if(post.uid === currentUser.uid) {
                         const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
                         
-                        // নামের পাশে ব্লু টিক চেক করা
                         let badge = "";
-                        if (post.author.toLowerCase() === "sobuj mia") {
-                            badge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l
+                        if (post.author.toLowerCase().includes("sobuj mia")) {
+                            badge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+                        }
+
+                        let imageHTML = "";
+                        if(post.image) {
+                            imageHTML = `<img src="${post.image}" class="post-image">`;
+                        }
+
+                        const postHTML = `
+                            <div class="feed-post">
+                                <div class="post-header">
+                                    <div class="small-avatar">${avatar}</div>
+                                    <div>
+                                        <div class="post-author">${post.author}${badge}</div>
+                                        <div class="post-time">সবেমাত্র</div>
+                                    </div>
+                                </div>
+                                <div class="post-text">${post.content}</div>
+                                ${imageHTML}
+                                <div class="post-footer">
+                                    <span class="footer-item"><i class="fa-regular fa-thumbs-up"></i> Like</span>
+                                    <span class="footer-item"><i class="fa-regular fa-comment"></i> Comment</span>
+                                </div>
+                            </div>
+                        `;
+                        feed.innerHTML += postHTML;
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
