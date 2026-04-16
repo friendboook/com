@@ -17,44 +17,51 @@
         .tab-item { position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; color: #a3b1a9; cursor: pointer; border-radius: 10px; transition: all 0.3s; }
         .tab-item.active { color: #2ecc71; }
         .tab-item.active::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 45px; height: 4px; background-color: #2ecc71; border-radius: 5px; }
-        
-        /* ডাইনামিক লাল ব্যাজ স্টাইল */
         .nav-badge { position: absolute; top: 2px; right: calc(50% - 22px); background-color: #e41e3f; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 50px; border: 2px solid #01160b; display: none; }
         
         .main-content { max-width: 600px; margin: 20px auto; padding: 0 10px; }
         .create-post-box { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .user-avatar { width: 42px; height: 42px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .user-avatar { width: 42px; height: 42px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .create-post-box textarea { flex-grow: 1; background: #022112; border: 1px solid #0f4024; border-radius: 25px; padding: 10px 18px; color: #ffffff; resize: none; height: 45px; outline: none; }
         
         #post-image-preview { display: none; margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #0a2e1a; position: relative; }
-        #post-image-preview img { width: 100%; }
-        #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+        #post-image-preview img { width: 100%; display: block; }
+        #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
 
         .feed-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
         .post-author { font-weight: bold; color: #2ecc71; font-size: 16px; display: flex; align-items: center; }
         .post-time { font-size: 13px; color: #8c9e94; }
-        .post-text { color: #ffffff; margin-bottom: 15px; white-space: pre-wrap; }
+        .post-text { color: #ffffff; margin-bottom: 15px; white-space: pre-wrap; line-height: 1.5;}
         .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid #0a2e1a; }
         
         .post-stats { display: flex; justify-content: space-between; font-size: 14px; color: #8c9e94; padding-bottom: 10px; border-bottom: 1px solid #0a2e1a; margin-bottom: 10px; }
         .post-footer { display: flex; justify-content: space-around; position: relative; }
-        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; }
+        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; transition: 0.2s;}
+        .footer-item:hover { background-color: rgba(255,255,255,0.05); border-radius: 6px; }
         
         .like-container { position: relative; display: inline-flex; -webkit-touch-callout: none; user-select: none; }
-        .reaction-box { position: absolute; bottom: 140%; left: -10px; background: #01160b; border: 1px solid #0a2e1a; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
+        .reaction-box { position: absolute; bottom: 140%; left: -10px; background: #01160b; border: 1px solid #0a2e1a; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6);}
         .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
-        .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; }
+        .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
+        .reaction-icon:hover { transform: scale(1.3) translateY(-5px); }
+        .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
         .comments-section { display: none; margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
-        .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; cursor: pointer; }
+        .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; cursor: pointer; font-weight: bold;}
+        .comment-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { display: flex; gap: 10px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: #2ecc71; overflow: hidden; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; flex-shrink: 0;}
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-content { font-size: 14px; color: #e4e6eb; }
+        .comment-author { font-weight: bold; color: #2ecc71; font-size: 14px; margin-bottom: 2px; }
         
         input[type="file"] { display: none; }
-        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; display: none; z-index: 2000; }
+        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; display: none; z-index: 2000; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -77,14 +84,14 @@
     <div class="main-content">
         <div class="create-post-box">
             <div class="post-input-top">
-                <div class="user-avatar" id="profileDisplay">U</div>
+                <a href="profile.html" style="text-decoration: none;"><div class="user-avatar" id="profileDisplay">U</div></a>
                 <textarea id="newPostText" placeholder="আপনার মনে কি আছে?"></textarea>
             </div>
             <div id="post-image-preview"><img id="preview-img" src=""><button id="remove-preview-btn">X</button></div>
-            <div style="border-top: 1px solid #0a2e1a; padding-top: 10px; display: flex; justify-content: space-between;">
-                <label for="postImageUpload" style="color: #45bd62; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-image"></i> Photo</label>
+            <div style="border-top: 1px solid #0a2e1a; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <label for="postImageUpload" style="color: #45bd62; cursor: pointer; font-weight: 600; padding: 5px;"><i class="fa-solid fa-image" style="font-size: 20px;"></i> Photo</label>
                 <input type="file" id="postImageUpload" accept="image/*">
-                <button id="submitPostBtn" style="background: #27ae60; color: white; border: none; padding: 5px 20px; border-radius: 20px; font-weight: bold;">Post</button>
+                <button id="submitPostBtn" style="background: #27ae60; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">Post</button>
             </div>
         </div>
         <div id="newsfeed"></div>
@@ -103,8 +110,7 @@
             projectId: "friendbook-e9569",
             storageBucket: "friendbook-e9569.firebasestorage.app",
             messagingSenderId: "459682436919",
-            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2",
-            measurementId: "G-CQCWVWTW5W"
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -124,7 +130,6 @@
                         const display = document.getElementById('profileDisplay');
                         if(currentUserPhoto) display.innerHTML = `<img src="${currentUserPhoto}">`; else display.innerText = currentUserName.charAt(0);
                         
-                        // মেসেজ নোটিফিকেশন চেক
                         const unreads = data.unreadCounts || {};
                         let count = 0; for(let k in unreads) count += unreads[k];
                         const badge = document.getElementById('msg-badge');
@@ -135,7 +140,6 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // ইমেজ প্রিভিউ লজিক
         document.getElementById('postImageUpload').onchange = (e) => {
             if(e.target.files.length > 0) {
                 postImageFile = e.target.files[0];
@@ -146,13 +150,13 @@
         };
         document.getElementById('remove-preview-btn').onclick = () => { postImageFile = null; document.getElementById('post-image-preview').style.display = 'none'; };
 
-        // পোস্ট পাবলিশ লজিক
         document.getElementById('submitPostBtn').onclick = async () => {
             const text = document.getElementById('newPostText').value;
             if(!text.trim() && !postImageFile) return;
             const statusText = document.getElementById('upload-status');
             statusText.style.display = 'block'; statusText.innerText = "পোস্ট হচ্ছে...";
             let finalImg = null;
+            document.getElementById('submitPostBtn').disabled = true;
             try {
                 if(postImageFile) {
                     const fd = new FormData(); fd.append("image", postImageFile); fd.append("key", IMGBB_API_KEY);
@@ -161,16 +165,16 @@
                 }
                 await addDoc(collection(db, "posts"), { uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, content: text, image: finalImg, reactions: {}, comments: [], timestamp: serverTimestamp() });
                 document.getElementById('newPostText').value = ""; document.getElementById('remove-preview-btn').click();
-                statusText.innerText = "সফল হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2000);
-            } catch (e) { statusText.innerText = "ব্যর্থ হয়েছে!"; }
+                statusText.innerText = "পোস্ট সফল হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2000);
+            } catch (e) { statusText.innerText = "ব্যর্থ হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2000); }
+            finally { document.getElementById('submitPostBtn').disabled = false; }
         };
 
-        // গ্লোবাল রিয়েক্ট এবং কমেন্ট ফাংশন
         window.addReaction = async (id, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); };
         window.toggleLike = async (id, has) => { const ref = doc(db, "posts", id); if(has) await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); else await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); };
-        window.toggleComment = (id) => { const el = document.getElementById(`comments-${id}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; };
-        window.sendComment = async (id) => {
-            const input = document.getElementById(`in-${id}`); if(!input.value.trim()) return;
+        window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; };
+        window.addComment = async (id) => {
+            const input = document.getElementById(`comment-input-${id}`); if(!input.value.trim()) return;
             await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: input.value, timestamp: Date.now() }) });
             input.value = "";
         };
@@ -180,15 +184,32 @@
             onSnapshot(q, (snapshot) => {
                 const feed = document.getElementById('newsfeed'); feed.innerHTML = "";
                 snapshot.forEach((postDoc) => {
-                    const post = postDoc.data(); const pid = postDoc.id;
+                    const post = postDoc.data(); const postId = postDoc.id;
                     const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
-                    const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89-1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
-                    const myR = post.reactions[currentUser.uid];
-                    const likeHTML = myR === 'like' ? '<i class="fa-solid fa-thumbs-up action-like"></i> Like' : (myR === 'love' ? '❤️ Love' : '<i class="fa-regular fa-thumbs-up"></i> Like');
+                    const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
                     
-                    let cList = ""; post.comments.forEach(c => { cList += `<div style="display:flex; gap:8px; margin-bottom:10px;"><div class="small-avatar" style="width:30px; height:30px;">${c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0)}</div><div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:10px;"><div style="font-weight:bold; font-size:12px; color:#2ecc71;">${c.author}</div><div style="font-size:13px;">${c.text}</div></div></div>`; });
+                    // সেফটি লজিক (পুরোনো পোস্ট ক্র্যাশ রোধ করতে)
+                    const reactions = post.reactions || {};
+                    const comments = post.comments || [];
+                    const reactionCount = Object.keys(reactions).length;
+                    const myReaction = reactions[currentUser.uid];
+                    
+                    let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like';
+                    let likeBtnClass = "footer-item";
 
-                    feed.innerHTML += `
+                    if(myReaction) {
+                        if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; }
+                        else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; }
+                        else if(myReaction === 'haha') { likeBtnHTML = '😂 Haha'; likeBtnClass += ' action-haha'; }
+                        else if(myReaction === 'wow') { likeBtnHTML = '😲 Wow'; likeBtnClass += ' action-wow'; }
+                        else if(myReaction === 'sad') { likeBtnHTML = '😢 Sad'; likeBtnClass += ' action-sad'; }
+                        else if(myReaction === 'angry') { likeBtnHTML = '😡 Angry'; likeBtnClass += ' action-angry'; }
+                    }
+                    
+                    let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
+                    let cList = ""; comments.forEach(c => { cList += `<div class="comment-item"><div class="comment-avatar">${c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0)}</div><div class="comment-content"><div class="comment-author">${c.author}</div><div>${c.text}</div></div></div>`; });
+
+                    const postHTML = `
                         <div class="feed-post">
                             <div class="post-header">
                                 <a href="profile.html?id=${post.uid}" style="text-decoration:none;"><div class="user-avatar">${avatar}</div></a>
@@ -198,23 +219,32 @@
                                 </div>
                             </div>
                             <div class="post-text">${post.content}</div>
-                            ${post.image ? `<img src="${post.image}" class="post-image">` : ""}
-                            <div class="post-stats"><span>👍 ${Object.keys(post.reactions).length}</span><span>${post.comments.length} Comments</span></div>
+                            ${imageHTML}
+                            <div class="post-stats">
+                                <span>${reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : ''}</span>
+                                <span>${comments.length > 0 ? `${comments.length} Comments` : ''}</span>
+                            </div>
                             <div class="post-footer">
                                 <div class="like-container">
-                                    <span class="footer-item" onclick="toggleLike('${pid}', ${!!myR})">${likeHTML}</span>
+                                    <span class="${likeBtnClass}" onclick="toggleLike('${postId}', ${!!myReaction})">${likeBtnHTML}</span>
                                     <div class="reaction-box">
-                                        <span onclick="addReaction('${pid}', 'like')">👍</span>
-                                        <span onclick="addReaction('${pid}', 'love')">❤️</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'like')">👍</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'love')">❤️</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'haha')">😂</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'wow')">😲</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'sad')">😢</span>
+                                        <span class="reaction-icon" onclick="addReaction('${postId}', 'angry')">😡</span>
                                     </div>
                                 </div>
-                                <span class="footer-item" onclick="toggleComment('${pid}')"><i class="fa-regular fa-comment"></i> Comment</span>
+                                <span class="footer-item" onclick="toggleCommentSection('${postId}')"><i class="fa-regular fa-comment"></i> Comment</span>
+                                <span class="footer-item" onclick="alert('শেয়ার ফিচারটি শীঘ্রই আসছে!')"><i class="fa-solid fa-share"></i> Share</span>
                             </div>
-                            <div class="comments-section" id="comments-${pid}">
-                                <div class="comment-input-area"><input type="text" id="in-${pid}" placeholder="কমেন্ট লিখুন..."><button class="comment-btn" onclick="sendComment('${pid}')">Send</button></div>
-                                <div style="max-height:200px; overflow-y:auto;">${cList}</div>
+                            <div class="comments-section" id="comments-${postId}">
+                                <div class="comment-input-area"><input type="text" id="comment-input-${postId}" placeholder="কমেন্ট লিখুন..."><button class="comment-btn" onclick="addComment('${postId}')"><i class="fa-solid fa-paper-plane"></i></button></div>
+                                <div class="comment-list">${cList}</div>
                             </div>
                         </div>`;
+                    feed.innerHTML += postHTML;
                 });
             });
         }
