@@ -23,7 +23,6 @@
         .follower-count { font-size: 15px; color: #b0b3b8; margin-top: 4px; }
         .follower-count span { color: #ffffff; font-weight: 600; }
         
-        /* ফ্রেন্ড রিকুয়েস্ট বাটন ডিজাইন */
         .friend-actions { display: none; gap: 10px; margin-top: 15px; justify-content: center; width: 100%; }
         .btn-friend { background-color: #1877F2; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; max-width: 150px; transition: 0.2s; }
         .btn-friend.cancel { background-color: #3a3b3c; }
@@ -45,12 +44,36 @@
         .create-post-box { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 15px; margin: 20px auto; max-width: 600px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
         .feed-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .small-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; color: #01160b; font-weight: bold; overflow: hidden; flex-shrink: 0; }
-        .small-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; color: #01160b; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .post-author { font-weight: bold; color: #2ecc71; font-size: 16px; display: flex; align-items: center; }
+        .post-time { font-size: 13px; color: #8c9e94; }
         .post-text { color: #ffffff; font-size: 16px; margin-bottom: 15px; white-space: pre-wrap; line-height: 1.5; }
         .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid #0a2e1a; }
         
+        /* প্রোফাইলের পোস্টের রিয়েকশন স্টাইল */
+        .post-stats { display: flex; justify-content: space-between; font-size: 14px; color: #8c9e94; padding-bottom: 10px; border-bottom: 1px solid #0a2e1a; margin-bottom: 10px; }
+        .post-footer { display: flex; justify-content: space-around; position: relative; }
+        .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; transition: 0.2s;}
+        .footer-item:hover { background-color: rgba(255,255,255,0.05); border-radius: 6px; }
+        .like-container { position: relative; display: inline-flex; -webkit-touch-callout: none; user-select: none; }
+        .reaction-box { position: absolute; bottom: 140%; left: -10px; background: #01160b; border: 1px solid #0a2e1a; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6);}
+        .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
+        .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
+        .reaction-icon:hover { transform: scale(1.3) translateY(-5px); }
+        .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
+        
+        .comments-section { display: none; margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
+        .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
+        .comment-input-area input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
+        .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; cursor: pointer; font-weight: bold;}
+        .comment-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { display: flex; gap: 10px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: #2ecc71; overflow: hidden; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; flex-shrink: 0;}
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-content { font-size: 14px; color: #e4e6eb; }
+        .comment-author { font-weight: bold; color: #2ecc71; font-size: 14px; margin-bottom: 2px; }
+
         .hidden { display: none; } input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; font-weight: bold; display: none; z-index: 2000; }
     </style>
@@ -117,7 +140,7 @@
 
     <div class="create-post-box own-profile-only">
         <div style="color: #2ecc71; font-weight: bold; margin-bottom: 10px;">নতুন পোস্ট করুন</div>
-        <textarea id="newPostText" style="width: 100%; height: 50px; background: #022112; color: white; border-radius: 10px; padding: 10px; border: 1px solid #0f4024;" placeholder="আপনার মনে কি আছে?"></textarea>
+        <textarea id="newPostText" style="width: 100%; height: 50px; background: #022112; color: white; border-radius: 10px; padding: 10px; border: 1px solid #0f4024; outline: none; resize: none;" placeholder="আপনার মনে কি আছে?"></textarea>
         <button class="primary-save-btn" id="submitPostBtn" style="margin-top: 10px; width: 100%;">Post</button>
     </div>
 
@@ -127,7 +150,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, arrayUnion, arrayRemove, deleteField, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
@@ -143,18 +166,25 @@
         const db = getFirestore(app);
 
         let currentUser = null;
+        let currentUserName = "User";
+        let currentUserPhoto = "";
         let targetUserId = null;
         let isOwnProfile = true;
 
-        // URL থেকে ইউজারের আইডি নেওয়া (যেমন: profile.html?id=xyz)
         const urlParams = new URLSearchParams(window.location.search);
         const urlId = urlParams.get('id');
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                targetUserId = urlId || currentUser.uid; // URL এ আইডি না থাকলে নিজের প্রোফাইল দেখাবে
+                targetUserId = urlId || currentUser.uid; 
                 isOwnProfile = (targetUserId === currentUser.uid);
+                
+                const myDoc = await getDoc(doc(db, "users", currentUser.uid));
+                if(myDoc.exists()){
+                    currentUserName = myDoc.data().displayName;
+                    currentUserPhoto = myDoc.data().profilePic;
+                }
 
                 setupUI();
                 loadProfileData();
@@ -164,7 +194,6 @@
 
         function setupUI() {
             if(!isOwnProfile) {
-                // অন্যের প্রোফাইল হলে এডিট বাটন হাইড করা
                 document.querySelectorAll('.own-profile-only').forEach(el => el.style.display = 'none');
                 document.getElementById('friendActionContainer').style.display = 'flex';
                 document.getElementById('headerTitle').innerText = "Timeline";
@@ -198,7 +227,6 @@
             }
         }
 
-        // --- ফ্রেন্ড রিকুয়েস্ট লজিক ---
         async function checkFriendStatus() {
             const myDoc = await getDoc(doc(db, "users", currentUser.uid));
             if(!myDoc.exists()) return;
@@ -207,72 +235,116 @@
             const friends = myData.friends || [];
             const sentRequests = myData.sentRequests || [];
             const receivedRequests = myData.receivedRequests || [];
-            
             const btn = document.getElementById('friendBtn');
             
             if(friends.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`;
-                btn.className = "btn-friend friends";
-                btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!");
+                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`; btn.className = "btn-friend friends"; btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!");
             } else if(sentRequests.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`;
-                btn.className = "btn-friend cancel";
-                btn.onclick = () => cancelRequest();
+                btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`; btn.className = "btn-friend cancel"; btn.onclick = () => cancelRequest();
             } else if(receivedRequests.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`;
-                btn.className = "btn-friend";
-                btn.onclick = () => acceptRequest();
+                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`; btn.className = "btn-friend"; btn.onclick = () => acceptRequest();
             } else {
-                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`;
-                btn.className = "btn-friend";
-                btn.onclick = () => sendRequest();
+                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`; btn.className = "btn-friend"; btn.onclick = () => sendRequest();
             }
 
-            // মেসেজ বাটনে ক্লিক করলে মেসেঞ্জারে যাবে
-            document.getElementById('messageBtn').onclick = () => {
-                window.location.href = "messages.html";
-            };
+            document.getElementById('messageBtn').onclick = () => { window.location.href = "messages.html"; };
         }
 
-        async function sendRequest() {
-            document.getElementById('friendBtn').innerText = "Sending...";
-            await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) });
-            await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) });
-            checkFriendStatus();
-        }
+        async function sendRequest() { document.getElementById('friendBtn').innerText = "Sending..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
+        async function cancelRequest() { document.getElementById('friendBtn').innerText = "Canceling..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) }); checkFriendStatus(); }
+        async function acceptRequest() { document.getElementById('friendBtn').innerText = "Accepting..."; await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(targetUserId), friends: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
 
-        async function cancelRequest() {
-            document.getElementById('friendBtn').innerText = "Canceling...";
-            await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) });
-            await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) });
-            checkFriendStatus();
-        }
+        // প্রোফাইল থেকে সাধারণ টেক্সট পোস্ট
+        document.getElementById('submitPostBtn').onclick = async () => {
+            const text = document.getElementById('newPostText').value;
+            if(!text.trim()) return;
+            const btn = document.getElementById('submitPostBtn');
+            btn.innerText = "Posting..."; btn.disabled = true;
+            await addDoc(collection(db, "posts"), { uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, content: text, image: null, reactions: {}, comments: [], timestamp: serverTimestamp() });
+            document.getElementById('newPostText').value = ""; btn.innerText = "Post"; btn.disabled = false;
+        };
 
-        async function acceptRequest() {
-            document.getElementById('friendBtn').innerText = "Accepting...";
-            await updateDoc(doc(db, "users", currentUser.uid), { 
-                receivedRequests: arrayRemove(targetUserId),
-                friends: arrayUnion(targetUserId)
-            });
-            await updateDoc(doc(db, "users", targetUserId), { 
-                sentRequests: arrayRemove(currentUser.uid),
-                friends: arrayUnion(currentUser.uid)
-            });
-            checkFriendStatus();
-        }
+        // গ্লোবাল রিয়েক্ট এবং কমেন্ট ফাংশন
+        window.addReaction = async (id, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); };
+        window.toggleLike = async (id, has) => { const ref = doc(db, "posts", id); if(has) await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); else await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); };
+        window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; };
+        window.addComment = async (id) => {
+            const input = document.getElementById(`comment-input-${id}`); if(!input.value.trim()) return;
+            await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: input.value, timestamp: Date.now() }) });
+            input.value = "";
+        };
 
+        // প্রোফাইলের টাইমলাইনে পোস্ট লোড করা (সব বাটন সহ)
         function loadProfilePosts() {
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
                 const feed = document.getElementById('profile-posts-feed');
                 feed.innerHTML = "";
-                snapshot.forEach((doc) => {
-                    const post = doc.data();
+                snapshot.forEach((postDoc) => {
+                    const post = postDoc.data();
+                    const postId = postDoc.id; 
+                    
                     if(post.uid === targetUserId) {
                         const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
-                        let badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
+                        const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
+
+                        // সেফটি লজিক
+                        const reactions = post.reactions || {};
+                        const comments = post.comments || [];
+                        const reactionCount = Object.keys(reactions).length;
+                        const myReaction = reactions[currentUser.uid];
+
+                        let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like';
+                        let likeBtnClass = "footer-item";
+
+                        if(myReaction) {
+                            if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; }
+                            else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; }
+                            else if(myReaction === 'haha') { likeBtnHTML = '😂 Haha'; likeBtnClass += ' action-haha'; }
+                            else if(myReaction === 'wow') { likeBtnHTML = '😲 Wow'; likeBtnClass += ' action-wow'; }
+                            else if(myReaction === 'sad') { likeBtnHTML = '😢 Sad'; likeBtnClass += ' action-sad'; }
+                            else if(myReaction === 'angry') { likeBtnHTML = '😡 Angry'; likeBtnClass += ' action-angry'; }
+                        }
+
                         let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
-                        feed.innerHTML += `<div class="feed-post"><div class="post-header"><div class="small-avatar">${avatar}</div><div><div class="post-author">${post.author}${badge}</div><div class="post-time">সবেমাত্র</div></div></div><div class="post-text">${post.content}</div>${imageHTML}</div>`;
+                        let cList = ""; comments.forEach(c => { cList += `<div class="comment-item"><div class="comment-avatar">${c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0)}</div><div class="comment-content"><div class="comment-author">${c.author}</div><div>${c.text}</div></div></div>`; });
+
+                        const postHTML = `
+                            <div class="feed-post">
+                                <div class="post-header">
+                                    <div class="user-avatar">${avatar}</div>
+                                    <div>
+                                        <div class="post-author">${post.author}${badge}</div>
+                                        <div class="post-time">সবেমাত্র</div>
+                                    </div>
+                                </div>
+                                <div class="post-text">${post.content}</div>
+                                ${imageHTML}
+                                <div class="post-stats">
+                                    <span>${reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : ''}</span>
+                                    <span>${comments.length > 0 ? `${comments.length} Comments` : ''}</span>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="like-container">
+                                        <span class="${likeBtnClass}" onclick="toggleLike('${postId}', ${!!myReaction})">${likeBtnHTML}</span>
+                                        <div class="reaction-box">
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'like')">👍</span>
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'love')">❤️</span>
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'haha')">😂</span>
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'wow')">😲</span>
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'sad')">😢</span>
+                                            <span class="reaction-icon" onclick="addReaction('${postId}', 'angry')">😡</span>
+                                        </div>
+                                    </div>
+                                    <span class="footer-item" onclick="toggleCommentSection('${postId}')"><i class="fa-regular fa-comment"></i> Comment</span>
+                                    <span class="footer-item" onclick="alert('শেয়ার ফিচারটি শীঘ্রই আসছে!')"><i class="fa-solid fa-share"></i> Share</span>
+                                </div>
+                                <div class="comments-section" id="comments-${postId}">
+                                    <div class="comment-input-area"><input type="text" id="comment-input-${postId}" placeholder="কমেন্ট লিখুন..."><button class="comment-btn" onclick="addComment('${postId}')"><i class="fa-solid fa-paper-plane"></i></button></div>
+                                    <div class="comment-list">${cList}</div>
+                                </div>
+                            </div>`;
+                        feed.innerHTML += postHTML;
                     }
                 });
             });
