@@ -8,11 +8,11 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* ফেসবুকের ডিফল্ট সিস্টেম ফন্ট স্টাইল যুক্ত করা হয়েছে */
         body { 
             background-color: #000a05; 
             color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding-bottom: 30px;
         }
 
         header {
@@ -39,7 +39,6 @@
             border-bottom-left-radius: 12px;
             border-bottom-right-radius: 12px;
             border: 1px solid #0a2e1a;
-            padding-bottom: 20px;
         }
 
         .cover-photo {
@@ -52,62 +51,76 @@
         }
 
         .edit-cover-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            border: 1px solid rgba(255,255,255,0.3);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            position: absolute; bottom: 15px; right: 15px;
+            background-color: rgba(0, 0, 0, 0.7); color: white;
+            padding: 8px 15px; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);
+            z-index: 100; display: flex; align-items: center; gap: 8px;
         }
 
         .profile-header {
-            position: relative;
-            padding: 0 20px;
-            margin-top: -60px; 
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            z-index: 50;
+            position: relative; padding: 0 20px; margin-top: -60px; 
+            display: flex; flex-direction: column; align-items: center; /* সেন্টারে আনা হলো */
+            z-index: 50; text-align: center;
         }
 
-        .profile-pic-container { position: relative; width: 130px; height: 130px; }
+        .profile-pic-container { position: relative; width: 140px; height: 140px; }
         .profile-pic {
             width: 100%; height: 100%; border-radius: 50%;
             border: 5px solid #01160b; background-color: #2ecc71;
             object-fit: cover; display: flex; justify-content: center;
-            align-items: center; font-size: 45px; color: #000a05; font-weight: bold;
+            align-items: center; font-size: 50px; color: #000a05; font-weight: bold;
             overflow: hidden;
         }
         .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
 
         .edit-profile-btn {
-            position: absolute; bottom: 8px; right: 8px;
-            background-color: #3a3b3c; color: white; width: 35px; height: 35px;
+            position: absolute; bottom: 10px; right: 5px;
+            background-color: #3a3b3c; color: white; width: 36px; height: 36px;
             border-radius: 50%; display: flex; justify-content: center;
-            align-items: center; cursor: pointer; border: 2px solid #01160b;
-            z-index: 60;
+            align-items: center; cursor: pointer; border: 2px solid #01160b; z-index: 60;
         }
 
-        /* নামের ফন্ট ফেসবুকের মতো পারফেক্ট করা হয়েছে */
         .profile-name { 
-            margin-top: 12px; 
-            font-size: 24px; 
-            font-weight: 600; /* অতিরিক্ত বোল্ড কমানো হয়েছে */
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            letter-spacing: -0.3px; /* ফন্টগুলো একটু কাছাকাছি আনা হয়েছে */
+            margin-top: 12px; font-size: 26px; font-weight: 600; color: #ffffff;
+            display: flex; align-items: center; justify-content: center; letter-spacing: -0.3px; 
         }
+
+        /* --- নতুন বায়ো এবং ডিটেইলস সেকশন ডিজাইন --- */
+        .profile-body {
+            padding: 15px 20px;
+        }
+
+        .bio-section { text-align: center; margin-bottom: 20px; }
+        .bio-text { font-size: 15px; color: #e4e6eb; margin-bottom: 10px; white-space: pre-wrap; }
         
+        .edit-action-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff; border: none; padding: 8px 0; width: 100%;
+            border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: 0.2s;
+        }
+        .edit-action-btn:hover { background-color: rgba(255, 255, 255, 0.15); }
+        .primary-save-btn {
+            background-color: #2ecc71; color: #01160b; border: none; padding: 8px 15px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px;
+        }
+
+        textarea, .edit-input {
+            width: 100%; background: #022112; border: 1px solid #0f4024;
+            color: white; padding: 10px; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 8px;
+        }
+        textarea { resize: none; height: 60px; text-align: center; }
+
+        .divider { height: 1px; background-color: #0a2e1a; margin: 15px 0; }
+
+        .details-section { margin-top: 15px; }
+        .details-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #ffffff; }
+        .details-list { list-style: none; }
+        .details-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; color: #e4e6eb; }
+        .details-list i { color: #8c9e94; font-size: 18px; width: 20px; text-align: center; }
+        
+        .hidden { display: none; }
         input[type="file"] { display: none; }
         
         #upload-status { 
@@ -142,9 +155,46 @@
             </div>
             <div class="profile-name" id="userNameDisplay">লোড হচ্ছে...</div>
         </div>
+
+        <div class="profile-body">
+            
+            <div class="bio-section">
+                <div id="bio-display-area">
+                    <div class="bio-text" id="bio-text">নিজের সম্পর্কে কিছু লিখুন...</div>
+                    <button class="edit-action-btn" id="edit-bio-btn">বায়ো সম্পাদনা করুন</button>
+                </div>
+                <div id="bio-edit-area" class="hidden">
+                    <textarea id="bio-input" placeholder="আপনার বায়ো লিখুন..."></textarea>
+                    <button class="primary-save-btn" id="save-bio-btn">সেইভ করুন</button>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="details-section">
+                <h3 class="details-title">Details</h3>
+                
+                <div id="details-display-area">
+                    <ul class="details-list">
+                        <li><i class="fa-solid fa-briefcase"></i> <span id="work-text">কর্মক্ষেত্র যোগ করুন</span></li>
+                        <li><i class="fa-solid fa-graduation-cap"></i> <span id="edu-text">শিক্ষাপ্রতিষ্ঠান যোগ করুন</span></li>
+                        <li><i class="fa-solid fa-house-chimney"></i> <span id="loc-text">বর্তমান ঠিকানা যোগ করুন</span></li>
+                    </ul>
+                    <button class="edit-action-btn" id="edit-details-btn" style="margin-top: 10px;">বিস্তারিত সম্পাদনা করুন</button>
+                </div>
+
+                <div id="details-edit-area" class="hidden">
+                    <input type="text" class="edit-input" id="work-input" placeholder="কর্মক্ষেত্র (যেমন: Graphic Designer)">
+                    <input type="text" class="edit-input" id="edu-input" placeholder="শিক্ষাপ্রতিষ্ঠান (যেমন: Govt. College)">
+                    <input type="text" class="edit-input" id="loc-input" placeholder="বর্তমান ঠিকানা (যেমন: ধোবাউড়া, ময়মনসিংহ)">
+                    <button class="primary-save-btn" id="save-details-btn">তথ্য সেইভ করুন</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div id="upload-status">ছবি আপলোড হচ্ছে...</div>
+    <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
@@ -169,6 +219,7 @@
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
         let currentUser = null;
 
+        // ডেটা ফেচ এবং লোড
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -176,26 +227,86 @@
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     
-                    // ভেরিফাইড ব্যাজ এবং চ্যাপ্টা হওয়ার সমস্যা সমাধান (flex-shrink: 0)
+                    // ভেরিফাইড ব্যাজ
                     let verifiedBadge = "";
                     if (userData.displayName.toLowerCase() === "sobuj mia") {
                         verifiedBadge = ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 20px; height: 20px; min-width: 20px; margin-left: 6px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
                     }
-                    
                     document.getElementById('userNameDisplay').innerHTML = userData.displayName + verifiedBadge;
 
-                    if (userData.profilePic) {
-                        document.getElementById('profilePicDisplay').innerHTML = `<img src="${userData.profilePic}">`;
-                    } else {
-                        document.getElementById('profilePicDisplay').innerText = userData.displayName.charAt(0);
+                    // ছবি লোড
+                    if (userData.profilePic) document.getElementById('profilePicDisplay').innerHTML = `<img src="${userData.profilePic}">`;
+                    else document.getElementById('profilePicDisplay').innerText = userData.displayName.charAt(0);
+                    
+                    if (userData.coverPic) document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
+
+                    // বায়ো এবং ডিটেইলস লোড
+                    if (userData.bio) {
+                        document.getElementById('bio-text').innerText = userData.bio;
+                        document.getElementById('bio-input').value = userData.bio;
                     }
-                    if (userData.coverPic) {
-                        document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
+                    if (userData.work) {
+                        document.getElementById('work-text').innerText = userData.work;
+                        document.getElementById('work-input').value = userData.work;
+                    }
+                    if (userData.edu) {
+                        document.getElementById('edu-text').innerText = userData.edu;
+                        document.getElementById('edu-input').value = userData.edu;
+                    }
+                    if (userData.loc) {
+                        document.getElementById('loc-text').innerText = userData.loc;
+                        document.getElementById('loc-input').value = userData.loc;
                     }
                 }
             } else { window.location.href = "index.html"; }
         });
 
+        // --- বায়ো এডিট এবং সেভ লজিক ---
+        document.getElementById('edit-bio-btn').onclick = () => {
+            document.getElementById('bio-display-area').classList.add('hidden');
+            document.getElementById('bio-edit-area').classList.remove('hidden');
+        };
+
+        document.getElementById('save-bio-btn').onclick = async () => {
+            const newBio = document.getElementById('bio-input').value;
+            const statusText = document.getElementById('upload-status');
+            
+            document.getElementById('bio-text').innerText = newBio || "নিজের সম্পর্কে কিছু লিখুন...";
+            document.getElementById('bio-display-area').classList.remove('hidden');
+            document.getElementById('bio-edit-area').classList.add('hidden');
+            
+            statusText.style.display = 'block'; statusText.innerText = "সেভ হচ্ছে...";
+            await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio });
+            statusText.innerText = "বায়ো সেভ হয়েছে!";
+            setTimeout(() => { statusText.style.display = 'none'; }, 2000);
+        };
+
+        // --- ডিটেইলস এডিট এবং সেভ লজিক ---
+        document.getElementById('edit-details-btn').onclick = () => {
+            document.getElementById('details-display-area').classList.add('hidden');
+            document.getElementById('details-edit-area').classList.remove('hidden');
+        };
+
+        document.getElementById('save-details-btn').onclick = async () => {
+            const newWork = document.getElementById('work-input').value;
+            const newEdu = document.getElementById('edu-input').value;
+            const newLoc = document.getElementById('loc-input').value;
+            const statusText = document.getElementById('upload-status');
+            
+            document.getElementById('work-text').innerText = newWork || "কর্মক্ষেত্র যোগ করুন";
+            document.getElementById('edu-text').innerText = newEdu || "শিক্ষাপ্রতিষ্ঠান যোগ করুন";
+            document.getElementById('loc-text').innerText = newLoc || "বর্তমান ঠিকানা যোগ করুন";
+            
+            document.getElementById('details-display-area').classList.remove('hidden');
+            document.getElementById('details-edit-area').classList.add('hidden');
+            
+            statusText.style.display = 'block'; statusText.innerText = "সেভ হচ্ছে...";
+            await updateDoc(doc(db, "users", currentUser.uid), { work: newWork, edu: newEdu, loc: newLoc });
+            statusText.innerText = "তথ্য সেভ হয়েছে!";
+            setTimeout(() => { statusText.style.display = 'none'; }, 2000);
+        };
+
+        // ছবি আপলোড লজিক (ImgBB)
         async function uploadImage(file, type) {
             if (!file) return;
             const statusText = document.getElementById('upload-status');
@@ -207,10 +318,7 @@
             formData.append("key", IMGBB_API_KEY);
             
             try {
-                const response = await fetch("https://api.imgbb.com/1/upload", {
-                    method: "POST",
-                    body: formData
-                });
+                const response = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
                 const data = await response.json();
 
                 if(data.success) {
