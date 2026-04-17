@@ -64,7 +64,7 @@
         .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
         .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
         .reaction-icon:hover { transform: scale(1.3) translateY(-5px); }
-        .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha { color: #F7B125 !important; } .action-wow { color: #F7B125 !important; } .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
+        .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
         .comments-section { display: none; margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -162,27 +162,11 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, arrayUnion, arrayRemove, deleteField, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
-            authDomain: "friendbook-e9569.firebaseapp.com",
-            projectId: "friendbook-e9569",
-            storageBucket: "friendbook-e9569.firebasestorage.app",
-            messagingSenderId: "459682436919",
-            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
 
-        let currentUser = null;
-        let currentUserName = "User";
-        let currentUserPhoto = "";
-        let targetUserId = null;
-        let isOwnProfile = true;
-        let postImageFile = null;
-        
+        let currentUser = null, currentUserName = "User", currentUserPhoto = "", targetUserId = null, isOwnProfile = true, postImageFile = null;
         window.openComments = {};
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -190,19 +174,12 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                currentUser = user;
-                targetUserId = urlId || currentUser.uid; 
-                isOwnProfile = (targetUserId === currentUser.uid);
+                currentUser = user; targetUserId = urlId || currentUser.uid; isOwnProfile = (targetUserId === currentUser.uid);
                 
                 const myDoc = await getDoc(doc(db, "users", currentUser.uid));
-                if(myDoc.exists()){
-                    currentUserName = myDoc.data().displayName || "User";
-                    currentUserPhoto = myDoc.data().profilePic || "";
-                }
+                if(myDoc.exists()){ currentUserName = myDoc.data().displayName || "User"; currentUserPhoto = myDoc.data().profilePic || ""; }
 
-                setupUI();
-                loadProfileData();
-                loadProfilePosts();
+                setupUI(); loadProfileData(); loadProfilePosts();
             } else { window.location.href = "index.html"; }
         });
 
@@ -212,16 +189,13 @@
                 document.getElementById('friendActionContainer').style.display = 'flex';
                 document.getElementById('headerTitle').innerText = "Timeline";
                 checkFriendStatus();
-            } else {
-                document.getElementById('friendActionContainer').style.display = 'none';
-            }
+            } else { document.getElementById('friendActionContainer').style.display = 'none'; }
         }
 
         async function loadProfileData() {
             const userDoc = await getDoc(doc(db, "users", targetUserId));
             if (userDoc.exists()) {
-                const userData = userDoc.data();
-                const dName = userData.displayName || "User";
+                const userData = userDoc.data(); const dName = userData.displayName || "User";
                 
                 let verifiedBadge = ""; let followerHTML = "";
                 if (dName.toLowerCase().includes("sobuj mia")) {
@@ -236,19 +210,15 @@
                 
                 document.getElementById('bio-text').innerText = userData.bio || (isOwnProfile ? "নিজের সম্পর্কে কিছু লিখুন..." : "No bio added.");
                 document.getElementById('bio-input').value = userData.bio || "";
-                
                 document.getElementById('work-text').innerText = userData.work || "Not added";
                 document.getElementById('work-input').value = userData.work || "";
-                
                 document.getElementById('edu-text').innerText = userData.edu || "Not added";
                 document.getElementById('edu-input').value = userData.edu || "";
-                
                 document.getElementById('loc-text').innerText = userData.loc || "Not added";
                 document.getElementById('loc-input').value = userData.loc || "";
             }
         }
 
-        // --- প্রোফাইল এডিট ও ছবি আপলোডের লজিক ---
         document.getElementById('edit-bio-btn').onclick = () => { document.getElementById('bio-display-area').classList.add('hidden'); document.getElementById('bio-edit-area').classList.remove('hidden'); };
         document.getElementById('save-bio-btn').onclick = async () => { const newBio = document.getElementById('bio-input').value; document.getElementById('bio-text').innerText = newBio || "নিজের সম্পর্কে কিছু লিখুন..."; document.getElementById('bio-display-area').classList.remove('hidden'); document.getElementById('bio-edit-area').classList.add('hidden'); await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio }); };
         
@@ -260,8 +230,7 @@
             const statusText = document.getElementById('upload-status'); statusText.style.display = 'block'; statusText.innerText = "ছবি আপলোড হচ্ছে...";
             const formData = new FormData(); formData.append("image", file); formData.append("key", IMGBB_API_KEY);
             try {
-                const response = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
-                const data = await response.json();
+                const response = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData }); const data = await response.json();
                 if(data.success) {
                     const imageUrl = data.data.display_url; const userRef = doc(db, "users", currentUser.uid);
                     if (type === 'profile') { await updateDoc(userRef, { profilePic: imageUrl }); document.getElementById('profilePicDisplay').innerHTML = `<img src="${imageUrl}">`; currentUserPhoto = imageUrl; } 
@@ -274,49 +243,26 @@
         document.getElementById('profileUpload').addEventListener('change', (e) => { if (e.target.files.length > 0) uploadProfileCoverImage(e.target.files[0], 'profile'); });
         document.getElementById('coverUpload').addEventListener('change', (e) => { if (e.target.files.length > 0) uploadProfileCoverImage(e.target.files[0], 'cover'); });
 
-
-        // --- ফ্রেন্ড রিকুয়েস্ট লজিক ---
         async function checkFriendStatus() {
             const myDoc = await getDoc(doc(db, "users", currentUser.uid));
             if(!myDoc.exists()) return;
             const myData = myDoc.data();
-            
-            const friends = myData.friends || [];
-            const sentRequests = myData.sentRequests || [];
-            const receivedRequests = myData.receivedRequests || [];
+            const friends = myData.friends || []; const sentRequests = myData.sentRequests || []; const receivedRequests = myData.receivedRequests || [];
             const btn = document.getElementById('friendBtn');
             
-            if(friends.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`; btn.className = "btn-friend friends"; btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!");
-            } else if(sentRequests.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`; btn.className = "btn-friend cancel"; btn.onclick = () => cancelRequest();
-            } else if(receivedRequests.includes(targetUserId)) {
-                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`; btn.className = "btn-friend"; btn.onclick = () => acceptRequest();
-            } else {
-                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`; btn.className = "btn-friend"; btn.onclick = () => sendRequest();
-            }
+            if(friends.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`; btn.className = "btn-friend friends"; btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!"); } 
+            else if(sentRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`; btn.className = "btn-friend cancel"; btn.onclick = () => cancelRequest(); } 
+            else if(receivedRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`; btn.className = "btn-friend"; btn.onclick = () => acceptRequest(); } 
+            else { btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`; btn.className = "btn-friend"; btn.onclick = () => sendRequest(); }
 
             document.getElementById('messageBtn').onclick = () => { window.location.href = "messages.html"; };
         }
 
-        async function sendRequest() { 
-            document.getElementById('friendBtn').innerText = "Sending..."; 
-            await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); 
-            await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); 
-            
-            await setDoc(doc(db, "users", targetUserId, "notifications", `req_${currentUser.uid}`), {
-                type: 'friend_request', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp()
-            });
-            checkFriendStatus(); 
-        }
-
+        async function sendRequest() { document.getElementById('friendBtn').innerText = "Sending..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); await setDoc(doc(db, "users", targetUserId, "notifications", `req_${currentUser.uid}`), { type: 'friend_request', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); checkFriendStatus(); }
         async function cancelRequest() { document.getElementById('friendBtn').innerText = "Canceling..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) }); checkFriendStatus(); }
         async function acceptRequest() { document.getElementById('friendBtn').innerText = "Accepting..."; await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(targetUserId), friends: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
 
-        // --- পোস্ট করা ---
-        document.getElementById('postImageUpload').onchange = (e) => {
-            if(e.target.files.length > 0) { postImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('preview-img').src = e.target.result; document.getElementById('post-image-preview').style.display = 'block'; }; reader.readAsDataURL(postImageFile); }
-        };
+        document.getElementById('postImageUpload').onchange = (e) => { if(e.target.files.length > 0) { postImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('preview-img').src = e.target.result; document.getElementById('post-image-preview').style.display = 'block'; }; reader.readAsDataURL(postImageFile); } };
         document.getElementById('remove-preview-btn').onclick = () => { postImageFile = null; document.getElementById('post-image-preview').style.display = 'none'; };
 
         document.getElementById('submitPostBtn').onclick = async () => {
@@ -330,66 +276,47 @@
             finally { document.getElementById('submitPostBtn').disabled = false; }
         };
 
-        // --- রিয়েকশন ও কমেন্ট ---
-        window.addReaction = async (id, postUid, type) => { 
-            await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); 
-            if(postUid !== currentUser.uid) {
-                await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() });
-            }
-        };
+        window.addReaction = async (id, postUid, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); if(postUid !== currentUser.uid) { await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
+        window.toggleLike = async (id, postUid, has) => { const ref = doc(db, "posts", id); if(has) { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); } else { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); if(postUid !== currentUser.uid) await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_like`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
+        window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; } else { el.style.display = 'block'; window.openComments[id] = true; } };
+        window.sendComment = async (id, postUid) => { const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return; window.openComments[id] = true; try { await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) }); if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); } } catch(e) { alert("কমেন্ট করতে সমস্যা হয়েছে: " + e.message); } input.value = ""; };
 
-        window.toggleLike = async (id, postUid, has) => { 
-            const ref = doc(db, "posts", id); 
-            if(has) { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); } 
-            else { 
-                await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); 
-                if(postUid !== currentUser.uid) await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_like`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() });
-            } 
-        };
-
-        window.toggleCommentSection = (id) => { 
-            const el = document.getElementById(`comments-${id}`); 
-            if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; } 
-            else { el.style.display = 'block'; window.openComments[id] = true; }
-        };
-        
-        window.sendComment = async (id, postUid) => {
-            const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return;
-            window.openComments[id] = true;
-            await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) });
-            if(postUid !== currentUser.uid) await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() });
-            input.value = "";
-        };
-
-        // --- পোস্ট লোড করা ---
         function loadProfilePosts() {
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
-                const feed = document.getElementById('profile-posts-feed');
-                feed.innerHTML = "";
+                const feed = document.getElementById('profile-posts-feed'); feed.innerHTML = "";
                 snapshot.forEach((postDoc) => {
-                    const post = postDoc.data();
-                    const postId = postDoc.id; 
-                    
+                    const post = postDoc.data(); const postId = postDoc.id; 
                     if(post.uid === targetUserId) {
                         const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
-                        const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
+                        const isVIP = post.author.toLowerCase().includes("sobuj mia");
+                        const badge = isVIP ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
 
-                        const reactions = post.reactions || {};
-                        const comments = post.comments || [];
-                        const reactionCount = Object.keys(reactions).length;
+                        const reactions = post.reactions || {}; const comments = post.comments || []; const reactionCount = Object.keys(reactions).length;
                         const myReaction = reactions[currentUser.uid];
-
-                        let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like';
-                        let likeBtnClass = "footer-item";
-
-                        if(myReaction) {
-                            if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; }
-                            else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; }
+                        
+                        let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like'; let likeBtnClass = "footer-item";
+                        if(myReaction) { 
+                            if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; } 
+                            else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; } 
                             else if(myReaction === 'haha') { likeBtnHTML = '😂 Haha'; likeBtnClass += ' action-haha'; }
                             else if(myReaction === 'wow') { likeBtnHTML = '😲 Wow'; likeBtnClass += ' action-wow'; }
                             else if(myReaction === 'sad') { likeBtnHTML = '😢 Sad'; likeBtnClass += ' action-sad'; }
                             else if(myReaction === 'angry') { likeBtnHTML = '😡 Angry'; likeBtnClass += ' action-angry'; }
+                        }
+
+                        // VIP Fake Millions Logic
+                        let displayLikes = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : '';
+                        let displayComments = comments.length > 0 ? `${comments.length} Comments` : '';
+                        let displayShares = '';
+
+                        if(isVIP) {
+                            let n1 = (postId.charCodeAt(0) % 8) + 2; 
+                            let n2 = (postId.charCodeAt(1) % 9);     
+                            let n3 = (postId.charCodeAt(2) % 7) + 1; 
+                            displayLikes = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${n1}.${n2}M`;
+                            displayComments = `${n2}.${n3}M Comments`;
+                            displayShares = `<span>${n3}.${n1}M Shares</span>`;
                         }
 
                         let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
@@ -409,8 +336,11 @@
                                 <div class="post-text">${post.content}</div>
                                 ${imageHTML}
                                 <div class="post-stats">
-                                    <span>${reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : ''}</span>
-                                    <span>${comments.length > 0 ? `${comments.length} Comments` : ''}</span>
+                                    <span>${displayLikes}</span>
+                                    <div style="display:flex; gap:10px;">
+                                        <span>${displayComments}</span>
+                                        ${displayShares}
+                                    </div>
                                 </div>
                                 <div class="post-footer">
                                     <div class="like-container">
