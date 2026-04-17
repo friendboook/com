@@ -11,7 +11,6 @@
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
         .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; max-width: 1200px; margin: 0 auto; }
         .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
-        
         .search-container { position: relative; flex-grow: 1; max-width: 400px; margin: 0 20px; }
         .search-container input { width: 100%; padding: 10px 18px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; transition: 0.3s; }
         .search-container input:focus { border-color: #2ecc71; box-shadow: 0 0 8px rgba(46, 204, 113, 0.2); }
@@ -20,44 +19,37 @@
         .search-item:hover { background: rgba(46, 204, 113, 0.1); }
         .search-avatar { width: 35px; height: 35px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; flex-shrink: 0;}
         .search-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
         .header-tabs { display: flex; justify-content: space-around; border-top: 1px solid #0a2e1a; max-width: 600px; margin: 0 auto; padding: 5px 10px; }
         .tab-item { position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; color: #a3b1a9; cursor: pointer; border-radius: 10px; transition: all 0.3s; }
         .tab-item.active { color: #2ecc71; }
         .tab-item.active::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 45px; height: 4px; background-color: #2ecc71; border-radius: 5px; }
         .nav-badge { position: absolute; top: 2px; right: calc(50% - 22px); background-color: #e41e3f; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 50px; border: 2px solid #01160b; display: none; }
-        
         .main-content { max-width: 600px; margin: 20px auto; padding: 0 10px; }
         .create-post-box { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .user-avatar { width: 42px; height: 42px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .create-post-box textarea { flex-grow: 1; background: #022112; border: 1px solid #0f4024; border-radius: 25px; padding: 10px 18px; color: #ffffff; resize: none; height: 45px; outline: none; }
-        
         #post-image-preview { display: none; margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #0a2e1a; position: relative; }
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
-
         .feed-post { background-color: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
         .post-author { font-weight: bold; color: #2ecc71; font-size: 16px; display: flex; align-items: center; }
         .post-time { font-size: 13px; color: #8c9e94; }
         .post-text { color: #ffffff; margin-bottom: 15px; white-space: pre-wrap; line-height: 1.5;}
         .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid #0a2e1a; }
-        
         .post-stats { display: flex; justify-content: space-between; font-size: 14px; color: #8c9e94; padding-bottom: 10px; border-bottom: 1px solid #0a2e1a; margin-bottom: 10px; }
         .post-footer { display: flex; justify-content: space-around; position: relative; }
         .footer-item { color: #a3b1a9; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 5px 10px; transition: 0.2s;}
         .footer-item:hover { background-color: rgba(255,255,255,0.05); border-radius: 6px; }
-        
         .like-container { position: relative; display: inline-flex; -webkit-touch-callout: none; user-select: none; }
         .reaction-box { position: absolute; bottom: 140%; left: -10px; background: #01160b; border: 1px solid #0a2e1a; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6);}
         .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
         .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
         .reaction-icon:hover { transform: scale(1.3) translateY(-5px); }
         .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
-        
-        .comments-section { margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
+        .comments-section { display: none; margin-top: 15px; border-top: 1px solid #0a2e1a; padding-top: 15px; }
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
         .comment-btn { background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 20px; cursor: pointer; font-weight: bold;}
@@ -67,7 +59,6 @@
         .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .comment-content { font-size: 14px; color: #e4e6eb; }
         .comment-author { font-weight: bold; color: #2ecc71; font-size: 14px; margin-bottom: 2px; }
-        
         input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.9); padding: 10px 20px; border-radius: 30px; color: white; display: none; z-index: 2000; font-weight: bold;}
     </style>
@@ -84,12 +75,8 @@
         </div>
         <div class="header-tabs">
             <div class="tab-item active" onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i></div>
-            <div class="tab-item" onclick="window.location.href='messages.html'">
-                <i class="fa-solid fa-comment-dots"></i><span class="nav-badge" id="msg-badge">0</span>
-            </div>
-            <div class="tab-item" onclick="window.location.href='notifications.html'">
-                <i class="fa-solid fa-bell"></i><span class="nav-badge" id="notif-badge">0</span>
-            </div>
+            <div class="tab-item" onclick="window.location.href='messages.html'"><i class="fa-solid fa-comment-dots"></i><span class="nav-badge" id="msg-badge">0</span></div>
+            <div class="tab-item" onclick="window.location.href='notifications.html'"><i class="fa-solid fa-bell"></i><span class="nav-badge" id="notif-badge">0</span></div>
             <div class="tab-item" onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i></div>
         </div>
     </header>
@@ -117,23 +104,10 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteField, arrayUnion, setDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
-            authDomain: "friendbook-e9569.firebaseapp.com",
-            projectId: "friendbook-e9569",
-            storageBucket: "friendbook-e9569.firebasestorage.app",
-            messagingSenderId: "459682436919",
-            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
-        let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null;
-        let allUsers = []; 
-
-        // কোন কমেন্ট বক্স খোলা আছে তা মনে রাখার জন্য
+        let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
 
         onAuthStateChanged(auth, async (user) => {
@@ -141,73 +115,42 @@
                 currentUser = user;
                 onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
                     if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        currentUserName = data.displayName || "User";
-                        currentUserPhoto = data.profilePic || "";
+                        const data = docSnap.data(); currentUserName = data.displayName || "User"; currentUserPhoto = data.profilePic || "";
                         const display = document.getElementById('profileDisplay');
                         if(currentUserPhoto) display.innerHTML = `<img src="${currentUserPhoto}">`; else display.innerText = currentUserName.charAt(0);
-                        
-                        const unreads = data.unreadCounts || {};
-                        let count = 0; for(let k in unreads) count += unreads[k];
+                        const unreads = data.unreadCounts || {}; let count = 0; for(let k in unreads) count += unreads[k];
                         const badge = document.getElementById('msg-badge');
                         if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.style.display = 'block'; } else badge.style.display = 'none';
                     }
                 });
-                
                 const notifQ = query(collection(db, "users", currentUser.uid, "notifications"));
                 onSnapshot(notifQ, (snap) => {
                     let uCount = 0; snap.forEach(d => { if(!d.data().isRead) uCount++; });
                     const nBadge = document.getElementById('notif-badge');
-                    if(uCount > 0) { nBadge.innerText = uCount > 9 ? '9+' : uCount; nBadge.style.display = 'block'; }
-                    else nBadge.style.display = 'none';
+                    if(uCount > 0) { nBadge.innerText = uCount > 9 ? '9+' : uCount; nBadge.style.display = 'block'; } else nBadge.style.display = 'none';
                 });
-
-                loadAllPosts(); 
-                loadAllUsersForSearch();
+                loadAllPosts(); loadAllUsersForSearch();
             } else { window.location.href = "index.html"; }
         });
 
-        // --- সার্চ লজিক ---
-        function loadAllUsersForSearch() {
-            onSnapshot(collection(db, "users"), (snap) => {
-                allUsers = [];
-                snap.forEach(doc => { allUsers.push({ id: doc.id, ...doc.data() }); });
-            });
-        }
-
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-
+        function loadAllUsersForSearch() { onSnapshot(collection(db, "users"), (snap) => { allUsers = []; snap.forEach(doc => { allUsers.push({ id: doc.id, ...doc.data() }); }); }); }
+        const searchInput = document.getElementById('searchInput'); const searchResults = document.getElementById('searchResults');
         searchInput.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase().trim();
-            if(!val) { searchResults.style.display = 'none'; return; }
-            
-            const filtered = allUsers.filter(u => u.displayName && u.displayName.toLowerCase().includes(val) && u.id !== currentUser.uid);
-            searchResults.innerHTML = "";
-            
-            if(filtered.length === 0) {
-                searchResults.innerHTML = `<div style="padding: 15px; text-align: center; color: #8c9e94;">কোনো ইউজার পাওয়া যায়নি</div>`;
-            } else {
+            const val = e.target.value.toLowerCase().trim(); if(!val) { searchResults.style.display = 'none'; return; }
+            const filtered = allUsers.filter(u => u.displayName && u.displayName.toLowerCase().includes(val) && u.id !== currentUser.uid); searchResults.innerHTML = "";
+            if(filtered.length === 0) { searchResults.innerHTML = `<div style="padding: 15px; text-align: center; color: #8c9e94;">কোনো ইউজার পাওয়া যায়নি</div>`; } 
+            else {
                 filtered.forEach(u => {
                     const avatar = u.profilePic ? `<img src="${u.profilePic}">` : u.displayName.charAt(0);
                     let badge = u.displayName.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
-                    searchResults.innerHTML += `
-                        <a href="profile.html?id=${u.id}" class="search-item">
-                            <div class="search-avatar">${avatar}</div>
-                            <div style="font-weight: bold; display: flex; align-items: center;">${u.displayName}${badge}</div>
-                        </a>
-                    `;
+                    searchResults.innerHTML += `<a href="profile.html?id=${u.id}" class="search-item"><div class="search-avatar">${avatar}</div><div style="font-weight: bold; display: flex; align-items: center;">${u.displayName}${badge}</div></a>`;
                 });
             }
             searchResults.style.display = 'block';
         });
-
         document.addEventListener('click', (e) => { if(!e.target.closest('.search-container')) searchResults.style.display = 'none'; });
 
-        // --- পোস্ট করা ---
-        document.getElementById('postImageUpload').onchange = (e) => {
-            if(e.target.files.length > 0) { postImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('preview-img').src = e.target.result; document.getElementById('post-image-preview').style.display = 'block'; }; reader.readAsDataURL(postImageFile); }
-        };
+        document.getElementById('postImageUpload').onchange = (e) => { if(e.target.files.length > 0) { postImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('preview-img').src = e.target.result; document.getElementById('post-image-preview').style.display = 'block'; }; reader.readAsDataURL(postImageFile); } };
         document.getElementById('remove-preview-btn').onclick = () => { postImageFile = null; document.getElementById('post-image-preview').style.display = 'none'; };
 
         document.getElementById('submitPostBtn').onclick = async () => {
@@ -221,12 +164,9 @@
             finally { document.getElementById('submitPostBtn').disabled = false; }
         };
 
-        // --- রিয়েকশন ও কমেন্ট ---
         window.addReaction = async (id, postUid, type) => { 
             await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); 
-            if(postUid !== currentUser.uid) {
-                await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() });
-            }
+            if(postUid !== currentUser.uid) { await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); }
         };
 
         window.toggleLike = async (id, postUid, has) => { 
@@ -238,32 +178,16 @@
             } 
         };
 
-        window.toggleCommentSection = (id) => { 
-            const el = document.getElementById(`comments-${id}`); 
-            if(el.style.display === 'block') {
-                el.style.display = 'none';
-                window.openComments[id] = false;
-            } else {
-                el.style.display = 'block';
-                window.openComments[id] = true;
-            }
-        };
+        window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; } else { el.style.display = 'block'; window.openComments[id] = true; } };
         
         window.sendComment = async (id, postUid) => {
-            const input = document.getElementById(`comment-input-${id}`); 
-            const txt = input.value; 
-            if(!txt.trim()) return;
-
-            window.openComments[id] = true; // কমেন্ট করার পর বক্স যেন খোলা থাকে
-
+            const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return;
+            window.openComments[id] = true;
             try {
                 await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) });
-                if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) {
-                    await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() });
-                }
-            } catch(e) {
-                alert("কমেন্ট করতে সমস্যা হয়েছে: " + e.message);
-            }
+                if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); }
+            } catch(e) { alert("কমেন্ট করতে সমস্যা হয়েছে: " + e.message); }
+            input.value = "";
         };
 
         function loadAllPosts() {
@@ -273,11 +197,18 @@
                 snapshot.forEach((postDoc) => {
                     const post = postDoc.data(); const postId = postDoc.id;
                     const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
-                    const badge = post.author.toLowerCase().includes("sobuj mia") ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
                     
-                    const reactions = post.reactions || {}; const comments = post.comments || []; const reactionCount = Object.keys(reactions).length;
+                    // VIP Badge Check
+                    const isVIP = post.author.toLowerCase().includes("sobuj mia");
+                    const badge = isVIP ? ` <svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>` : "";
+                    
+                    const reactions = post.reactions || {}; 
+                    const comments = post.comments || []; 
+                    const reactionCount = Object.keys(reactions).length;
                     const myReaction = reactions[currentUser.uid];
-                    let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like'; let likeBtnClass = "footer-item";
+                    
+                    let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like'; 
+                    let likeBtnClass = "footer-item";
                     if(myReaction) { 
                         if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; } 
                         else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; } 
@@ -287,10 +218,24 @@
                         else if(myReaction === 'angry') { likeBtnHTML = '😡 Angry'; likeBtnClass += ' action-angry'; }
                     }
                     
+                    // VIP Fake Millions Logic
+                    let displayLikes = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : '';
+                    let displayComments = comments.length > 0 ? `${comments.length} Comments` : '';
+                    let displayShares = '';
+
+                    if(isVIP) {
+                        // Generate deterministic fake numbers based on post ID so they don't jump around randomly
+                        let n1 = (postId.charCodeAt(0) % 8) + 2; // 2 to 9
+                        let n2 = (postId.charCodeAt(1) % 9);     // 0 to 8
+                        let n3 = (postId.charCodeAt(2) % 7) + 1; // 1 to 7
+                        displayLikes = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${n1}.${n2}M`;
+                        displayComments = `${n2}.${n3}M Comments`;
+                        displayShares = `<span>${n3}.${n1}M Shares</span>`;
+                    }
+
                     let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
                     let cList = ""; comments.forEach(c => { cList += `<div class="comment-item"><div class="comment-avatar">${c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0)}</div><div class="comment-content"><div class="comment-author">${c.author}</div><div>${c.text}</div></div></div>`; });
 
-                    // যে কমেন্ট বক্সগুলো খোলা আছে সেগুলো খোলা রাখার লজিক
                     const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
 
                     const postHTML = `
@@ -301,7 +246,13 @@
                             </div>
                             <div class="post-text">${post.content}</div>
                             ${imageHTML}
-                            <div class="post-stats"><span>${reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2;"></i> ${reactionCount}` : ''}</span><span>${comments.length > 0 ? `${comments.length} Comments` : ''}</span></div>
+                            <div class="post-stats">
+                                <span>${displayLikes}</span>
+                                <div style="display:flex; gap:10px;">
+                                    <span>${displayComments}</span>
+                                    ${displayShares}
+                                </div>
+                            </div>
                             <div class="post-footer">
                                 <div class="like-container">
                                     <span class="${likeBtnClass}" onclick="toggleLike('${postId}', '${post.uid}', ${!!myReaction})">${likeBtnHTML}</span>
