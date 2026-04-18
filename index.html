@@ -2,73 +2,148 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FriendBook - Login or Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FriendBook - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000a05; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        
-        .login-container { max-width: 400px; width: 100%; margin-top: 50px; background-color: #01160b; padding: 30px; border-radius: 12px; border: 1px solid #0a2e1a; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
-        .logo { color: #2ecc71; font-size: 40px; font-weight: 800; margin-bottom: 10px; text-decoration: none; display: block; }
-        .subtitle { color: #8c9e94; font-size: 16px; margin-bottom: 30px; }
-        
-        input { width: 100%; padding: 14px 18px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; font-size: 16px; }
-        input:focus { border-color: #2ecc71; }
-        
-        .login-btn { width: 100%; padding: 14px; background-color: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .login-btn:hover { background-color: #2ecc71; }
-        
-        .divider { height: 1px; background-color: #0a2e1a; margin: 25px 0; position: relative; }
-        .divider::before { content: 'অথবা'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: #01160b; padding: 0 10px; color: #8c9e94; font-size: 14px; }
-        
-        .signup-btn { background-color: transparent; color: #2ecc71; border: 1px solid #2ecc71; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; }
-        .signup-btn:hover { background-color: #2ecc71; color: #01160b; }
+        body { 
+            background-color: #000a05; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-        /* --- ডাউনলোড বাটন স্টাইল --- */
-        .download-section { margin-top: 40px; text-align: center; width: 100%; max-width: 400px; }
-        .download-card { background: linear-gradient(145deg, #022112, #01160b); border: 1px dashed #2ecc71; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .download-text { font-size: 14px; color: #8c9e94; font-weight: 500; }
-        
-        .app-download-btn { background-color: #ffffff; color: #000000; padding: 12px 24px; border-radius: 50px; text-decoration: none; display: flex; align-items: center; gap: 12px; font-weight: 700; transition: 0.3s; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
-        .app-download-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4); background-color: #2ecc71; color: #ffffff; }
-        .app-download-btn i { font-size: 24px; }
-        
-        #error-msg { color: #e41e3f; font-size: 14px; margin-top: 10px; display: none; }
+        /* --- Splash Screen Animation --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000a05;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+        .splash-logo {
+            width: 120px; /* লোগোর সাইজ একটু বড় করা হলো */
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+        .from-green {
+            position: absolute;
+            bottom: 50px;
+            color: #2ecc71;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        /* --- Login Container (Initially Hidden) --- */
+        #login-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            display: none; 
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .logo-text { color: #2ecc71; font-size: 45px; font-weight: 800; margin-bottom: 5px; }
+        .subtitle { color: #8c9e94; font-size: 15px; margin-bottom: 30px; }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid #0f4024;
+            background-color: #022112;
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-btn:active { transform: scale(0.98); }
+
+        .divider { height: 1px; background-color: #0a2e1a; margin: 30px 0; position: relative; }
+        .divider::after { content: 'অথবা'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: #000a05; padding: 0 15px; color: #8c9e94; font-size: 14px; }
+
+        .signup-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #2ecc71;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #2ecc71;
+            padding: 10px 30px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .signup-link:hover { background-color: #2ecc71; color: #000a05; }
+
+        #error-msg { color: #ff4757; font-size: 14px; margin-top: 10px; display: none; }
+
+        .app-dl { margin-top: 40px; color: #8c9e94; font-size: 13px; }
+        .app-dl a { color: #ffffff; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="login-container">
-        <a href="index.html" class="logo">FriendBook</a>
-        <p class="subtitle">সবুজ মিয়ার সোশ্যাল মিডিয়ায় আপনাকে স্বাগতম</p>
-        
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required>
-            <input type="password" id="password" placeholder="পাসওয়ার্ড" required>
-            <button type="submit" class="login-btn">লগ ইন করুন</button>
-            <div id="error-msg">ভুল ইমেইল বা পাসওয়ার্ড!</div>
-        </form>
-        
-        <div class="divider"></div>
-        
-        <a href="signup.html" class="signup-btn">নতুন অ্যাকাউন্ট তৈরি করুন</a>
+    <div id="splash-screen">
+        <img src="https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png" class="splash-logo" id="logoImg">
+        <div class="from-green">FriendBook</div>
     </div>
 
-    <div class="download-section">
-        <div class="download-card">
-            <p class="download-text">সেরা অভিজ্ঞতার জন্য আমাদের অ্যাপটি নামিয়ে নিন</p>
-            
-            <a href="FriendBook.apk" class="app-download-btn">
-                <i class="fa-brands fa-android"></i>
-                <span>Download Android App</span>
-            </a>
+    <div id="login-content">
+        <div class="logo-text">FriendBook</div>
+        <p class="subtitle">সবুজ মিয়ার সোশ্যাল মিডিয়ায় স্বাগতম</p>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
+            <input type="password" id="password" placeholder="পাসওয়ার্ড" required autocomplete="current-password">
+            <button type="submit" class="login-btn" id="loginBtn">লগ ইন করুন</button>
+            <div id="error-msg">ইমেইল বা পাসওয়ার্ড ভুল!</div>
+        </form>
+
+        <div class="divider"></div>
+        <a href="signup.html" class="signup-link">নতুন অ্যাকাউন্ট খুলুন</a>
+
+        <div class="app-dl">
+            <p>সেরা অভিজ্ঞতার জন্য অ্যাপটি ব্যবহার করুন</p>
+            <a href="FriendBook.apk"><i class="fa-brands fa-android" style="font-size: 20px;"></i> Download APK</a>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
@@ -82,17 +157,47 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // --- অটো লগইন এবং স্প্ল্যাশ স্ক্রিন লজিক ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // ২.৫ সেকেন্ড লোগো এনিমেশন দেখিয়ে সরাসরি হোমে নিয়ে যাবে
+                setTimeout(() => {
+                    window.location.href = "home.html";
+                }, 2500);
+            } else {
+                // যদি লগইন না থাকে, স্প্ল্যাশ স্ক্রিন সরিয়ে লগইন ফর্ম দেখাবে
+                setTimeout(() => {
+                    const splash = document.getElementById('splash-screen');
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.getElementById('login-content').style.display = 'block';
+                    }, 800);
+                }, 2500);
+            }
+        });
+
+        // --- লগইন হ্যান্ডলার ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('error-msg');
+            const btn = document.getElementById('loginBtn');
+            const error = document.getElementById('error-msg');
+
+            btn.innerText = "অপেক্ষা করুন...";
+            btn.disabled = true;
+            error.style.display = 'none';
 
             try {
+                // Persistent Login সেট করা হচ্ছে
+                await setPersistence(auth, browserLocalPersistence);
                 await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = "home.html";
-            } catch (error) {
-                errorMsg.style.display = 'block';
+            } catch (err) {
+                btn.innerText = "লগ ইন করুন";
+                btn.disabled = false;
+                error.style.display = 'block';
             }
         };
     </script>
