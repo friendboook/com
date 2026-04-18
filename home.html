@@ -9,6 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding-bottom: 30px; }
         
+        /* --- Header & Search --- */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; max-width: 600px; margin: 0 auto; }
         .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
@@ -29,6 +30,7 @@
         .user-avatar { width: 40px; height: 40px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- Create Post Box --- */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
@@ -42,6 +44,7 @@
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
 
+        /* --- Stories Section --- */
         .stories-container { background-color: #01160b; padding: 15px 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
         .stories-container::-webkit-scrollbar { display: none; }
         .story-card { width: 105px; height: 185px; border-radius: 12px; position: relative; background: #333; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a; cursor: pointer; }
@@ -49,10 +52,22 @@
         .story-card.create .story-bg { height: 65%; border-radius: 12px 12px 0 0; background: #022112; display: flex; justify-content: center; align-items: center; color: #2ecc71; font-size: 30px; }
         .story-card.create .create-btn { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); background: #1877F2; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 3px solid #01160b; font-size: 18px; }
         .story-card.create .story-text { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 13px; font-weight: bold; color: white; }
-        .story-avatar { position: absolute; top: 10px; left: 10px; width: 35px; height: 35px; border-radius: 50%; border: 3px solid #1877F2; background: #2ecc71; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; overflow:hidden;}
+        .story-avatar { position: absolute; top: 10px; left: 10px; width: 35px; height: 35px; border-radius: 50%; border: 3px solid #1877F2; background: #2ecc71; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; overflow:hidden; z-index: 2;}
         .story-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .story-text { position: absolute; bottom: 8px; left: 8px; font-size: 12px; font-weight: bold; color: white; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
 
+        /* --- Story Full Screen Modal --- */
+        .story-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        .story-progress-container { width: 100%; height: 3px; background: rgba(255,255,255,0.3); margin-top: 5px; padding: 0 5px; }
+        .story-progress-fill { height: 100%; background: #fff; width: 0%; border-radius: 3px; }
+        .story-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; position: absolute; top: 10px; width: 100%; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); }
+        .story-modal-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2ecc71; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; overflow:hidden; border: 2px solid #1877F2; }
+        .story-modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .story-modal-author { color: white; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 3px black; display: flex; align-items: center;}
+        .story-close { color: white; font-size: 28px; cursor: pointer; text-shadow: 1px 1px 3px black; padding: 0 10px;}
+        .story-modal-image { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 1; }
+
+        /* --- Feed Post Layout --- */
         .feed-post { background-color: #01160b; padding: 12px 0; margin-bottom: 8px; }
         .post-header { display: flex; align-items: center; gap: 10px; padding: 0 15px; margin-bottom: 8px; }
         .post-author { font-weight: bold; color: #e4e6eb; font-size: 16px; display: flex; align-items: center; }
@@ -75,6 +90,7 @@
         
         .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
+        /* Comments */
         .comments-section { display: none; padding: 10px 15px; border-top: 1px solid #0a2e1a; margin-top: 5px;}
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #3a3b3c; border: none; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
@@ -127,20 +143,27 @@
             </div>
         </div>
 
-        <div class="stories-container">
-            <div class="story-card create" onclick="alert('স্টোরি আপলোড সিস্টেম শীঘ্রই আসছে!')">
+        <input type="file" id="storyUploadInput" accept="image/*"> <div class="stories-container" id="stories-feed">
+            <div class="story-card create" onclick="document.getElementById('storyUploadInput').click()">
                 <div class="story-bg" id="storyMyBg"></div>
                 <div class="create-btn"><i class="fa-solid fa-plus"></i></div>
                 <div class="story-text">Create story</div>
             </div>
-            <div class="story-card"><img src="https://picsum.photos/300/500?random=1" class="story-bg"><div class="story-avatar">N</div><div class="story-text">Nila</div></div>
-            <div class="story-card"><img src="https://picsum.photos/300/500?random=2" class="story-bg"><div class="story-avatar">S</div><div class="story-text">Sadia Islam</div></div>
-            <div class="story-card"><img src="https://picsum.photos/300/500?random=3" class="story-bg"><div class="story-avatar">R</div><div class="story-text">Rafi Khan</div></div>
-            <div class="story-card"><img src="https://picsum.photos/300/500?random=4" class="story-bg"><div class="story-avatar">A</div><div class="story-text">Arif</div></div>
-            <div class="story-card"><img src="https://picsum.photos/300/500?random=5" class="story-bg"><div class="story-avatar">F</div><div class="story-text">Farid Ahmed</div></div>
-        </div>
+            </div>
 
         <div id="newsfeed"></div>
+    </div>
+
+    <div id="storyModal" class="story-modal">
+        <div class="story-progress-container"><div class="story-progress-fill" id="storyProgressFill"></div></div>
+        <div class="story-modal-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="story-modal-avatar" id="storyModalAvatar"></div>
+                <div class="story-modal-author" id="storyModalAuthor"></div>
+            </div>
+            <i class="fa-solid fa-xmark story-close" onclick="closeStory()"></i>
+        </div>
+        <img id="storyModalImage" class="story-modal-image" src="">
     </div>
     
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
@@ -153,12 +176,12 @@
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
-
-        // flex-shrink: 0 বসানো হয়েছে যাতে আইকন চ্যাপ্টা না হয়।
-        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+        
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; min-width: 16px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
+        let storyTimer = null; // স্টোরি অটো কাটার জন্য টাইমার
 
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
@@ -168,9 +191,7 @@
             return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
         }
 
-        document.getElementById('newPostText').addEventListener('input', function() {
-            document.getElementById('postActionsArea').style.display = (this.value.trim() || postImageFile) ? 'flex' : 'none';
-        });
+        document.getElementById('newPostText').addEventListener('input', function() { document.getElementById('postActionsArea').style.display = (this.value.trim() || postImageFile) ? 'flex' : 'none'; });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -192,15 +213,102 @@
                         if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.style.display = 'block'; } else badge.style.display = 'none';
                     }
                 });
-                const notifQ = query(collection(db, "users", currentUser.uid, "notifications"));
-                onSnapshot(notifQ, (snap) => {
-                    let uCount = 0; snap.forEach(d => { if(!d.data().isRead) uCount++; });
-                    const nBadge = document.getElementById('notif-badge');
-                    if(uCount > 0) { nBadge.innerText = uCount > 9 ? '9+' : uCount; nBadge.style.display = 'block'; } else nBadge.style.display = 'none';
-                });
-                loadAllPosts(); loadAllUsersForSearch();
+                
+                loadAllPosts(); loadAllUsersForSearch(); loadStories(); // স্টোরি লোড কল
             } else { window.location.href = "index.html"; }
         });
+
+        // --- STORY LOGIC START ---
+        
+        // ১. স্টোরি আপলোড
+        document.getElementById('storyUploadInput').onchange = async (e) => {
+            if(e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const statusText = document.getElementById('upload-status'); 
+                statusText.style.display = 'block'; statusText.innerText = "Uploading Story...";
+                
+                const fd = new FormData(); fd.append("image", file); fd.append("key", IMGBB_API_KEY);
+                try {
+                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
+                    const data = await res.json(); 
+                    if(data.success) {
+                        await addDoc(collection(db, "stories"), { uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, image: data.data.display_url, timestamp: serverTimestamp() });
+                        statusText.innerText = "Story Added!"; setTimeout(() => statusText.style.display = 'none', 2000);
+                    }
+                } catch (err) { statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); }
+            }
+        };
+
+        // ২. ডাটাবেস থেকে স্টোরি লোড
+        function loadStories() {
+            const q = query(collection(db, "stories"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const feed = document.getElementById('stories-feed');
+                
+                // ডিফল্ট Create Box রেখে বাকি সব মুছে ফেলা
+                feed.innerHTML = `
+                    <div class="story-card create" onclick="document.getElementById('storyUploadInput').click()">
+                        <div class="story-bg" id="storyMyBg">${currentUserPhoto ? `<img src="${currentUserPhoto}" style="width:100%; height:100%; object-fit:cover;">` : currentUserName.charAt(0)}</div>
+                        <div class="create-btn"><i class="fa-solid fa-plus"></i></div>
+                        <div class="story-text">Create story</div>
+                    </div>`;
+
+                const now = Date.now();
+                snapshot.forEach((doc) => {
+                    const story = doc.data();
+                    if (!story.timestamp) return;
+                    
+                    const storyTime = story.timestamp.toMillis();
+                    // ২৪ ঘণ্টার (86400000 ms) পুরোনো স্টোরি দেখাবে না
+                    if (now - storyTime < 86400000) {
+                        const avatar = story.authorPhoto ? `<img src="${story.authorPhoto}">` : story.author.charAt(0);
+                        // viewStory ফাংশন কল করার জন্য ডাটা রেডি করা
+                        const storyHTML = `
+                            <div class="story-card" onclick="viewStory('${story.image}', '${story.author}', '${story.authorPhoto || ''}')">
+                                <img src="${story.image}" class="story-bg">
+                                <div class="story-avatar">${avatar}</div>
+                                <div class="story-text">${story.author.split(' ')[0]}</div>
+                            </div>`;
+                        feed.innerHTML += storyHTML;
+                    }
+                });
+            });
+        }
+
+        // ৩. স্টোরি ভিউয়ার এবং টাইমার
+        window.viewStory = (image, author, authorPhoto) => {
+            document.getElementById('storyModalImage').src = image;
+            const badge = author.toLowerCase().includes("sobuj mia") ? verifiedSvg : "";
+            document.getElementById('storyModalAuthor').innerHTML = author + badge;
+            document.getElementById('storyModalAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
+            
+            const modal = document.getElementById('storyModal');
+            const progressFill = document.getElementById('storyProgressFill');
+            
+            modal.style.display = 'flex';
+            
+            // প্রোগ্রেস বার এনিমেশন শুরু
+            progressFill.style.transition = 'none';
+            progressFill.style.width = '0%';
+            
+            setTimeout(() => {
+                progressFill.style.transition = 'width 5s linear';
+                progressFill.style.width = '100%';
+            }, 50);
+
+            // ৫ সেকেন্ড পর অটো কেটে যাবে
+            clearTimeout(storyTimer);
+            storyTimer = setTimeout(() => { closeStory(); }, 5000);
+        };
+
+        window.closeStory = () => {
+            clearTimeout(storyTimer);
+            document.getElementById('storyModal').style.display = 'none';
+            document.getElementById('storyProgressFill').style.width = '0%';
+            document.getElementById('storyModalImage').src = '';
+        };
+
+        // --- STORY LOGIC END ---
 
         function loadAllUsersForSearch() { onSnapshot(collection(db, "users"), (snap) => { allUsers = []; snap.forEach(doc => { allUsers.push({ id: doc.id, ...doc.data() }); }); }); }
         const searchInput = document.getElementById('searchInput'); const searchResults = document.getElementById('searchResults');
@@ -297,7 +405,7 @@
                         
                         displayLikesStat = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${n1}.${n2}M`;
                         displayCommentsStat = `${n2}.${n3}M comments`;
-                        displaySharesStat = `<span>${n3}.${n1}M shares</span>`;
+                        displaySharesStat = `<span>${n3}.${n1}M shares</span>`; 
                         
                         displayLikesBtn = `${n1}.${n2}M`;
                         displayCommentsBtn = `${n2}.${n3}M`;
@@ -344,7 +452,7 @@
                                         <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}</div></a>
                                         ${badge}
                                     </div>
-                                    <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
+                                    <div class="post-time">${post.image ? 'Updated his photo' : 'Just now'} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                             </div>
                             <div class="post-text">${post.content}</div>
