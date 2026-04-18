@@ -9,7 +9,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding-bottom: 30px; }
         
-        /* --- Header & Search --- */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; max-width: 600px; margin: 0 auto; }
         .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
@@ -30,12 +29,10 @@
         .user-avatar { width: 40px; height: 40px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- Create Post Box --- */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
         .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 20px; color: #ffffff; outline: none; font-size: 15px; }
-        /* গ্যালারি আইকন বড় করা হয়েছে */
         .gallery-icon-label { display: flex; align-items: center; justify-content: center; padding: 5px; cursor: pointer; }
         .gallery-icon-label i { color: #45bd62; font-size: 28px; transition: 0.2s; }
         .gallery-icon-label:active i { transform: scale(0.9); }
@@ -45,7 +42,6 @@
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
 
-        /* --- Stories Section --- */
         .stories-container { background-color: #01160b; padding: 15px 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
         .stories-container::-webkit-scrollbar { display: none; }
         .story-card { width: 105px; height: 185px; border-radius: 12px; position: relative; background: #333; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a; cursor: pointer; }
@@ -57,44 +53,17 @@
         .story-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .story-text { position: absolute; bottom: 8px; left: 8px; font-size: 12px; font-weight: bold; color: white; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
 
-        /* --- Feed Post Layout --- */
         .feed-post { background-color: #01160b; padding: 12px 0; margin-bottom: 8px; }
         .post-header { display: flex; align-items: center; gap: 10px; padding: 0 15px; margin-bottom: 8px; }
-        .post-author { font-weight: bold; color: #e4e6eb; font-size: 15px; display: flex; align-items: center; }
+        .post-author { font-weight: bold; color: #e4e6eb; font-size: 16px; display: flex; align-items: center; }
         .post-time { font-size: 12px; color: #b0b3b8; display: flex; align-items: center; gap: 5px;}
         .post-text { color: #e4e6eb; font-size: 15px; padding: 0 15px; margin-bottom: 10px; white-space: pre-wrap; line-height: 1.5; }
         .post-image { width: 100%; max-height: 500px; object-fit: cover; display: block; border-top: 1px solid #0a2e1a; border-bottom: 1px solid #0a2e1a; }
         
         .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
         
-        /* --- Action Buttons (FB Style) --- */
-        .post-footer { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px 15px; 
-            gap: 10px; 
-            -webkit-touch-callout: none; 
-            -webkit-user-select: none; 
-            -khtml-user-select: none; 
-            -moz-user-select: none; 
-            -ms-user-select: none; 
-            user-select: none; 
-        }
-        .footer-item { 
-            background-color: rgba(255,255,255,0.08); 
-            border-radius: 20px; 
-            color: #e4e6eb; 
-            cursor: pointer; 
-            font-size: 15px; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-            padding: 8px 0; 
-            flex: 1; 
-            transition: 0.2s;
-        }
+        .post-footer { display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .footer-item { background-color: rgba(255,255,255,0.08); border-radius: 20px; color: #e4e6eb; cursor: pointer; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; flex: 1; transition: 0.2s; }
         .footer-item:active { transform: scale(0.95); background-color: rgba(255,255,255,0.15); }
         
         .like-container { position: relative; display: flex; flex: 1; justify-content: center; }
@@ -104,10 +73,8 @@
         .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
         .reaction-icon:hover { transform: scale(1.3) translateY(-5px); }
         
-        /* Reaction Colors */
         .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
-        /* Comments */
         .comments-section { display: none; padding: 10px 15px; border-top: 1px solid #0a2e1a; margin-top: 5px;}
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #3a3b3c; border: none; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
@@ -154,9 +121,7 @@
                 </label>
                 <input type="file" id="postImageUpload" accept="image/*">
             </div>
-            
             <div id="post-image-preview"><img id="preview-img" src=""><button id="remove-preview-btn">X</button></div>
-            
             <div class="post-actions" id="postActionsArea" style="display: none;">
                 <button id="submitPostBtn" style="background: #1877F2; color: white; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">Post</button>
             </div>
@@ -168,31 +133,11 @@
                 <div class="create-btn"><i class="fa-solid fa-plus"></i></div>
                 <div class="story-text">Create story</div>
             </div>
-            <div class="story-card">
-                <img src="https://picsum.photos/300/500?random=1" class="story-bg">
-                <div class="story-avatar">N</div>
-                <div class="story-text">Nila</div>
-            </div>
-            <div class="story-card">
-                <img src="https://picsum.photos/300/500?random=2" class="story-bg">
-                <div class="story-avatar">S</div>
-                <div class="story-text">Sadia Islam</div>
-            </div>
-            <div class="story-card">
-                <img src="https://picsum.photos/300/500?random=3" class="story-bg">
-                <div class="story-avatar">R</div>
-                <div class="story-text">Rafi Khan</div>
-            </div>
-            <div class="story-card">
-                <img src="https://picsum.photos/300/500?random=4" class="story-bg">
-                <div class="story-avatar">A</div>
-                <div class="story-text">Arif</div>
-            </div>
-            <div class="story-card">
-                <img src="https://picsum.photos/300/500?random=5" class="story-bg">
-                <div class="story-avatar">F</div>
-                <div class="story-text">Farid Ahmed</div>
-            </div>
+            <div class="story-card"><img src="https://picsum.photos/300/500?random=1" class="story-bg"><div class="story-avatar">N</div><div class="story-text">Nila</div></div>
+            <div class="story-card"><img src="https://picsum.photos/300/500?random=2" class="story-bg"><div class="story-avatar">S</div><div class="story-text">Sadia Islam</div></div>
+            <div class="story-card"><img src="https://picsum.photos/300/500?random=3" class="story-bg"><div class="story-avatar">R</div><div class="story-text">Rafi Khan</div></div>
+            <div class="story-card"><img src="https://picsum.photos/300/500?random=4" class="story-bg"><div class="story-avatar">A</div><div class="story-text">Arif</div></div>
+            <div class="story-card"><img src="https://picsum.photos/300/500?random=5" class="story-bg"><div class="story-avatar">F</div><div class="story-text">Farid Ahmed</div></div>
         </div>
 
         <div id="newsfeed"></div>
@@ -208,23 +153,18 @@
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
+
+        // flex-shrink: 0 বসানো হয়েছে যাতে আইকন চ্যাপ্টা না হয়।
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
 
-        // Time Formatter (সবেমাত্র, ৫ মি., ইত্যাদি দেখানোর জন্য)
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
-            const now = new Date();
-            const past = timestamp.toDate();
-            const diffMs = now - past;
-            const diffMins = Math.round(diffMs / 60000);
-            const diffHrs = Math.round(diffMs / 3600000);
-            const diffDays = Math.round(diffMs / 86400000);
-
-            if (diffMins < 1) return "সবেমাত্র";
-            if (diffMins < 60) return `${diffMins} মি.`;
-            if (diffHrs < 24) return `${diffHrs} ঘণ্টা`;
-            if (diffDays < 7) return `${diffDays} দিন`;
+            const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
+            const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
+            if (diffMins < 1) return "সবেমাত্র"; if (diffMins < 60) return `${diffMins} মি.`; if (diffHrs < 24) return `${diffHrs} ঘণ্টা`; if (diffDays < 7) return `${diffDays} দিন`;
             return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
         }
 
@@ -271,7 +211,7 @@
             else {
                 filtered.forEach(u => {
                     const avatar = u.profilePic ? `<img src="${u.profilePic}">` : u.displayName.charAt(0);
-                    let badge = u.displayName.toLowerCase().includes("sobuj mia") ? ` <i class="fa-solid fa-circle-check" style="color: #1877F2; font-size: 14px; margin-left: 5px;"></i>` : "";
+                    let badge = u.displayName.toLowerCase().includes("sobuj mia") ? verifiedSvg : "";
                     searchResults.innerHTML += `<a href="profile.html?id=${u.id}" class="search-item"><div class="search-avatar">${avatar}</div><div style="font-weight: bold; display: flex; align-items: center;">${u.displayName}${badge}</div></a>`;
                 });
             }
@@ -335,24 +275,21 @@
                     const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
                     
                     const isVIP = post.author.toLowerCase().includes("sobuj mia");
-                    const badge = isVIP ? ` <i class="fa-solid fa-circle-check" style="color: #1877F2; font-size: 15px; margin-left: 5px;"></i>` : "";
+                    const badge = isVIP ? verifiedSvg : "";
                     
                     const reactions = post.reactions || {}; 
                     const comments = post.comments || []; 
                     const reactionCount = Object.keys(reactions).length;
                     const myReaction = reactions[currentUser.uid];
                     
-                    // Button Details
                     let displayLikesBtn = reactionCount > 0 ? reactionCount : '';
                     let displayCommentsBtn = comments.length > 0 ? comments.length : '';
                     let displaySharesBtn = ''; 
 
-                    // Stats Details (Top Row)
                     let displayLikesStat = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${reactionCount}` : '';
                     let displayCommentsStat = comments.length > 0 ? `${comments.length} comments` : '';
                     let displaySharesStat = '';
 
-                    // VIP Magic 
                     if(isVIP) {
                         let n1 = (postId.charCodeAt(0) % 8) + 2; 
                         let n2 = (postId.charCodeAt(1) % 9);     
@@ -360,14 +297,13 @@
                         
                         displayLikesStat = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${n1}.${n2}M`;
                         displayCommentsStat = `${n2}.${n3}M comments`;
-                        displaySharesStat = `<span>${n3}.${n1}M shares</span>`; 
+                        displaySharesStat = `<span>${n3}.${n1}M shares</span>`;
                         
                         displayLikesBtn = `${n1}.${n2}M`;
                         displayCommentsBtn = `${n2}.${n3}M`;
                         displaySharesBtn = `${n3}.${n1}M`;
                     }
 
-                    // My Reaction Icon
                     let likeIcon = '<i class="fa-regular fa-thumbs-up"></i>'; 
                     let likeClass = "footer-item";
                     if(myReaction) { 
@@ -403,8 +339,11 @@
                         <div class="feed-post">
                             <div class="post-header">
                                 <a href="profile.html?id=${post.uid}" style="text-decoration:none;"><div class="user-avatar">${avatar}</div></a>
-                                <div>
-                                    <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}${badge}</div></a>
+                                <div style="display:flex; flex-direction:column;">
+                                    <div style="display:flex; align-items:center;">
+                                        <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}</div></a>
+                                        ${badge}
+                                    </div>
                                     <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                             </div>
