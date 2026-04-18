@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FriendBook - Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #000a05; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px 20px;
+            background-color: #01160b;
+            border: 1px solid #0a2e1a;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .logo-text { color: #2ecc71; font-size: 35px; font-weight: 800; margin-bottom: 5px; }
+        .subtitle { color: #8c9e94; font-size: 15px; margin-bottom: 25px; }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid #0f4024;
+            background-color: #022112;
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+
+        .signup-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #1877F2; /* ফেসবুকের মতো নীল বাটন */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+        .signup-btn:active { transform: scale(0.98); }
+
+        .login-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2ecc71;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-link:hover { text-decoration: underline; }
+
+        #error-msg { color: #ff4757; font-size: 14px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="logo-text">FriendBook</div>
+        <p class="subtitle">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+
+        <form id="signupForm">
+            <input type="text" id="fullName" placeholder="আপনার পুরো নাম" required autocomplete="name">
+            <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
+            <input type="password" id="password" placeholder="নতুন পাসওয়ার্ড (অন্তত ৬ সংখ্যা)" required autocomplete="new-password" minlength="6">
+            <button type="submit" class="signup-btn" id="signupBtn">অ্যাকাউন্ট খুলুন</button>
+            <div id="error-msg"></div>
+        </form>
+
+        <a href="index.html" class="login-link">আগে থেকে অ্যাকাউন্ট আছে? লগ ইন করুন</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
+            authDomain: "friendbook-e9569.firebaseapp.com",
+            projectId: "friendbook-e9569",
+            storageBucket: "friendbook-e9569.firebasestorage.app",
+            messagingSenderId: "459682436919",
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.getElementById('signupForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('signupBtn');
+            const error = document.getElementById('error-msg');
+
+            btn.innerText = "অ্যাকাউন্ট তৈরি হচ্ছে...";
+            btn.disabled = true;
+            error.style.display = 'none';
+
+            try {
+                // ১. ফায়ারবেসে ইউজার তৈরি করা
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // ২. ডাটাবেসে ইউজারের তথ্য সেভ করা
+                await setDoc(doc(db, "users", user.uid), {
+                    displayName: name,
+                    email: email,
+                    profilePic: "",
+                    coverPic: "",
+                    bio: "",
+                    work: "",
+                    edu: "",
+                    loc: "",
+                    friends: [],
+                    sentRequests: [],
+                    receivedRequests: [],
+                    unreadCounts: {},
+                    createdAt: serverTimestamp()
+                });
+
+                // ৩. সফল হলে হোমে নিয়ে যাওয়া
+                window.location.href = "home.html";
+
+            } catch (err) {
+                btn.innerText = "অ্যাকাউন্ট খুলুন";
+                btn.disabled = false;
+                error.style.display = 'block';
+                
+                if (err.code === 'auth/email-already-in-use') {
+                    error.innerText = "এই ইমেইল দিয়ে আগে থেকেই একটি অ্যাকাউন্ট আছে!";
+                } else if (err.code === 'auth/weak-password') {
+                    error.innerText = "পাসওয়ার্ড অন্তত ৬ সংখ্যার হতে হবে!";
+                } else {
+                    error.innerText = "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+                }
+            }
+        };
+    </script>
+</body>
+</html>
