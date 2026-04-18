@@ -126,7 +126,7 @@
         <div class="header-top">
             <a href="home.html" class="logo">FriendBook</a>
             <div class="top-icons">
-                <div class="icon-btn" onclick="alert('স্টোরি বা পোস্ট তৈরি করুন')"><i class="fa-solid fa-plus"></i></div>
+                <div class="icon-btn"><i class="fa-solid fa-plus"></i></div>
                 <div class="icon-btn" id="searchToggleBtn"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fa-solid fa-bars"></i></div>
             </div>
@@ -474,7 +474,7 @@
                                         <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}</div></a>
                                         ${badge}
                                     </div>
-                                    <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
+                                    <div class="post-time">${post.image ? 'Updated his photo' : 'Just now'} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                             </div>
                             <div class="post-text">${post.content}</div>
