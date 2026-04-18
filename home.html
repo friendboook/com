@@ -17,6 +17,8 @@
         .search-container input { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; transition: 0.3s; }
         .search-results { position: absolute; top: 110%; left: 0; width: 100%; background: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; max-height: 300px; overflow-y: auto; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
         .search-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid #0a2e1a; cursor: pointer; text-decoration: none; color: white; }
+        .search-avatar { width: 35px; height: 35px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; flex-shrink: 0;}
+        .search-avatar img { width: 100%; height: 100%; object-fit: cover; }
         
         .header-tabs { display: flex; justify-content: space-around; max-width: 600px; margin: 0 auto; padding: 0 5px; }
         .tab-item { position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; color: #a3b1a9; cursor: pointer; border-radius: 8px; transition: all 0.3s; }
@@ -33,8 +35,12 @@
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
         .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 20px; color: #ffffff; outline: none; font-size: 15px; }
-        .post-actions { border-top: 1px solid #0a2e1a; padding-top: 10px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+        /* গ্যালারি আইকন বড় করা হয়েছে */
+        .gallery-icon-label { display: flex; align-items: center; justify-content: center; padding: 5px; cursor: pointer; }
+        .gallery-icon-label i { color: #45bd62; font-size: 28px; transition: 0.2s; }
+        .gallery-icon-label:active i { transform: scale(0.9); }
         
+        .post-actions { border-top: 1px solid #0a2e1a; padding-top: 10px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
         #post-image-preview { display: none; margin-top: 10px; border-radius: 10px; overflow: hidden; position: relative; }
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
@@ -42,7 +48,6 @@
         /* --- Stories Section --- */
         .stories-container { background-color: #01160b; padding: 15px 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
         .stories-container::-webkit-scrollbar { display: none; }
-        /* স্টোরির কার্ড এখন লম্বাটে (9:16 রেশিও) */
         .story-card { width: 105px; height: 185px; border-radius: 12px; position: relative; background: #333; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a; cursor: pointer; }
         .story-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
         .story-card.create .story-bg { height: 65%; border-radius: 12px 12px 0 0; background: #022112; display: flex; justify-content: center; align-items: center; color: #2ecc71; font-size: 30px; }
@@ -62,13 +67,12 @@
         
         .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
         
-        /* --- Action Buttons (FB Style Pill Shapes) --- */
+        /* --- Action Buttons (FB Style) --- */
         .post-footer { 
             display: flex; 
             justify-content: space-between; 
             padding: 8px 15px; 
             gap: 10px; 
-            /* লেখা কপি হয়ে যাওয়া বন্ধ করার কোড */
             -webkit-touch-callout: none; 
             -webkit-user-select: none; 
             -khtml-user-select: none; 
@@ -77,8 +81,8 @@
             user-select: none; 
         }
         .footer-item { 
-            background-color: rgba(255,255,255,0.08); /* গোল ব্যাকগ্রাউন্ড */
-            border-radius: 20px; /* পিল শেপ */
+            background-color: rgba(255,255,255,0.08); 
+            border-radius: 20px; 
             color: #e4e6eb; 
             cursor: pointer; 
             font-size: 15px; 
@@ -94,7 +98,7 @@
         .footer-item:active { transform: scale(0.95); background-color: rgba(255,255,255,0.15); }
         
         .like-container { position: relative; display: flex; flex: 1; justify-content: center; }
-        .like-container .footer-item { width: 100%; } /* লাইক বাটন পুরো জায়গা নেবে */
+        .like-container .footer-item { width: 100%; } 
         .reaction-box { position: absolute; bottom: 120%; left: 0; background: #242526; border: 1px solid #3a3b3c; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6);}
         .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
         .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
@@ -145,7 +149,9 @@
                 <div class="fake-input-box">
                     <input type="text" id="newPostText" placeholder="What's on your mind?">
                 </div>
-                <label for="postImageUpload"><i class="fa-solid fa-images" style="color: #45bd62; font-size: 24px; cursor: pointer;"></i></label>
+                <label for="postImageUpload" class="gallery-icon-label">
+                    <i class="fa-solid fa-images"></i>
+                </label>
                 <input type="file" id="postImageUpload" accept="image/*">
             </div>
             
@@ -163,27 +169,27 @@
                 <div class="story-text">Create story</div>
             </div>
             <div class="story-card">
-                <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=300" class="story-bg">
+                <img src="https://picsum.photos/300/500?random=1" class="story-bg">
                 <div class="story-avatar">N</div>
                 <div class="story-text">Nila</div>
             </div>
             <div class="story-card">
-                <img src="https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92a?auto=format&fit=crop&w=300" class="story-bg">
+                <img src="https://picsum.photos/300/500?random=2" class="story-bg">
                 <div class="story-avatar">S</div>
                 <div class="story-text">Sadia Islam</div>
             </div>
             <div class="story-card">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300" class="story-bg">
+                <img src="https://picsum.photos/300/500?random=3" class="story-bg">
                 <div class="story-avatar">R</div>
                 <div class="story-text">Rafi Khan</div>
             </div>
             <div class="story-card">
-                <img src="https://images.unsplash.com/photo-1506744626753-dba37c152814?auto=format&fit=crop&w=300" class="story-bg">
+                <img src="https://picsum.photos/300/500?random=4" class="story-bg">
                 <div class="story-avatar">A</div>
                 <div class="story-text">Arif</div>
             </div>
             <div class="story-card">
-                <img src="https://images.unsplash.com/photo-1444464666168-49b626f41143?auto=format&fit=crop&w=300" class="story-bg">
+                <img src="https://picsum.photos/300/500?random=5" class="story-bg">
                 <div class="story-avatar">F</div>
                 <div class="story-text">Farid Ahmed</div>
             </div>
@@ -204,6 +210,23 @@
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
+
+        // Time Formatter (সবেমাত্র, ৫ মি., ইত্যাদি দেখানোর জন্য)
+        function timeAgo(timestamp) {
+            if (!timestamp) return "সবেমাত্র";
+            const now = new Date();
+            const past = timestamp.toDate();
+            const diffMs = now - past;
+            const diffMins = Math.round(diffMs / 60000);
+            const diffHrs = Math.round(diffMs / 3600000);
+            const diffDays = Math.round(diffMs / 86400000);
+
+            if (diffMins < 1) return "সবেমাত্র";
+            if (diffMins < 60) return `${diffMins} মি.`;
+            if (diffHrs < 24) return `${diffHrs} ঘণ্টা`;
+            if (diffDays < 7) return `${diffDays} দিন`;
+            return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
+        }
 
         document.getElementById('newPostText').addEventListener('input', function() {
             document.getElementById('postActionsArea').style.display = (this.value.trim() || postImageFile) ? 'flex' : 'none';
@@ -319,26 +342,29 @@
                     const reactionCount = Object.keys(reactions).length;
                     const myReaction = reactions[currentUser.uid];
                     
-                    // --- Button Content Logic (FB Mobile Style: [Icon] [Number]) ---
+                    // Button Details
                     let displayLikesBtn = reactionCount > 0 ? reactionCount : '';
                     let displayCommentsBtn = comments.length > 0 ? comments.length : '';
-                    let displaySharesBtn = ''; // Share count
+                    let displaySharesBtn = ''; 
 
+                    // Stats Details (Top Row)
                     let displayLikesStat = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${reactionCount}` : '';
                     let displayCommentsStat = comments.length > 0 ? `${comments.length} comments` : '';
+                    let displaySharesStat = '';
 
+                    // VIP Magic 
                     if(isVIP) {
                         let n1 = (postId.charCodeAt(0) % 8) + 2; 
                         let n2 = (postId.charCodeAt(1) % 9);     
                         let n3 = (postId.charCodeAt(2) % 7) + 1; 
                         
-                        // Fake stats
                         displayLikesStat = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${n1}.${n2}M`;
                         displayCommentsStat = `${n2}.${n3}M comments`;
+                        displaySharesStat = `<span>${n3}.${n1}M shares</span>`; 
                         
-                        // Fake buttons
                         displayLikesBtn = `${n1}.${n2}M`;
                         displayCommentsBtn = `${n2}.${n3}M`;
+                        displaySharesBtn = `${n3}.${n1}M`;
                     }
 
                     // My Reaction Icon
@@ -353,10 +379,9 @@
                         else if(myReaction === 'angry') { likeIcon = '😡'; likeClass += ' action-angry'; }
                     }
 
-                    // Button Strings (No "Like" word, just icon + count if count > 0)
                     let likeBtnHTML = `${likeIcon} ${displayLikesBtn}`;
                     let commentBtnHTML = `<i class="fa-regular fa-message"></i> ${displayCommentsBtn}`;
-                    let shareBtnHTML = `<i class="fa-solid fa-share"></i>`;
+                    let shareBtnHTML = `<i class="fa-solid fa-share"></i> ${displaySharesBtn}`;
                     
                     let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
                     
@@ -372,6 +397,7 @@
                     });
 
                     const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
+                    const timeText = timeAgo(post.timestamp);
 
                     const postHTML = `
                         <div class="feed-post">
@@ -379,7 +405,7 @@
                                 <a href="profile.html?id=${post.uid}" style="text-decoration:none;"><div class="user-avatar">${avatar}</div></a>
                                 <div>
                                     <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}${badge}</div></a>
-                                    <div class="post-time">${post.image ? 'Updated his cover photo' : 'Just now'} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
+                                    <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                             </div>
                             <div class="post-text">${post.content}</div>
@@ -387,7 +413,10 @@
                             
                             <div class="post-stats">
                                 <span>${displayLikesStat}</span>
-                                <span>${displayCommentsStat}</span>
+                                <div style="display:flex; gap:10px; color: #b0b3b8;">
+                                    <span>${displayCommentsStat}</span>
+                                    ${displaySharesStat}
+                                </div>
                             </div>
                             
                             <div class="post-footer">
