@@ -35,15 +35,22 @@
         .bio-section { text-align: center; margin-bottom: 20px; }
         .bio-text { font-size: 15px; color: #e4e6eb; margin-bottom: 10px; white-space: pre-wrap; }
         .edit-action-btn { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .primary-save-btn { background-color: #2ecc71; color: #01160b; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        textarea, .edit-input { width: 100%; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 8px; }
+        
+        /* --- এডিট বক্সের ডিজাইন ফিক্স --- */
+        #bio-edit-area, #details-edit-area { padding-top: 10px; }
+        #bio-input { width: 100%; min-height: 80px; padding: 12px; background: #022112; border: 1px solid #1a5c38; border-radius: 8px; color: #fff; font-family: inherit; font-size: 15px; resize: vertical; margin-bottom: 12px; line-height: 1.5; outline: none; }
+        #bio-input:focus { border-color: #2ecc71; }
+        .edit-input { width: 100%; padding: 14px 12px; margin-bottom: 12px; background: #022112; border: 1px solid #1a5c38; border-radius: 8px; color: #fff; font-size: 15px; outline: none; }
+        .edit-input:focus { border-color: #2ecc71; }
+        .primary-save-btn { background-color: #2ecc71; color: #01160b; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-top: 5px; }
+        
         .divider { height: 1px; background-color: #0a2e1a; margin: 15px 0; }
         .details-section { margin-top: 15px; }
-        .details-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #ffffff; }
+        .details-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #ffffff; }
         .details-list { list-style: none; }
-        .details-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; color: #e4e6eb; }
+        .details-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; color: #e4e6eb; }
         
-        /* --- Create Post Box (Updated FB Style) --- */
+        /* --- Create Post Box --- */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin: 8px auto; max-width: 600px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
@@ -58,7 +65,7 @@
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
 
-        /* --- Feed Post Layout (Updated FB Style) --- */
+        /* --- Feed Post Layout --- */
         .feed-post { background-color: #01160b; padding: 12px 0; margin: 0 auto 8px auto; max-width: 600px; }
         .post-header { display: flex; align-items: center; gap: 10px; padding: 0 15px; margin-bottom: 8px; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; color: #01160b; font-weight: bold; overflow: hidden; flex-shrink: 0; }
@@ -70,14 +77,8 @@
         
         .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
         
-        /* --- Action Buttons --- */
-        .post-footer { 
-            display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; 
-            -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
-        }
-        .footer-item { 
-            background-color: rgba(255,255,255,0.08); border-radius: 20px; color: #e4e6eb; cursor: pointer; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; flex: 1; transition: 0.2s;
-        }
+        .post-footer { display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .footer-item { background-color: rgba(255,255,255,0.08); border-radius: 20px; color: #e4e6eb; cursor: pointer; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; flex: 1; transition: 0.2s; }
         .footer-item:active { transform: scale(0.95); background-color: rgba(255,255,255,0.15); }
         .like-container { position: relative; display: flex; flex: 1; justify-content: center; }
         .like-container .footer-item { width: 100%; } 
@@ -88,7 +89,6 @@
         
         .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
-        /* Comments */
         .comments-section { display: none; padding: 10px 15px; border-top: 1px solid #0a2e1a; margin-top: 5px; }
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #3a3b3c; border: none; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
@@ -101,7 +101,7 @@
         .comment-author { font-weight: bold; color: #e4e6eb; font-size: 13px; margin-bottom: 2px; }
         .comment-content { font-size: 14px; color: #e4e6eb; }
 
-        input[type="file"] { display: none; }
+        .hidden { display: none; } input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 10px 20px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 2000; }
     </style>
 </head>
@@ -196,26 +196,20 @@
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
 
+        // অরিজিনাল খাঁজকাটা ব্লুটিকের SVG কোড
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", targetUserId = null, isOwnProfile = true, postImageFile = null;
         window.openComments = {};
 
         const urlParams = new URLSearchParams(window.location.search);
         const urlId = urlParams.get('id');
 
-        // Time Formatter
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
-            const now = new Date();
-            const past = timestamp.toDate();
-            const diffMs = now - past;
-            const diffMins = Math.round(diffMs / 60000);
-            const diffHrs = Math.round(diffMs / 3600000);
-            const diffDays = Math.round(diffMs / 86400000);
-
-            if (diffMins < 1) return "সবেমাত্র";
-            if (diffMins < 60) return `${diffMins} মি.`;
-            if (diffHrs < 24) return `${diffHrs} ঘণ্টা`;
-            if (diffDays < 7) return `${diffDays} দিন`;
+            const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
+            const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
+            if (diffMins < 1) return "সবেমাত্র"; if (diffMins < 60) return `${diffMins} মি.`; if (diffHrs < 24) return `${diffHrs} ঘণ্টা`; if (diffDays < 7) return `${diffDays} দিন`;
             return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
         }
 
@@ -226,15 +220,12 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user; targetUserId = urlId || currentUser.uid; isOwnProfile = (targetUserId === currentUser.uid);
-                
                 const myDoc = await getDoc(doc(db, "users", currentUser.uid));
                 if(myDoc.exists()){ 
-                    currentUserName = myDoc.data().displayName || "User"; 
-                    currentUserPhoto = myDoc.data().profilePic || ""; 
+                    currentUserName = myDoc.data().displayName || "User"; currentUserPhoto = myDoc.data().profilePic || ""; 
                     const avatarBox = document.getElementById('profilePostAvatar');
                     if(currentUserPhoto) avatarBox.innerHTML = `<img src="${currentUserPhoto}">`; else avatarBox.innerText = currentUserName.charAt(0);
                 }
-
                 setupUI(); loadProfileData(); loadProfilePosts();
             } else { window.location.href = "index.html"; }
         });
@@ -252,14 +243,13 @@
             const userDoc = await getDoc(doc(db, "users", targetUserId));
             if (userDoc.exists()) {
                 const userData = userDoc.data(); const dName = userData.displayName || "User";
-                
-                let verifiedBadge = ""; let followerHTML = "";
+                let verifiedHTML = ""; let followerHTML = "";
                 if (dName.toLowerCase().includes("sobuj mia")) {
-                    verifiedBadge = ` <i class="fa-solid fa-circle-check" style="color: #1877F2; font-size: 18px; margin-left: 5px;"></i>`;
+                    verifiedHTML = verifiedSvg;
                     followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
                 }
 
-                document.getElementById('userNameDisplay').innerHTML = dName + verifiedBadge;
+                document.getElementById('userNameDisplay').innerHTML = dName + verifiedHTML;
                 document.getElementById('followerCountDisplay').innerHTML = followerHTML;
                 if (userData.profilePic) { document.getElementById('profilePicDisplay').innerHTML = `<img src="${userData.profilePic}">`; } else { document.getElementById('profilePicDisplay').innerText = dName.charAt(0); }
                 if (userData.coverPic) document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
@@ -277,7 +267,6 @@
 
         document.getElementById('edit-bio-btn').onclick = () => { document.getElementById('bio-display-area').classList.add('hidden'); document.getElementById('bio-edit-area').classList.remove('hidden'); };
         document.getElementById('save-bio-btn').onclick = async () => { const newBio = document.getElementById('bio-input').value; document.getElementById('bio-text').innerText = newBio || "নিজের সম্পর্কে কিছু লিখুন..."; document.getElementById('bio-display-area').classList.remove('hidden'); document.getElementById('bio-edit-area').classList.add('hidden'); await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio }); };
-        
         document.getElementById('edit-details-btn').onclick = () => { document.getElementById('details-display-area').classList.add('hidden'); document.getElementById('details-edit-area').classList.remove('hidden'); };
         document.getElementById('save-details-btn').onclick = async () => { const newWork = document.getElementById('work-input').value; const newEdu = document.getElementById('edu-input').value; const newLoc = document.getElementById('loc-input').value; document.getElementById('work-text').innerText = newWork || "Not added"; document.getElementById('edu-text').innerText = newEdu || "Not added"; document.getElementById('loc-text').innerText = newLoc || "Not added"; document.getElementById('details-display-area').classList.remove('hidden'); document.getElementById('details-edit-area').classList.add('hidden'); await updateDoc(doc(db, "users", currentUser.uid), { work: newWork, edu: newEdu, loc: newLoc }); };
 
@@ -305,12 +294,10 @@
             const myData = myDoc.data();
             const friends = myData.friends || []; const sentRequests = myData.sentRequests || []; const receivedRequests = myData.receivedRequests || [];
             const btn = document.getElementById('friendBtn');
-            
             if(friends.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`; btn.className = "btn-friend friends"; btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!"); } 
             else if(sentRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`; btn.className = "btn-friend cancel"; btn.onclick = () => cancelRequest(); } 
             else if(receivedRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`; btn.className = "btn-friend"; btn.onclick = () => acceptRequest(); } 
             else { btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`; btn.className = "btn-friend"; btn.onclick = () => sendRequest(); }
-
             document.getElementById('messageBtn').onclick = () => { window.location.href = "messages.html"; };
         }
 
@@ -345,9 +332,8 @@
                     const post = postDoc.data(); const postId = postDoc.id; 
                     if(post.uid === targetUserId) {
                         const avatar = post.authorPhoto ? `<img src="${post.authorPhoto}">` : post.author.charAt(0);
-                        
                         const isVIP = post.author.toLowerCase().includes("sobuj mia");
-                        const badge = isVIP ? ` <i class="fa-solid fa-circle-check" style="color: #1877F2; font-size: 15px; margin-left: 5px;"></i>` : "";
+                        const badge = isVIP ? verifiedSvg : "";
 
                         const reactions = post.reactions || {}; 
                         const comments = post.comments || []; 
