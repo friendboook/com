@@ -22,22 +22,34 @@
             width: 100%;
             max-width: 400px;
             padding: 30px 20px;
-            background-color: #01160b;
-            border: 1px solid #0a2e1a;
-            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             animation: fadeIn 0.5s ease-in;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .logo-text { color: #2ecc71; font-size: 35px; font-weight: 800; margin-bottom: 5px; }
-        .subtitle { color: #8c9e94; font-size: 15px; margin-bottom: 25px; }
+        /* লোগো ও শিরোনাম স্টাইল (লগইন পেজের মতো) */
+        .login-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #2ecc71;
+            display: inline-block;
+        }
+        .logo-text { color: #2ecc71; font-size: 40px; font-weight: 800; margin-bottom: 5px; }
+        .subtitle { color: #8c9e94; font-size: 15px; margin-bottom: 30px; }
+
+        /* নামের বক্স পাশাপাশি করার জন্য */
+        .name-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
 
         input {
             width: 100%;
             padding: 15px 20px;
-            margin-bottom: 15px;
             border-radius: 12px;
             border: 1px solid #0f4024;
             background-color: #022112;
@@ -47,11 +59,12 @@
             transition: 0.3s;
         }
         input:focus { border-color: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+        .single-input { margin-bottom: 15px; }
 
         .signup-btn {
             width: 100%;
             padding: 15px;
-            background-color: #1877F2; /* ফেসবুকের মতো নীল বাটন */
+            background-color: #27ae60; /* সবুজ বাটন */
             color: white;
             border: none;
             border-radius: 12px;
@@ -59,13 +72,13 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 5px;
+            margin-top: 10px;
         }
         .signup-btn:active { transform: scale(0.98); }
 
         .login-link {
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #2ecc71;
             text-decoration: none;
             font-weight: bold;
@@ -78,13 +91,24 @@
 <body>
 
     <div class="signup-container">
+        <img src="https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png" class="login-logo">
         <div class="logo-text">FriendBook</div>
         <p class="subtitle">নতুন অ্যাকাউন্ট তৈরি করুন</p>
 
         <form id="signupForm">
-            <input type="text" id="fullName" placeholder="আপনার পুরো নাম" required autocomplete="name">
-            <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
-            <input type="password" id="password" placeholder="নতুন পাসওয়ার্ড (অন্তত ৬ সংখ্যা)" required autocomplete="new-password" minlength="6">
+            <div class="name-row">
+                <input type="text" id="firstName" placeholder="First Name" required>
+                <input type="text" id="lastName" placeholder="Last Name" required>
+            </div>
+            
+            <div class="single-input">
+                <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
+            </div>
+            
+            <div class="single-input">
+                <input type="password" id="password" placeholder="পাসওয়ার্ড (অন্তত ৬ সংখ্যা)" required autocomplete="new-password" minlength="6">
+            </div>
+
             <button type="submit" class="signup-btn" id="signupBtn">অ্যাকাউন্ট খুলুন</button>
             <div id="error-msg"></div>
         </form>
@@ -112,7 +136,9 @@
 
         document.getElementById('signupForm').onsubmit = async (e) => {
             e.preventDefault();
-            const name = document.getElementById('fullName').value.trim();
+            const fName = document.getElementById('firstName').value.trim();
+            const lName = document.getElementById('lastName').value.trim();
+            const fullName = fName + " " + lName;
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('signupBtn');
@@ -123,13 +149,11 @@
             error.style.display = 'none';
 
             try {
-                // ১. ফায়ারবেসে ইউজার তৈরি করা
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // ২. ডাটাবেসে ইউজারের তথ্য সেভ করা
                 await setDoc(doc(db, "users", user.uid), {
-                    displayName: name,
+                    displayName: fullName,
                     email: email,
                     profilePic: "",
                     coverPic: "",
@@ -144,7 +168,6 @@
                     createdAt: serverTimestamp()
                 });
 
-                // ৩. সফল হলে হোমে নিয়ে যাওয়া
                 window.location.href = "home.html";
 
             } catch (err) {
