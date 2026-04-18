@@ -17,8 +17,6 @@
         .search-container input { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; transition: 0.3s; }
         .search-results { position: absolute; top: 110%; left: 0; width: 100%; background: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; max-height: 300px; overflow-y: auto; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
         .search-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid #0a2e1a; cursor: pointer; text-decoration: none; color: white; }
-        .search-avatar { width: 35px; height: 35px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; flex-shrink: 0;}
-        .search-avatar img { width: 100%; height: 100%; object-fit: cover; }
         
         .header-tabs { display: flex; justify-content: space-around; max-width: 600px; margin: 0 auto; padding: 0 5px; }
         .tab-item { position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; color: #a3b1a9; cursor: pointer; border-radius: 8px; transition: all 0.3s; }
@@ -30,7 +28,7 @@
         .user-avatar { width: 40px; height: 40px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- Create Post Box (FB Style) --- */
+        /* --- Create Post Box --- */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
@@ -41,10 +39,11 @@
         #post-image-preview img { width: 100%; display: block; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
 
-        /* --- Stories Section (FB Style) --- */
+        /* --- Stories Section --- */
         .stories-container { background-color: #01160b; padding: 15px 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
         .stories-container::-webkit-scrollbar { display: none; }
-        .story-card { min-width: 110px; height: 180px; border-radius: 12px; position: relative; background: #333; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a; cursor: pointer; }
+        /* স্টোরির কার্ড এখন লম্বাটে (9:16 রেশিও) */
+        .story-card { width: 105px; height: 185px; border-radius: 12px; position: relative; background: #333; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a; cursor: pointer; }
         .story-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
         .story-card.create .story-bg { height: 65%; border-radius: 12px 12px 0 0; background: #022112; display: flex; justify-content: center; align-items: center; color: #2ecc71; font-size: 30px; }
         .story-card.create .create-btn { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); background: #1877F2; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 3px solid #01160b; font-size: 18px; }
@@ -53,22 +52,49 @@
         .story-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .story-text { position: absolute; bottom: 8px; left: 8px; font-size: 12px; font-weight: bold; color: white; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
 
-        /* --- Feed Post Layout (FB Style) --- */
+        /* --- Feed Post Layout --- */
         .feed-post { background-color: #01160b; padding: 12px 0; margin-bottom: 8px; }
         .post-header { display: flex; align-items: center; gap: 10px; padding: 0 15px; margin-bottom: 8px; }
         .post-author { font-weight: bold; color: #e4e6eb; font-size: 15px; display: flex; align-items: center; }
         .post-time { font-size: 12px; color: #b0b3b8; display: flex; align-items: center; gap: 5px;}
         .post-text { color: #e4e6eb; font-size: 15px; padding: 0 15px; margin-bottom: 10px; white-space: pre-wrap; line-height: 1.5; }
-        
-        /* ফুল স্ক্রিন ইমেজের জন্য স্টাইল */
         .post-image { width: 100%; max-height: 500px; object-fit: cover; display: block; border-top: 1px solid #0a2e1a; border-bottom: 1px solid #0a2e1a; }
         
-        .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; border-bottom: 1px solid #0a2e1a; }
-        .post-footer { display: flex; justify-content: space-between; padding: 4px 15px; }
-        .footer-item { color: #b0b3b8; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; flex: 1; border-radius: 6px; transition: 0.2s;}
-        .footer-item:hover { background-color: rgba(255,255,255,0.05); }
+        .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
+        
+        /* --- Action Buttons (FB Style Pill Shapes) --- */
+        .post-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 8px 15px; 
+            gap: 10px; 
+            /* লেখা কপি হয়ে যাওয়া বন্ধ করার কোড */
+            -webkit-touch-callout: none; 
+            -webkit-user-select: none; 
+            -khtml-user-select: none; 
+            -moz-user-select: none; 
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+        .footer-item { 
+            background-color: rgba(255,255,255,0.08); /* গোল ব্যাকগ্রাউন্ড */
+            border-radius: 20px; /* পিল শেপ */
+            color: #e4e6eb; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            padding: 8px 0; 
+            flex: 1; 
+            transition: 0.2s;
+        }
+        .footer-item:active { transform: scale(0.95); background-color: rgba(255,255,255,0.15); }
         
         .like-container { position: relative; display: flex; flex: 1; justify-content: center; }
+        .like-container .footer-item { width: 100%; } /* লাইক বাটন পুরো জায়গা নেবে */
         .reaction-box { position: absolute; bottom: 120%; left: 0; background: #242526; border: 1px solid #3a3b3c; border-radius: 30px; padding: 5px 10px; display: flex; gap: 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6);}
         .like-container:hover .reaction-box { opacity: 1; visibility: visible; }
         .reaction-icon { font-size: 26px; cursor: pointer; transition: 0.2s; }
@@ -78,7 +104,7 @@
         .action-like { color: #1877F2 !important; } .action-love { color: #F33E58 !important; } .action-haha, .action-wow, .action-sad { color: #F7B125 !important; } .action-angry { color: #E9710F !important; }
         
         /* Comments */
-        .comments-section { display: none; padding: 10px 15px; border-top: 1px solid #0a2e1a; }
+        .comments-section { display: none; padding: 10px 15px; border-top: 1px solid #0a2e1a; margin-top: 5px;}
         .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-input-area input { flex-grow: 1; background: #3a3b3c; border: none; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
         .comment-btn { background: transparent; color: #1877F2; border: none; font-weight: bold; cursor: pointer; font-size: 15px;}
@@ -147,6 +173,16 @@
                 <div class="story-text">Sadia Islam</div>
             </div>
             <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300" class="story-bg">
+                <div class="story-avatar">R</div>
+                <div class="story-text">Rafi Khan</div>
+            </div>
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1506744626753-dba37c152814?auto=format&fit=crop&w=300" class="story-bg">
+                <div class="story-avatar">A</div>
+                <div class="story-text">Arif</div>
+            </div>
+            <div class="story-card">
                 <img src="https://images.unsplash.com/photo-1444464666168-49b626f41143?auto=format&fit=crop&w=300" class="story-bg">
                 <div class="story-avatar">F</div>
                 <div class="story-text">Farid Ahmed</div>
@@ -169,7 +205,6 @@
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
 
-        // Show Post Button when typing
         document.getElementById('newPostText').addEventListener('input', function() {
             document.getElementById('postActionsArea').style.display = (this.value.trim() || postImageFile) ? 'flex' : 'none';
         });
@@ -284,31 +319,45 @@
                     const reactionCount = Object.keys(reactions).length;
                     const myReaction = reactions[currentUser.uid];
                     
-                    let likeBtnHTML = '<i class="fa-regular fa-thumbs-up"></i> Like'; 
-                    let likeBtnClass = "footer-item";
-                    if(myReaction) { 
-                        if(myReaction === 'like') { likeBtnHTML = '<i class="fa-solid fa-thumbs-up"></i> Like'; likeBtnClass += ' action-like'; } 
-                        else if(myReaction === 'love') { likeBtnHTML = '❤️ Love'; likeBtnClass += ' action-love'; } 
-                        else if(myReaction === 'haha') { likeBtnHTML = '😂 Haha'; likeBtnClass += ' action-haha'; }
-                        else if(myReaction === 'wow') { likeBtnHTML = '😲 Wow'; likeBtnClass += ' action-wow'; }
-                        else if(myReaction === 'sad') { likeBtnHTML = '😢 Sad'; likeBtnClass += ' action-sad'; }
-                        else if(myReaction === 'angry') { likeBtnHTML = '😡 Angry'; likeBtnClass += ' action-angry'; }
-                    }
-                    
-                    let displayLikes = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${reactionCount}` : '';
-                    let displayComments = comments.length > 0 ? `${comments.length} comments` : '';
-                    let displayShares = '';
+                    // --- Button Content Logic (FB Mobile Style: [Icon] [Number]) ---
+                    let displayLikesBtn = reactionCount > 0 ? reactionCount : '';
+                    let displayCommentsBtn = comments.length > 0 ? comments.length : '';
+                    let displaySharesBtn = ''; // Share count
+
+                    let displayLikesStat = reactionCount > 0 ? `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${reactionCount}` : '';
+                    let displayCommentsStat = comments.length > 0 ? `${comments.length} comments` : '';
 
                     if(isVIP) {
                         let n1 = (postId.charCodeAt(0) % 8) + 2; 
                         let n2 = (postId.charCodeAt(1) % 9);     
                         let n3 = (postId.charCodeAt(2) % 7) + 1; 
-                        displayLikes = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${n1}.${n2}M`;
-                        displayComments = `${n2}.${n3}M comments`;
-                        displayShares = `<span>${n3}.${n1}M shares</span>`;
+                        
+                        // Fake stats
+                        displayLikesStat = `<i class="fa-solid fa-thumbs-up" style="color:#1877F2; background: white; border-radius: 50%; padding: 2px;"></i> ${n1}.${n2}M`;
+                        displayCommentsStat = `${n2}.${n3}M comments`;
+                        
+                        // Fake buttons
+                        displayLikesBtn = `${n1}.${n2}M`;
+                        displayCommentsBtn = `${n2}.${n3}M`;
                     }
 
-                    // ইমেজের চারপাশে কোনো প্যাডিং নেই, ফুল স্ক্রিন
+                    // My Reaction Icon
+                    let likeIcon = '<i class="fa-regular fa-thumbs-up"></i>'; 
+                    let likeClass = "footer-item";
+                    if(myReaction) { 
+                        if(myReaction === 'like') { likeIcon = '<i class="fa-solid fa-thumbs-up"></i>'; likeClass += ' action-like'; } 
+                        else if(myReaction === 'love') { likeIcon = '❤️'; likeClass += ' action-love'; } 
+                        else if(myReaction === 'haha') { likeIcon = '😂'; likeClass += ' action-haha'; }
+                        else if(myReaction === 'wow') { likeIcon = '😲'; likeClass += ' action-wow'; }
+                        else if(myReaction === 'sad') { likeIcon = '😢'; likeClass += ' action-sad'; }
+                        else if(myReaction === 'angry') { likeIcon = '😡'; likeClass += ' action-angry'; }
+                    }
+
+                    // Button Strings (No "Like" word, just icon + count if count > 0)
+                    let likeBtnHTML = `${likeIcon} ${displayLikesBtn}`;
+                    let commentBtnHTML = `<i class="fa-regular fa-message"></i> ${displayCommentsBtn}`;
+                    let shareBtnHTML = `<i class="fa-solid fa-share"></i>`;
+                    
                     let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
                     
                     let cList = ""; comments.forEach(c => { 
@@ -335,16 +384,15 @@
                             </div>
                             <div class="post-text">${post.content}</div>
                             ${imageHTML}
+                            
                             <div class="post-stats">
-                                <span>${displayLikes}</span>
-                                <div style="display:flex; gap:10px;">
-                                    <span>${displayComments}</span>
-                                    ${displayShares}
-                                </div>
+                                <span>${displayLikesStat}</span>
+                                <span>${displayCommentsStat}</span>
                             </div>
+                            
                             <div class="post-footer">
                                 <div class="like-container">
-                                    <span class="${likeBtnClass}" onclick="toggleLike('${postId}', '${post.uid}', ${!!myReaction})">${likeBtnHTML}</span>
+                                    <span class="${likeClass}" onclick="toggleLike('${postId}', '${post.uid}', ${!!myReaction})">${likeBtnHTML}</span>
                                     <div class="reaction-box">
                                         <span class="reaction-icon" onclick="addReaction('${postId}', '${post.uid}', 'like')">👍</span>
                                         <span class="reaction-icon" onclick="addReaction('${postId}', '${post.uid}', 'love')">❤️</span>
@@ -354,9 +402,10 @@
                                         <span class="reaction-icon" onclick="addReaction('${postId}', '${post.uid}', 'angry')">😡</span>
                                     </div>
                                 </div>
-                                <span class="footer-item" onclick="toggleCommentSection('${postId}')"><i class="fa-regular fa-comment"></i> Comment</span>
-                                <span class="footer-item" onclick="alert('Share feature coming soon!')"><i class="fa-solid fa-share"></i> Share</span>
+                                <span class="footer-item" onclick="toggleCommentSection('${postId}')">${commentBtnHTML}</span>
+                                <span class="footer-item" onclick="alert('Share feature coming soon!')">${shareBtnHTML}</span>
                             </div>
+                            
                             <div class="comments-section" id="comments-${postId}" style="display: ${isCommentOpen};">
                                 <div class="comment-input-area"><input type="text" id="comment-input-${postId}" placeholder="Write a comment..."><button class="comment-btn" onclick="sendComment('${postId}', '${post.uid}')">Send</button></div>
                                 <div class="comment-list">${cList}</div>
