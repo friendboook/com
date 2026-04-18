@@ -9,17 +9,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding-bottom: 30px; }
         
-        /* --- Header & Search --- */
+        /* --- Header & Search (New FB Layout) --- */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .header-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; max-width: 600px; margin: 0 auto; }
-        .logo { color: #2ecc71; font-size: 26px; font-weight: 800; text-decoration: none; }
-        .search-container { position: relative; flex-grow: 1; max-width: 250px; margin-left: 15px; }
-        .search-container input { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; transition: 0.3s; }
-        .search-results { position: absolute; top: 110%; left: 0; width: 100%; background: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; max-height: 300px; overflow-y: auto; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+        .logo { color: #2ecc71; font-size: 28px; font-weight: 800; text-decoration: none; letter-spacing: -0.5px;}
+        
+        /* Top Right Icons */
+        .top-icons { display: flex; gap: 10px; }
+        .icon-btn { width: 38px; height: 38px; border-radius: 50%; background-color: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; transition: 0.2s; color: #e4e6eb; }
+        .icon-btn:active { transform: scale(0.9); background-color: rgba(255,255,255,0.2); }
+
+        /* Hidden Search Overlay */
+        .search-container-overlay { padding: 10px 15px; background: #01160b; border-bottom: 1px solid #0a2e1a; position: relative; display: none; }
+        .search-container-overlay input { width: 100%; padding: 10px 20px; border-radius: 30px; border: 1px solid #0f4024; background-color: #022112; color: #ffffff; outline: none; font-size: 15px; }
+        .search-container-overlay input:focus { border-color: #2ecc71; box-shadow: 0 0 8px rgba(46, 204, 113, 0.2); }
+        
+        .search-results { position: absolute; top: 100%; left: 0; width: 100%; background: #01160b; border-bottom: 1px solid #0a2e1a; max-height: 300px; overflow-y: auto; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
         .search-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid #0a2e1a; cursor: pointer; text-decoration: none; color: white; }
         .search-avatar { width: 35px; height: 35px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; flex-shrink: 0;}
         .search-avatar img { width: 100%; height: 100%; object-fit: cover; }
         
+        /* Navigation Tabs */
         .header-tabs { display: flex; justify-content: space-around; max-width: 600px; margin: 0 auto; padding: 0 5px; }
         .tab-item { position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; color: #a3b1a9; cursor: pointer; border-radius: 8px; transition: all 0.3s; }
         .tab-item.active { color: #2ecc71; }
@@ -29,15 +39,18 @@
         .main-content { max-width: 600px; margin: 0 auto; }
         .user-avatar { width: 40px; height: 40px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        /* Active Dot Status */
+        .active-dot { position: absolute; bottom: 0; right: 0; width: 13px; height: 13px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; }
 
         /* --- Create Post Box --- */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
         .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 20px; color: #ffffff; outline: none; font-size: 15px; }
-        .gallery-icon-label { display: flex; align-items: center; justify-content: center; padding: 5px; cursor: pointer; }
-        .gallery-icon-label i { color: #45bd62; font-size: 28px; transition: 0.2s; }
-        .gallery-icon-label:active i { transform: scale(0.9); }
+        .gallery-icon-label { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; width: 50px; }
+        .gallery-icon-label i { color: #45bd62; font-size: 24px; transition: 0.2s; margin-bottom: 2px; }
+        .gallery-icon-label span { font-size: 12px; font-weight: 600; color: #b0b3b8; }
+        .gallery-icon-label:active { transform: scale(0.9); }
         
         .post-actions { border-top: 1px solid #0a2e1a; padding-top: 10px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
         #post-image-preview { display: none; margin-top: 10px; border-radius: 10px; overflow: hidden; position: relative; }
@@ -112,28 +125,43 @@
     <header>
         <div class="header-top">
             <a href="home.html" class="logo">FriendBook</a>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search..." autocomplete="off">
-                <div class="search-results" id="searchResults"></div>
+            <div class="top-icons">
+                <div class="icon-btn" onclick="alert('স্টোরি বা পোস্ট তৈরি করুন')"><i class="fa-solid fa-plus"></i></div>
+                <div class="icon-btn" id="searchToggleBtn"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fa-solid fa-bars"></i></div>
             </div>
         </div>
+        
+        <div class="search-container-overlay" id="searchContainerOverlay">
+            <input type="text" id="searchInput" placeholder="Search FriendBook..." autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        
         <div class="header-tabs">
             <div class="tab-item active" onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i></div>
-            <div class="tab-item" onclick="window.location.href='messages.html'"><i class="fa-solid fa-comment-dots"></i><span class="nav-badge" id="msg-badge">0</span></div>
-            <div class="tab-item" onclick="window.location.href='notifications.html'"><i class="fa-solid fa-bell"></i><span class="nav-badge" id="notif-badge">0</span></div>
-            <div class="tab-item" onclick="window.location.href='profile.html'"><i class="fa-regular fa-circle-user"></i></div>
+            <div class="tab-item" onclick="alert('Friends tab coming soon!')"><i class="fa-solid fa-user-group"></i></div>
+            <div class="tab-item" onclick="window.location.href='messages.html'">
+                <i class="fa-brands fa-facebook-messenger"></i><span class="nav-badge" id="msg-badge">0</span>
+            </div>
+            <div class="tab-item" onclick="window.location.href='notifications.html'">
+                <i class="fa-solid fa-bell"></i><span class="nav-badge" id="notif-badge">0</span>
+            </div>
         </div>
     </header>
 
     <div class="main-content">
         <div class="create-post-box">
             <div class="post-input-top">
-                <a href="profile.html"><div class="user-avatar" id="profileDisplay">U</div></a>
+                <a href="profile.html" style="position: relative; display: block;">
+                    <div class="user-avatar" id="profileDisplay">U</div>
+                    <div class="active-dot"></div>
+                </a>
                 <div class="fake-input-box">
                     <input type="text" id="newPostText" placeholder="What's on your mind?">
                 </div>
                 <label for="postImageUpload" class="gallery-icon-label">
                     <i class="fa-solid fa-images"></i>
+                    <span>Photo</span>
                 </label>
                 <input type="file" id="postImageUpload" accept="image/*">
             </div>
@@ -143,13 +171,14 @@
             </div>
         </div>
 
-        <input type="file" id="storyUploadInput" accept="image/*"> <div class="stories-container" id="stories-feed">
+        <input type="file" id="storyUploadInput" accept="image/*">
+        <div class="stories-container" id="stories-feed">
             <div class="story-card create" onclick="document.getElementById('storyUploadInput').click()">
                 <div class="story-bg" id="storyMyBg"></div>
                 <div class="create-btn"><i class="fa-solid fa-plus"></i></div>
                 <div class="story-text">Create story</div>
             </div>
-            </div>
+        </div>
 
         <div id="newsfeed"></div>
     </div>
@@ -168,6 +197,18 @@
     
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
+    <script>
+        document.getElementById('searchToggleBtn').onclick = () => {
+            const searchBox = document.getElementById('searchContainerOverlay');
+            if (searchBox.style.display === 'none' || searchBox.style.display === '') {
+                searchBox.style.display = 'block';
+                document.getElementById('searchInput').focus();
+            } else {
+                searchBox.style.display = 'none';
+            }
+        };
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
@@ -181,7 +222,7 @@
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {};
-        let storyTimer = null; // স্টোরি অটো কাটার জন্য টাইমার
+        let storyTimer = null; 
 
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
@@ -214,13 +255,11 @@
                     }
                 });
                 
-                loadAllPosts(); loadAllUsersForSearch(); loadStories(); // স্টোরি লোড কল
+                loadAllPosts(); loadAllUsersForSearch(); loadStories(); 
             } else { window.location.href = "index.html"; }
         });
 
         // --- STORY LOGIC START ---
-        
-        // ১. স্টোরি আপলোড
         document.getElementById('storyUploadInput').onchange = async (e) => {
             if(e.target.files.length > 0) {
                 const file = e.target.files[0];
@@ -239,13 +278,10 @@
             }
         };
 
-        // ২. ডাটাবেস থেকে স্টোরি লোড
         function loadStories() {
             const q = query(collection(db, "stories"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
                 const feed = document.getElementById('stories-feed');
-                
-                // ডিফল্ট Create Box রেখে বাকি সব মুছে ফেলা
                 feed.innerHTML = `
                     <div class="story-card create" onclick="document.getElementById('storyUploadInput').click()">
                         <div class="story-bg" id="storyMyBg">${currentUserPhoto ? `<img src="${currentUserPhoto}" style="width:100%; height:100%; object-fit:cover;">` : currentUserName.charAt(0)}</div>
@@ -259,10 +295,8 @@
                     if (!story.timestamp) return;
                     
                     const storyTime = story.timestamp.toMillis();
-                    // ২৪ ঘণ্টার (86400000 ms) পুরোনো স্টোরি দেখাবে না
                     if (now - storyTime < 86400000) {
                         const avatar = story.authorPhoto ? `<img src="${story.authorPhoto}">` : story.author.charAt(0);
-                        // viewStory ফাংশন কল করার জন্য ডাটা রেডি করা
                         const storyHTML = `
                             <div class="story-card" onclick="viewStory('${story.image}', '${story.author}', '${story.authorPhoto || ''}')">
                                 <img src="${story.image}" class="story-bg">
@@ -275,7 +309,6 @@
             });
         }
 
-        // ৩. স্টোরি ভিউয়ার এবং টাইমার
         window.viewStory = (image, author, authorPhoto) => {
             document.getElementById('storyModalImage').src = image;
             const badge = author.toLowerCase().includes("sobuj mia") ? verifiedSvg : "";
@@ -286,26 +319,16 @@
             const progressFill = document.getElementById('storyProgressFill');
             
             modal.style.display = 'flex';
-            
-            // প্রোগ্রেস বার এনিমেশন শুরু
             progressFill.style.transition = 'none';
             progressFill.style.width = '0%';
             
-            setTimeout(() => {
-                progressFill.style.transition = 'width 5s linear';
-                progressFill.style.width = '100%';
-            }, 50);
-
-            // ৫ সেকেন্ড পর অটো কেটে যাবে
-            clearTimeout(storyTimer);
-            storyTimer = setTimeout(() => { closeStory(); }, 5000);
+            setTimeout(() => { progressFill.style.transition = 'width 5s linear'; progressFill.style.width = '100%'; }, 50);
+            clearTimeout(storyTimer); storyTimer = setTimeout(() => { closeStory(); }, 5000);
         };
 
         window.closeStory = () => {
-            clearTimeout(storyTimer);
-            document.getElementById('storyModal').style.display = 'none';
-            document.getElementById('storyProgressFill').style.width = '0%';
-            document.getElementById('storyModalImage').src = '';
+            clearTimeout(storyTimer); document.getElementById('storyModal').style.display = 'none';
+            document.getElementById('storyProgressFill').style.width = '0%'; document.getElementById('storyModalImage').src = '';
         };
 
         // --- STORY LOGIC END ---
@@ -325,7 +348,6 @@
             }
             searchResults.style.display = 'block';
         });
-        document.addEventListener('click', (e) => { if(!e.target.closest('.search-container')) searchResults.style.display = 'none'; });
 
         document.getElementById('postImageUpload').onchange = (e) => { 
             if(e.target.files.length > 0) { 
@@ -452,7 +474,7 @@
                                         <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}</div></a>
                                         ${badge}
                                     </div>
-                                    <div class="post-time">${post.image ? 'Updated his photo' : 'Just now'} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
+                                    <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                             </div>
                             <div class="post-text">${post.content}</div>
