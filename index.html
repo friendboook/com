@@ -30,18 +30,39 @@
             z-index: 9999;
             transition: opacity 0.8s ease-out;
         }
+        
+        /* লোগো এখন স্থির এবং গোল থাকবে */
         .splash-logo {
             width: 120px;
             height: 120px;
-            border-radius: 50%; /* গোল সেপ */
+            border-radius: 50%;
             object-fit: cover;
-            animation: pulse 2s infinite ease-in-out;
         }
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.8; }
+
+        /* ৫টি ডটের এনিমেশন */
+        .loading-dots {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
         }
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ffffff; /* প্রথমে সাদা */
+            animation: fillGreen 0.3s forwards; /* সবুজ হওয়ার এনিমেশন */
+        }
+        /* এক এক করে ডটগুলো সবুজ হবে */
+        .loading-dots span:nth-child(1) { animation-delay: 0.3s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.6s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.9s; }
+        .loading-dots span:nth-child(4) { animation-delay: 1.2s; }
+        .loading-dots span:nth-child(5) { animation-delay: 1.5s; }
+
+        @keyframes fillGreen {
+            to { background-color: #2ecc71; transform: scale(1.1); }
+        }
+
         .from-green {
             position: absolute;
             bottom: 50px;
@@ -63,7 +84,6 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* লগইন পেজের গোল লোগো */
         .login-logo {
             width: 90px;
             height: 90px;
@@ -121,15 +141,21 @@
         .signup-link:hover { background-color: #2ecc71; color: #000a05; }
 
         #error-msg { color: #ff4757; font-size: 14px; margin-top: 10px; display: none; }
-
-        .app-dl { margin-top: 40px; color: #8c9e94; font-size: 13px; }
-        .app-dl a { color: #ffffff; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <img src="https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png" class="splash-logo">
+        
+        <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
         <div class="from-green">FriendBook</div>
     </div>
 
@@ -146,11 +172,6 @@
 
         <div class="divider"></div>
         <a href="signup.html" class="signup-link">নতুন অ্যাকাউন্ট খুলুন</a>
-
-        <div class="app-dl">
-            <p>সেরা অভিজ্ঞতার জন্য অ্যাপটি ব্যবহার করুন</p>
-            <a href="FriendBook.apk"><i class="fa-brands fa-android" style="font-size: 20px;"></i> Download APK</a>
-        </div>
     </div>
 
     <script type="module">
@@ -169,6 +190,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // লগইন স্ট্যাটাস চেক এবং স্প্ল্যাশ স্ক্রিন টাইমার (আগের মতোই আছে)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setTimeout(() => { window.location.href = "home.html"; }, 2500);
@@ -184,6 +206,7 @@
             }
         });
 
+        // লগইন ফর্ম সাবমিট (আগের মতোই আছে)
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
