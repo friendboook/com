@@ -68,11 +68,12 @@
                         text = "আপনার পোস্টে রিয়েক্ট করেছে।";
                     } else if(notif.type === 'comment') {
                         text = `আপনার পোস্টে কমেন্ট করেছে: "${notif.commentText}"`;
+                    } else if(notif.type === 'story_react') {
+                        text = `আপনার স্টোরিতে রিয়েক্ট করেছে ${notif.emoji}`;
+                    } else if(notif.type === 'follow') {
+                        text = "আপনাকে ফলো করেছে।";
                     } else if(notif.type === 'accepted') {
                         text = notif.text;
-                    } else if(notif.type === 'story_react') {
-                        // স্টোরির রিয়েক্ট হলে এখানে ইমোজি সহ দেখাবে
-                        text = `আপনার স্টোরিতে রিয়েক্ট করেছে ${notif.emoji}`;
                     }
 
                     const avatar = notif.senderPhoto ? `<img src="${notif.senderPhoto}">` : notif.senderName.charAt(0);
