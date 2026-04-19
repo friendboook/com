@@ -76,9 +76,18 @@
         
         /* --- Bio Styling & Border --- */
         .bio-section { text-align: center; margin-bottom: 20px; position: relative;}
-        .bio-text { font-size: 15px; color: #e4e6eb; white-space: pre-wrap; line-height: 1.6;}
+        .bio-text { font-size: 15px; color: #e4e6eb; white-space: pre-wrap; line-height: 1.6; transition: 0.3s;}
         
-        /* --- NEW: Golden Gradient Rounded Border only for Admin --- */
+        /* --- NEW: Golden Gradient Text for Bio (Admin Only) --- */
+        .admin-bio-text {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            text-shadow: 0px 1px 3px rgba(241, 196, 15, 0.2);
+        }
+
+        /* --- Golden Gradient Rounded Border only for Admin --- */
         .admin-bio-border {
             border: 2px solid transparent;
             border-radius: 20px;
@@ -310,10 +319,11 @@
                         adminTag = `<span class="admin-badge-tag"><i class="fa-solid fa-crown"></i> Admin</span>`;
                         document.getElementById('profilePicDisplay').classList.add('admin-glow-avatar');
                         
-                        // NEW: Admin Bio Border Class
+                        // Admin Bio Border and Golden Text Class
                         document.getElementById('bio-container-wrapper').classList.add('admin-bio-border');
+                        document.getElementById('bio-text').classList.add('admin-bio-text');
 
-                        // Typing animation logic (stays the same)
+                        // Typing animation logic
                         document.getElementById('admin-typing-container').style.display = 'block';
                         if (!window.typingStarted) {
                             window.typingStarted = true;
@@ -334,8 +344,9 @@
                     } else {
                         document.getElementById('profilePicDisplay').classList.remove('admin-glow-avatar');
                         document.getElementById('admin-typing-container').style.display = 'none';
-                        // Remove admin border class for other users
+                        // Remove admin styling for other users
                         document.getElementById('bio-container-wrapper').classList.remove('admin-bio-border');
+                        document.getElementById('bio-text').classList.remove('admin-bio-text');
                     }
                     // --- VIP ADMIN MAGIC END ---
 
