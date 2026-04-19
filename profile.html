@@ -18,8 +18,28 @@
         
         .profile-header { position: relative; padding: 0 20px; margin-top: -60px; display: flex; flex-direction: column; align-items: center; z-index: 50; text-align: center; }
         .profile-pic-container { position: relative; width: 140px; height: 140px; }
-        .profile-pic { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #01160b; background-color: #2ecc71; object-fit: cover; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #000a05; font-weight: bold; overflow: hidden; }
+        .profile-pic { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #01160b; background-color: #2ecc71; object-fit: cover; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #000a05; font-weight: bold; overflow: hidden; transition: 0.3s;}
         .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* --- NEW: VIP Admin Styles --- */
+        .admin-glow-avatar {
+            border: 4px solid #f1c40f !important; /* সোনালী বর্ডার */
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.6) !important; /* সোনালী আভা */
+        }
+        .admin-badge-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: #000;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(241, 196, 15, 0.5);
+            letter-spacing: 0.5px;
+        }
+
         .edit-profile-btn { position: absolute; bottom: 10px; right: 5px; background-color: #3a3b3c; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #01160b; z-index: 60; }
         .profile-name { margin-top: 12px; font-size: 26px; font-weight: 600; color: #ffffff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.3px; }
         .follower-count { font-size: 15px; color: #b0b3b8; margin-top: 4px; }
@@ -228,30 +248,36 @@
         }
 
         async function loadProfileData() {
-            // রিয়েল-টাইম অন-স্ন্যাপশট ব্যবহার করে ডাটা লোড করা হচ্ছে যাতে ফলো করলে সাথে সাথে বাড়ে
             onSnapshot(doc(db, "users", targetUserId), (userDoc) => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data(); const dName = userData.displayName || "User";
                     let verifiedHTML = ""; let followerHTML = "";
+                    let adminTag = ""; // নতুন অ্যাডমিন ব্যাজের জন্য
                     
-                    // ফলোয়ার কাউন্ট
                     const followersCount = userData.followers ? userData.followers.length : 0;
                     const followingCount = userData.following ? userData.following.length : 0;
-                    
                     followerHTML = `<span>${followersCount}</span> followers &nbsp; • &nbsp; <span>${followingCount}</span> following`;
 
-                    // ভিআইপি চেক (আপনার আইডি) - কোনো পরিবর্তন হবে না
+                    // --- VIP ADMIN MAGIC START ---
                     if (dName.toLowerCase().includes("sobuj mia")) {
                         verifiedHTML = verifiedSvg;
                         followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
+                        // অ্যাডমিন ব্যাজ
+                        adminTag = `<span class="admin-badge-tag"><i class="fa-solid fa-crown"></i> Admin</span>`;
+                        // প্রোফাইল ছবিতে গোল্ডেন গ্লো
+                        document.getElementById('profilePicDisplay').classList.add('admin-glow-avatar');
+                    } else {
+                        document.getElementById('profilePicDisplay').classList.remove('admin-glow-avatar');
                     }
+                    // --- VIP ADMIN MAGIC END ---
 
-                    document.getElementById('userNameDisplay').innerHTML = `<span style="display:flex; align-items:center;">${dName}${verifiedHTML}</span>`;
+                    document.getElementById('userNameDisplay').innerHTML = `<span style="display:flex; align-items:center;">${dName}${verifiedHTML}${adminTag}</span>`;
                     document.getElementById('followerCountDisplay').innerHTML = followerHTML;
+                    
                     if (userData.profilePic) { document.getElementById('profilePicDisplay').innerHTML = `<img src="${userData.profilePic}">`; } else { document.getElementById('profilePicDisplay').innerText = dName.charAt(0); }
                     if (userData.coverPic) document.getElementById('coverPhotoDisplay').style.backgroundImage = `url(${userData.coverPic})`;
                     
-                    if(document.getElementById('bio-input').value === "") { // একবার লোড হলে আর বারবার টেক্সটবক্স ওভাররাইট করবে না
+                    if(document.getElementById('bio-input').value === "") {
                         document.getElementById('bio-text').innerText = userData.bio || (isOwnProfile ? "নিজের সম্পর্কে কিছু লিখুন..." : "No bio added.");
                         document.getElementById('bio-input').value = userData.bio || "";
                         document.getElementById('work-text').innerText = userData.work || "Not added";
