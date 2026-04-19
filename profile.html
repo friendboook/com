@@ -21,10 +21,10 @@
         .profile-pic { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #01160b; background-color: #2ecc71; object-fit: cover; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #000a05; font-weight: bold; overflow: hidden; transition: 0.3s;}
         .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* --- NEW: VIP Admin Styles --- */
+        /* --- VIP Admin Styles --- */
         .admin-glow-avatar {
-            border: 4px solid #f1c40f !important; /* সোনালী বর্ডার */
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.6) !important; /* সোনালী আভা */
+            border: 4px solid #f1c40f !important;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.6) !important;
         }
         .admin-badge-tag {
             display: inline-block;
@@ -38,6 +38,29 @@
             text-transform: uppercase;
             box-shadow: 0 2px 8px rgba(241, 196, 15, 0.5);
             letter-spacing: 0.5px;
+        }
+
+        /* --- NEW: Typing Animation Styles --- */
+        .golden-gradient-text {
+            background: linear-gradient(135deg, #f39c12, #f1c40f, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            text-shadow: 0px 2px 10px rgba(241, 196, 15, 0.2);
+            letter-spacing: 1px;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 22px;
+            background-color: #f1c40f;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: blinkCursor 0.8s infinite;
+        }
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         .edit-profile-btn { position: absolute; bottom: 10px; right: 5px; background-color: #3a3b3c; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #01160b; z-index: 60; }
@@ -143,6 +166,11 @@
         </div>
 
         <div class="profile-body">
+            
+            <div id="admin-typing-container" style="display: none; text-align: center; margin-bottom: 12px; font-size: 22px;">
+                <span id="admin-typing-text" class="golden-gradient-text"></span><span class="typing-cursor"></span>
+            </div>
+
             <div class="bio-section">
                 <div id="bio-display-area">
                     <div class="bio-text" id="bio-text">নিজের সম্পর্কে কিছু লিখুন...</div>
@@ -252,7 +280,7 @@
                 if (userDoc.exists()) {
                     const userData = userDoc.data(); const dName = userData.displayName || "User";
                     let verifiedHTML = ""; let followerHTML = "";
-                    let adminTag = ""; // নতুন অ্যাডমিন ব্যাজের জন্য
+                    let adminTag = "";
                     
                     const followersCount = userData.followers ? userData.followers.length : 0;
                     const followingCount = userData.following ? userData.following.length : 0;
@@ -262,12 +290,42 @@
                     if (dName.toLowerCase().includes("sobuj mia")) {
                         verifiedHTML = verifiedSvg;
                         followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
-                        // অ্যাডমিন ব্যাজ
                         adminTag = `<span class="admin-badge-tag"><i class="fa-solid fa-crown"></i> Admin</span>`;
-                        // প্রোফাইল ছবিতে গোল্ডেন গ্লো
                         document.getElementById('profilePicDisplay').classList.add('admin-glow-avatar');
+                        
+                        // Show and start typing animation
+                        document.getElementById('admin-typing-container').style.display = 'block';
+                        if (!window.typingStarted) {
+                            window.typingStarted = true;
+                            const words = ["Designer", "Developer", "Programmer"];
+                            let wordIndex = 0; let charIndex = 0; let isDeleting = false;
+                            const typingTextSpan = document.getElementById('admin-typing-text');
+
+                            function typeEffect() {
+                                const currentWord = words[wordIndex];
+                                if (isDeleting) {
+                                    typingTextSpan.textContent = currentWord.substring(0, charIndex - 1);
+                                    charIndex--;
+                                } else {
+                                    typingTextSpan.textContent = currentWord.substring(0, charIndex + 1);
+                                    charIndex++;
+                                }
+                                let typingSpeed = isDeleting ? 60 : 120;
+                                if (!isDeleting && charIndex === currentWord.length) {
+                                    typingSpeed = 1500; 
+                                    isDeleting = true;
+                                } else if (isDeleting && charIndex === 0) {
+                                    isDeleting = false;
+                                    wordIndex = (wordIndex + 1) % words.length;
+                                    typingSpeed = 500; 
+                                }
+                                setTimeout(typeEffect, typingSpeed);
+                            }
+                            typeEffect();
+                        }
                     } else {
                         document.getElementById('profilePicDisplay').classList.remove('admin-glow-avatar');
+                        document.getElementById('admin-typing-container').style.display = 'none';
                     }
                     // --- VIP ADMIN MAGIC END ---
 
