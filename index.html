@@ -3,152 +3,237 @@
   <link rel="manifest" href="manifest.json">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FriendBook - Download Premium App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FriendBook - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Premium Dark Green Theme CSS */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0a1f15 0%, #103322 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #000a05; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             height: 100vh;
-            color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */
-        .bg-glow {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            background: #00ff73;
-            filter: blur(150px);
-            opacity: 0.15;
-            top: -50px;
-            right: -50px;
-            border-radius: 50%;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            background: rgba(18, 43, 30, 0.6);
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            max-width: 350px;
-            width: 90%;
-        }
-
-        /* প্রিমিয়াম চারকোনা (Rounded Corners) লোগো স্টাইল */
-        .logo-container {
-            width: 100px; /* আগের চেয়ে একটু ছোট সাইজ */
-            height: 100px; /* আগের চেয়ে একটু ছোট সাইজ */
-            margin: 0 auto 25px;
-            border-radius: 18px; /* চারকোনা কিন্তু কোণ হালকা বাঁকানো */
-            overflow: hidden;
-            border: 3px solid #00c464; /* সবুজ বর্ডার */
-            box-shadow: 0 0 20px rgba(0, 196, 100, 0.3); /* গ্লো ইফেক্ট */
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #fff; /* লোগোর ব্যাকগ্রাউন্ড সাদা */
-            padding: 3px; /* বর্ডারের ভেতরের ফাকা জায়গা */
+            overflow: hidden;
         }
 
-        .logo-container img {
-            width: 100%;
-            height: 100%;
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000a05;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        /* লোগো এখন স্থির এবং গোল থাকবে */
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
             object-fit: cover;
-            border-radius: 14px; /* ইমেজটির কোণও হালকা বাঁকানো থাকবে */
         }
 
-        .brand-name {
-            color: #ffffff;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        /* ৫টি ডটের এনিমেশন */
+        .loading-dots {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ffffff; /* প্রথমে সাদা */
+            animation: fillGreen 0.3s forwards; /* সবুজ হওয়ার এনিমেশন */
+        }
+        /* এক এক করে ডটগুলো সবুজ হবে */
+        .loading-dots span:nth-child(1) { animation-delay: 0.3s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.6s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.9s; }
+        .loading-dots span:nth-child(4) { animation-delay: 1.2s; }
+        .loading-dots span:nth-child(5) { animation-delay: 1.5s; }
+
+        @keyframes fillGreen {
+            to { background-color: #2ecc71; transform: scale(1.1); }
         }
 
-        .subtitle {
+        .from-green {
+            position: absolute;
+            bottom: 50px;
+            color: #2ecc71;
+            font-weight: bold;
+            letter-spacing: 2px;
             font-size: 14px;
-            color: #a0c2b1;
-            margin-bottom: 35px;
-            font-weight: 400;
+            text-transform: uppercase;
         }
 
-        /* প্রিমিয়াম ডাউনলোড বাটন */
-        .download-btn {
-            background: linear-gradient(90deg, #00b85c 0%, #008a45 100%);
+        /* --- Login Container --- */
+        #login-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            display: none; 
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .login-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #2ecc71;
+            display: inline-block;
+        }
+
+        .logo-text { color: #2ecc71; font-size: 45px; font-weight: 800; margin-bottom: 30px; }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid #0f4024;
+            background-color: #022112;
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #27ae60;
             color: white;
             border: none;
-            padding: 16px 30px;
+            border-radius: 12px;
             font-size: 18px;
-            font-weight: 600;
-            border-radius: 50px;
+            font-weight: bold;
             cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-btn:active { transform: scale(0.98); }
+
+        .divider { height: 1px; background-color: #0a2e1a; margin: 30px 0; position: relative; }
+        .divider::after { content: 'অথবা'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: #000a05; padding: 0 15px; color: #8c9e94; font-size: 14px; }
+
+        .signup-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #2ecc71;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 184, 92, 0.3);
+            font-weight: bold;
+            border: 1px solid #2ecc71;
+            padding: 10px 30px;
+            border-radius: 10px;
+            transition: 0.3s;
         }
+        .signup-link:hover { background-color: #2ecc71; color: #000a05; }
 
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(0, 184, 92, 0.5);
-            background: linear-gradient(90deg, #00c464 0%, #009e4f 100%);
-        }
-
-        .download-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 5px 15px rgba(0, 184, 92, 0.3);
-        }
-
-        .download-icon {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-        }
+        #error-msg { color: #ff4757; font-size: 14px; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
-
-    <div class="container">
-        <div class="logo-container">
-            <img src="logo.png" alt="FriendBook Logo">
+    <div id="splash-screen">
+        <img src="https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png" class="splash-logo">
+        
+        <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
-        <div class="brand-name">FriendBook</div>
-        <div class="subtitle">অফিসিয়াল অ্যাপ্লিকেশন (v5.0)</div>
-
-        <a href="https://github.com/sobujmiashuvo360-hub/Apk/releases/download/v1.0/FriendBook.apk" id="downloadLink" class="download-btn">
-            <svg class="download-icon" viewBox="0 0 24 24">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-            </svg>
-            ডাউনলোড করুন
-        </a>
+        <div class="from-green">FriendBook</div>
     </div>
-<script>
+
+    <div id="login-content">
+        <img src="https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png" class="login-logo">
+        <div class="logo-text">FriendBook</div>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
+            <input type="password" id="password" placeholder="পাসওয়ার্ড" required autocomplete="current-password">
+            <button type="submit" class="login-btn" id="loginBtn">লগ ইন করুন</button>
+            <div id="error-msg">ইমেইল বা পাসওয়ার্ড ভুল!</div>
+        </form>
+
+        <div class="divider"></div>
+        <a href="signup.html" class="signup-link">নতুন অ্যাকাউন্ট খুলুন</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4",
+            authDomain: "friendbook-e9569.firebaseapp.com",
+            projectId: "friendbook-e9569",
+            storageBucket: "friendbook-e9569.firebasestorage.app",
+            messagingSenderId: "459682436919",
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // লগইন স্ট্যাটাস চেক এবং স্প্ল্যাশ স্ক্রিন টাইমার (আগের মতোই আছে)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setTimeout(() => { window.location.href = "home.html"; }, 2500);
+            } else {
+                setTimeout(() => {
+                    const splash = document.getElementById('splash-screen');
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.getElementById('login-content').style.display = 'block';
+                    }, 800);
+                }, 2500);
+            }
+        });
+
+        // লগইন ফর্ম সাবমিট (আগের মতোই আছে)
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const error = document.getElementById('error-msg');
+
+            btn.innerText = "অপেক্ষা করুন...";
+            btn.disabled = true;
+            error.style.display = 'none';
+
+            try {
+                await setPersistence(auth, browserLocalPersistence);
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = "home.html";
+            } catch (err) {
+                btn.innerText = "লগ ইন করুন";
+                btn.disabled = false;
+                error.style.display = 'block';
+            }
+        };
+    </script>
+    <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
   }
 </script>
-
 </body>
 </html>
