@@ -68,7 +68,7 @@
         .story-modal-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2ecc71; display:flex; justify-content:center; align-items:center; color:black; font-weight:bold; overflow:hidden; border: 2px solid #1877F2; }
         .story-modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .story-modal-author { color: white; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 3px black; display: flex; align-items: center;}
-        .story-close { color: white; font-size: 28px; cursor: pointer; text-shadow: 1px 1px 3px black; padding: 0 10px;}
+        .story-close { color: white; font-size: 28px; cursor: pointer; text-shadow: 1px 1px 3px black; padding: 0 5px;}
         .story-modal-image { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 1; }
         .story-modal-footer { position: absolute; bottom: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
         .story-views { color: white; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 3px black; display: flex; align-items: center; gap: 6px; }
@@ -207,7 +207,10 @@
                 <div class="story-modal-avatar" id="storyModalAvatar"></div>
                 <div class="story-modal-author" id="storyModalAuthor"></div>
             </div>
-            <i class="fa-solid fa-xmark story-close" onclick="closeStory()"></i>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-trash" id="storyDeleteBtn" style="color: #ff4757; font-size: 20px; cursor: pointer; display: none; text-shadow: 1px 1px 3px black;" onclick="deleteCurrentStory()"></i>
+                <i class="fa-solid fa-xmark story-close" onclick="closeStory()"></i>
+            </div>
         </div>
         <img id="storyModalImage" class="story-modal-image" src="">
         <div class="story-modal-footer" id="storyModalFooter">
@@ -250,7 +253,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteField, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteField, arrayUnion, arrayRemove, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
@@ -359,14 +362,12 @@
             onSnapshot(collection(db, "users"), (snap) => { 
                 allUsers = []; 
                 snap.forEach(doc => { allUsers.push({ id: doc.id, ...doc.data() }); }); 
-                // ফ্রেন্ডস ট্যাব ওপেন থাকলে অটোমেটিক আপডেট হবে
                 if (document.getElementById('tab-friends').classList.contains('active')) {
                     window.renderFriendsList();
                 }
             }); 
         }
 
-        // Search Input Logic
         const searchInput = document.getElementById('searchInput'); const searchResults = document.getElementById('searchResults');
         searchInput.addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase().trim(); if(!val) { searchResults.style.display = 'none'; return; }
@@ -424,6 +425,14 @@
             document.getElementById('storyModalAuthor').innerHTML = author + (author.toLowerCase().includes("sobuj mia") ? verifiedSvg : "");
             document.getElementById('storyModalAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
             
+            // Delete button logic (Only Admin or Owner can see it)
+            const deleteBtn = document.getElementById('storyDeleteBtn');
+            if (currentUser.uid === authorUid || currentUserName.toLowerCase().includes("sobuj mia")) {
+                deleteBtn.style.display = 'block';
+            } else {
+                deleteBtn.style.display = 'none';
+            }
+
             const viewCountDiv = document.getElementById('storyViewCount');
             const reactionsDiv = document.getElementById('storyReactionsDiv');
             if (currentUser.uid === authorUid) {
@@ -440,6 +449,25 @@
             document.getElementById('storyProgressFill').style.width = '0%';
             setTimeout(() => { document.getElementById('storyProgressFill').style.transition = 'width 5s linear'; document.getElementById('storyProgressFill').style.width = '100%'; }, 50);
             clearTimeout(storyTimer); storyTimer = setTimeout(() => { closeStory(); }, 5000);
+        };
+
+        // --- NEW: Delete Story Logic ---
+        window.deleteCurrentStory = async () => {
+            if(!window.currentStoryId) return;
+            const confirmDelete = confirm("আপনি কি সত্যিই এই স্টোরিটি ডিলিট করতে চান?");
+            if (confirmDelete) {
+                try {
+                    await deleteDoc(doc(db, "stories", window.currentStoryId));
+                    const statusText = document.getElementById('upload-status');
+                    statusText.style.display = 'block';
+                    statusText.innerText = "স্টোরি ডিলিট হয়েছে!";
+                    setTimeout(() => statusText.style.display = 'none', 2000);
+                    closeStory();
+                } catch(e) {
+                    console.error("Error deleting story: ", e);
+                    alert("ডিলিট করতে সমস্যা হয়েছে!");
+                }
+            }
         };
 
         window.reactToStory = async (emoji) => {
@@ -471,7 +499,7 @@
         window.toggleLike = async (id, postUid, has) => { const ref = doc(db, "posts", id); if(has) { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); } else { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); if(postUid !== currentUser.uid) await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_like`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.addReaction = async (id, postUid, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); if(postUid !== currentUser.uid) { await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; } else { el.style.display = 'block'; window.openComments[id] = true; } };
-        window.sendComment = async (id, postUid) => { const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return; window.openComments[id] = true; try { await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) }); if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); } } catch(e) { } input.value = ""; };
+        window.sendComment = async (id, postUid) => { const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return; window.openComments[id] = true; try { await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) }); if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); } } catch(e) { alert("Error: " + e.message); } input.value = ""; };
 
         function loadAllPosts() {
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
@@ -517,8 +545,6 @@
                     let cList = ""; comments.forEach(c => { cList += `<div class="comment-item"><div class="comment-avatar">${c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0)}</div><div class="comment-bubble"><div class="comment-author">${c.author}</div><div class="comment-content">${c.text}</div></div></div>`; });
 
                     const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
-                    
-                    // --- টাইম ফিক্স করা হয়েছে ---
                     const timeText = timeAgo(post.timestamp);
 
                     const postHTML = `
