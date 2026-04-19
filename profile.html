@@ -40,7 +40,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* --- NEW: Typing Animation Styles --- */
+        /* --- Typing Animation Styles --- */
         .golden-gradient-text {
             background: linear-gradient(135deg, #f39c12, #f1c40f, #f39c12);
             -webkit-background-clip: text;
@@ -73,9 +73,23 @@
         .btn-message { background-color: #3a3b3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; max-width: 150px; }
         
         .profile-body { padding: 15px 20px; }
-        .bio-section { text-align: center; margin-bottom: 20px; }
-        .bio-text { font-size: 15px; color: #e4e6eb; margin-bottom: 10px; white-space: pre-wrap; }
-        .edit-action-btn { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        
+        /* --- Bio Styling & Border --- */
+        .bio-section { text-align: center; margin-bottom: 20px; position: relative;}
+        .bio-text { font-size: 15px; color: #e4e6eb; white-space: pre-wrap; line-height: 1.6;}
+        
+        /* --- NEW: Golden Gradient Rounded Border only for Admin --- */
+        .admin-bio-border {
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 15px;
+            position: relative;
+            background: linear-gradient(#01160b, #01160b) padding-box,
+                        linear-gradient(135deg, #f39c12, #f1c40f) border-box;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.1);
+        }
+
+        .edit-action-btn { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         
         #bio-edit-area, #details-edit-area { padding-top: 10px; }
         #bio-input { width: 100%; min-height: 80px; padding: 12px; background: #022112; border: 1px solid #1a5c38; border-radius: 8px; color: #fff; font-family: inherit; font-size: 15px; resize: vertical; margin-bottom: 12px; line-height: 1.5; outline: none; }
@@ -172,10 +186,13 @@
             </div>
 
             <div class="bio-section">
-                <div id="bio-display-area">
-                    <div class="bio-text" id="bio-text">নিজের সম্পর্কে কিছু লিখুন...</div>
-                    <button class="edit-action-btn own-profile-only" id="edit-bio-btn">বায়ো সম্পাদনা করুন</button>
+                <div id="bio-container-wrapper" class="">
+                    <div id="bio-display-area">
+                        <div class="bio-text" id="bio-text">লোড হচ্ছে...</div>
+                    </div>
                 </div>
+                <button class="edit-action-btn own-profile-only" id="edit-bio-btn">বায়ো সম্পাদনা করুন</button>
+                
                 <div id="bio-edit-area" class="hidden">
                     <textarea id="bio-input" placeholder="আপনার বায়ো লিখুন..."></textarea>
                     <button class="primary-save-btn" id="save-bio-btn">সেইভ করুন</button>
@@ -233,7 +250,7 @@
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
 
-        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-622 622c-.19.19-.43.28-.67.28z"/></svg>`;
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", targetUserId = null, isOwnProfile = true, postImageFile = null;
         window.openComments = {};
@@ -293,32 +310,23 @@
                         adminTag = `<span class="admin-badge-tag"><i class="fa-solid fa-crown"></i> Admin</span>`;
                         document.getElementById('profilePicDisplay').classList.add('admin-glow-avatar');
                         
-                        // Show and start typing animation
+                        // NEW: Admin Bio Border Class
+                        document.getElementById('bio-container-wrapper').classList.add('admin-bio-border');
+
+                        // Typing animation logic (stays the same)
                         document.getElementById('admin-typing-container').style.display = 'block';
                         if (!window.typingStarted) {
                             window.typingStarted = true;
                             const words = ["Designer", "Developer", "Programmer"];
                             let wordIndex = 0; let charIndex = 0; let isDeleting = false;
                             const typingTextSpan = document.getElementById('admin-typing-text');
-
                             function typeEffect() {
                                 const currentWord = words[wordIndex];
-                                if (isDeleting) {
-                                    typingTextSpan.textContent = currentWord.substring(0, charIndex - 1);
-                                    charIndex--;
-                                } else {
-                                    typingTextSpan.textContent = currentWord.substring(0, charIndex + 1);
-                                    charIndex++;
-                                }
+                                if (isDeleting) { typingTextSpan.textContent = currentWord.substring(0, charIndex - 1); charIndex--; } 
+                                else { typingTextSpan.textContent = currentWord.substring(0, charIndex + 1); charIndex++; }
                                 let typingSpeed = isDeleting ? 60 : 120;
-                                if (!isDeleting && charIndex === currentWord.length) {
-                                    typingSpeed = 1500; 
-                                    isDeleting = true;
-                                } else if (isDeleting && charIndex === 0) {
-                                    isDeleting = false;
-                                    wordIndex = (wordIndex + 1) % words.length;
-                                    typingSpeed = 500; 
-                                }
+                                if (!isDeleting && charIndex === currentWord.length) { typingSpeed = 1500; isDeleting = true; } 
+                                else if (isDeleting && charIndex === 0) { isDeleting = false; wordIndex = (wordIndex + 1) % words.length; typingSpeed = 500; }
                                 setTimeout(typeEffect, typingSpeed);
                             }
                             typeEffect();
@@ -326,6 +334,8 @@
                     } else {
                         document.getElementById('profilePicDisplay').classList.remove('admin-glow-avatar');
                         document.getElementById('admin-typing-container').style.display = 'none';
+                        // Remove admin border class for other users
+                        document.getElementById('bio-container-wrapper').classList.remove('admin-bio-border');
                     }
                     // --- VIP ADMIN MAGIC END ---
 
