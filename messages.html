@@ -16,7 +16,7 @@
         
         .top-icons { display: flex; gap: 12px; }
         
-        /* Metallic Shiny White Effect for Top Icons */
+        /* Metallic Shiny White Effect */
         .icon-btn { 
             width: 38px; height: 38px; border-radius: 50%; 
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); 
@@ -33,7 +33,7 @@
         
         .main-container { max-width: 600px; margin: 0 auto; min-height: calc(100vh - 60px); position: relative; }
 
-        /* --- Active Users Row (All Users) --- */
+        /* --- Active Users Row (Top Horizontal Scroll) --- */
         .active-users-container {
             display: flex; gap: 15px; padding: 15px; overflow-x: auto; background: #01160b; border-bottom: 1px solid #0a2e1a;
         }
@@ -42,11 +42,12 @@
         .active-avatar-box { position: relative; width: 55px; height: 55px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); padding: 2px; }
         .active-avatar { width: 100%; height: 100%; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; overflow: hidden; }
         .active-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .green-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; display: none;} /* Default hidden */
+        .green-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; display: none;} 
         .active-name { font-size: 12px; color: #e4e6eb; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
-        /* --- Chat List --- */
-        .chat-list { padding-bottom: 20px; }
+        /* --- Chat List (All Users Vertical List) --- */
+        .chat-list-title { font-size: 14px; font-weight: bold; color: #8c9e94; padding: 15px 15px 5px 15px; text-transform: uppercase; }
+        .chat-list { padding-bottom: 20px; display: flex; flex-direction: column; }
         .chat-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .chat-item:active { background-color: rgba(255,255,255,0.05); }
         .chat-item-avatar { width: 50px; height: 50px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; overflow: hidden; flex-shrink: 0; position: relative;}
@@ -55,7 +56,6 @@
         .chat-name { font-size: 16px; font-weight: bold; color: #e4e6eb; display: flex; align-items: center; gap: 5px; }
         .chat-snippet { font-size: 13px; color: #8c9e94; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
         
-        /* VIP Admin Styles for List */
         .admin-glow-avatar { border: 2px solid #f1c40f !important; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5) !important; padding: 2px; }
 
         /* --- Chat Box View (Modal) --- */
@@ -76,17 +76,20 @@
         .chat-header-status { font-size: 11px; color: #31a24c; }
         .chat-header-icons { display: flex; gap: 15px; color: #2ecc71; font-size: 20px; }
 
-        /* --- Messages Area --- */
+        /* --- Messages Area & Perfect Reaction Positioning --- */
         .messages-area {
-            flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; background: #000a05; position: relative;
+            flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #000a05; position: relative;
         }
-        .message-wrapper { display: flex; flex-direction: column; width: 100%; position: relative; }
+        .message-wrapper { display: flex; flex-direction: column; width: 100%; }
         .message-wrapper.mine { align-items: flex-end; }
         .message-wrapper.theirs { align-items: flex-start; }
         
+        /* The inner container hugs the bubble perfectly */
+        .bubble-inner { position: relative; display: inline-block; max-width: 75%; }
+        
         .message-bubble {
-            max-width: 75%; padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; position: relative; cursor: pointer; word-wrap: break-word;
-            -webkit-touch-callout: none; user-select: none; /* For long press */
+            padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word;
+            -webkit-touch-callout: none; user-select: none; /* Prevents text selection on long press */
         }
         .message-wrapper.mine .message-bubble {
             background: linear-gradient(135deg, #0084ff, #00c6ff); color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(0, 132, 255, 0.3);
@@ -97,34 +100,36 @@
 
         .chat-image { width: 100%; border-radius: 12px; margin-top: 5px; }
 
-        /* Replied Message Snippet */
         .replied-to-msg {
             font-size: 12px; background: rgba(0,0,0,0.2); padding: 5px 8px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid #2ecc71; color: #d1d8e0;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
         }
 
-        .message-time { font-size: 10px; color: #8c9e94; margin-top: 4px; margin-bottom: 5px; padding: 0 5px; }
+        .message-time { font-size: 10px; color: #8c9e94; margin-top: 6px; padding: 0 5px; }
         .message-wrapper.mine .message-time { text-align: right; }
 
         .like-sticker { font-size: 45px; background: transparent !important; padding: 0 !important; box-shadow: none !important; animation: popUp 0.3s ease; color: #2ecc71; text-shadow: 0 2px 5px rgba(46, 204, 113, 0.4);}
         @keyframes popUp { 0% { transform: scale(0.5); opacity: 0;} 100% { transform: scale(1); opacity: 1;} }
 
-        /* --- Reaction & Reply System --- */
+        /* Reaction Badge attached to the bubble-inner */
         .msg-reaction-badge {
-            position: absolute; bottom: -8px; background: #242526; border: 1px solid #3a3b3c; border-radius: 20px; padding: 2px 6px; font-size: 12px; display: flex; align-items: center; gap: 3px; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            position: absolute; bottom: -10px; background: #242526; border: 1px solid #3a3b3c; border-radius: 20px; padding: 2px 6px; font-size: 12px; display: flex; align-items: center; gap: 3px; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5); white-space: nowrap;
         }
-        .message-wrapper.mine .msg-reaction-badge { left: 10px; }
-        .message-wrapper.theirs .msg-reaction-badge { right: 10px; }
+        .message-wrapper.mine .msg-reaction-badge { right: 5px; } /* Stick to bottom right */
+        .message-wrapper.theirs .msg-reaction-badge { left: 5px; } /* Stick to bottom left */
 
         /* Premium Glassmorphism Reaction Menu */
         .reaction-menu {
-            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); 
+            position: absolute; bottom: calc(100% + 5px); 
             background: rgba(30, 39, 46, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 8px 15px; 
             display: flex; gap: 15px; opacity: 0; visibility: hidden; transition: 0.2s; z-index: 100; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8); align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8); align-items: center; white-space: nowrap;
         }
-        .reaction-menu.show { opacity: 1; visibility: visible; bottom: calc(100% + 5px); }
+        .message-wrapper.mine .reaction-menu { right: 0; }
+        .message-wrapper.theirs .reaction-menu { left: 0; }
+        .reaction-menu.show { opacity: 1; visibility: visible; }
+        
         .react-emoji { font-size: 24px; cursor: pointer; transition: 0.2s; }
         .react-emoji:hover, .react-emoji:active { transform: scale(1.4) translateY(-5px); }
         .reply-action-btn { color: #ffffff; font-size: 14px; font-weight: bold; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 15px; cursor: pointer; margin-left: 5px; transition: 0.2s; }
@@ -151,7 +156,7 @@
         input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 10px 20px; border-radius: 30px; color: black; display: none; z-index: 5000; font-weight: bold;}
 
-        /* --- NEW: Premium Glassmorphism Custom Alert --- */
+        /* Premium Glassmorphism Custom Alert */
         .custom-alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -164,10 +169,7 @@
             animation: premiumPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
-        @keyframes premiumPop {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes premiumPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .alert-icon { font-size: 45px; color: #2ecc71; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(46, 204, 113, 0.6)); }
         .alert-message { font-size: 16px; color: #ffffff; margin-bottom: 25px; line-height: 1.5; font-weight: bold; }
         .alert-btn-group { display: flex; gap: 10px; width: 100%; justify-content: center; }
@@ -204,6 +206,8 @@
             <div style="color: #8c9e94; font-size: 13px; padding: 20px; width: 100%; text-align: center;">ইউজার লোড হচ্ছে...</div>
         </div>
 
+        <div class="chat-list-title">All Users</div>
+        
         <div class="chat-list" id="chatListContainer">
             </div>
 
@@ -315,6 +319,7 @@
             } else { window.location.href = "index.html"; }
         });
 
+        // 1. Load ALL Users from Database
         function loadAllUsers() {
             onSnapshot(collection(db, "users"), (snap) => {
                 allUsers = [];
@@ -324,6 +329,7 @@
             });
         }
 
+        // Top Horizontal Active Row (All users visible, dot only if active within 15 mins)
         function renderActiveUsersRow() {
             const container = document.getElementById('activeUsersList');
             container.innerHTML = "";
@@ -334,11 +340,10 @@
                 const isVIP = u.displayName.toLowerCase().includes("sobuj mia");
                 const glowClass = isVIP ? "admin-glow-avatar" : "";
                 
-                // Active status logic (Green Dot)
                 let isActive = false;
                 if(u.lastActive) {
                     const diffMins = (now - u.lastActive.toMillis()) / 60000;
-                    if(diffMins < 15) isActive = true; // 15 মিনিটের মধ্যে থাকলে অ্যাক্টিভ
+                    if(diffMins < 15) isActive = true; 
                 }
                 const dotDisplay = isActive ? "block" : "none";
 
@@ -354,9 +359,16 @@
             });
         }
 
+        // Bottom Vertical Chat List (All Registered Users)
         function renderChatList() {
             const container = document.getElementById('chatListContainer');
             container.innerHTML = "";
+            
+            if(allUsers.length === 0) {
+                container.innerHTML = "<div style='text-align:center; padding: 20px; color:#8c9e94;'>কোনো ইউজার পাওয়া যায়নি।</div>";
+                return;
+            }
+
             allUsers.forEach(u => {
                 const avatar = u.profilePic ? `<img src="${u.profilePic}">` : u.displayName.charAt(0);
                 const isVIP = u.displayName.toLowerCase().includes("sobuj mia");
@@ -404,14 +416,16 @@
             cancelReply();
         };
 
-        // --- Long Press Logic ---
+        // --- Long Press Logic (Hold to React/Reply) ---
         let pressTimer;
         window.startPress = (msgId, event) => {
             pressTimer = setTimeout(() => {
                 window.showReactionMenu(msgId, event);
             }, 400); // 400ms hold to trigger
         };
-        window.endPress = () => { clearTimeout(pressTimer); };
+        window.cancelPress = () => {
+            clearTimeout(pressTimer);
+        };
 
         function loadMessages(chatUserName) {
             const msgsArea = document.getElementById('messagesArea');
@@ -440,14 +454,18 @@
                         replyHtml = `<div class="replied-to-msg"><i class="fa-solid fa-reply"></i> ${msg.replyTo}</div>`;
                     }
 
+                    // Touch events added for long press
+                    const touchEvents = `onmousedown="startPress('${msgId}', event)" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress('${msgId}', event)" ontouchend="cancelPress()" ontouchmove="cancelPress()"`;
+
                     if(msg.type === "like") {
-                        contentHtml = `<div class="message-bubble like-sticker" onmousedown="startPress('${msgId}', event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPress('${msgId}', event)" ontouchend="endPress()">👍</div>`;
+                        contentHtml = `<div class="message-bubble like-sticker" ${touchEvents}>👍</div>`;
                     } else if (msg.type === "image") {
-                        contentHtml = `<div class="message-bubble" style="padding:5px;" onmousedown="startPress('${msgId}', event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPress('${msgId}', event)" ontouchend="endPress()">${replyHtml}<img src="${msg.imageUrl}" class="chat-image"></div>`;
+                        contentHtml = `<div class="message-bubble" style="padding:5px;" ${touchEvents}>${replyHtml}<img src="${msg.imageUrl}" class="chat-image"></div>`;
                     } else {
-                        contentHtml = `<div class="message-bubble" onmousedown="startPress('${msgId}', event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPress('${msgId}', event)" ontouchend="endPress()">${replyHtml}${msg.text}</div>`;
+                        contentHtml = `<div class="message-bubble" ${touchEvents}>${replyHtml}${msg.text}</div>`;
                     }
 
+                    // Perfect Reaction Badge HTML
                     let reactionBadge = msg.reaction ? `<div class="msg-reaction-badge">${msg.reaction}</div>` : "";
 
                     // Reaction Menu (Includes Reply Button)
@@ -462,11 +480,14 @@
                         </div>
                     `;
 
+                    // Perfect Structure using bubble-inner
                     msgsArea.innerHTML += `
                         <div class="message-wrapper ${wrapClass}">
-                            ${contentHtml}
-                            ${reactionBadge}
-                            ${reactionMenu}
+                            <div class="bubble-inner">
+                                ${contentHtml}
+                                ${reactionBadge}
+                                ${reactionMenu}
+                            </div>
                             <div class="message-time">${timeStr}</div>
                         </div>
                     `;
@@ -559,16 +580,4 @@
             document.querySelectorAll('.reaction-menu.show').forEach(el => el.classList.remove('show'));
         };
 
-        window.addMsgReaction = async (msgId, emoji, event) => {
-            event.stopPropagation();
-            closeAllReactions();
-            try {
-                await updateDoc(doc(db, "chats", currentChatId, "messages", msgId), {
-                    reaction: emoji
-                });
-            } catch(e) { console.error("Reaction failed", e); }
-        };
-
-    </script>
-</body>
-</html>
+        window.addMsgReaction
