@@ -15,7 +15,7 @@
         
         .top-icons { display: flex; gap: 10px; }
         
-        /* --- NEW: Metallic Shiny White Effect for Top Icons --- */
+        /* Metallic Shiny White Effect for Top Icons */
         .icon-btn { 
             width: 38px; height: 38px; border-radius: 50%; 
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); 
@@ -37,19 +37,29 @@
         
         .header-tabs { display: flex; justify-content: space-around; max-width: 600px; margin: 0 auto; padding: 0 5px; }
         
-        /* --- NEW: Metallic Shiny White Effect for Tab Icons --- */
+        /* --- NEW: TRUE Chrome/Silver Metal Effect for Tab Icons --- */
         .tab-item { 
             position: relative; padding: 12px 0; flex: 1; text-align: center; font-size: 22px; 
-            color: #ffffff; 
-            text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.6), 0px -1px 1px rgba(0,0,0,0.5);
             cursor: pointer; border-radius: 8px; transition: all 0.3s; 
         }
-        .tab-item.active { 
+        .tab-item i {
+            /* সিলভার স্টিল গ্রেডিয়েন্ট */
+            background: linear-gradient(to bottom, #ffffff 0%, #a4b0be 40%, #747d8c 50%, #dfe4ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            /* থ্রিডি মেটালিক শ্যাডো */
+            filter: drop-shadow(0px 2px 1px rgba(255, 255, 255, 0.3)) drop-shadow(0px -1px 1px rgba(0,0,0,0.8));
+        }
+        .tab-item.active i { 
+            /* এক্টিভ থাকলে সবুজ হয়ে যাবে */
+            background: none;
+            -webkit-text-fill-color: #2ecc71;
             color: #2ecc71; 
-            text-shadow: 0 0 10px rgba(46, 204, 113, 0.6); /* Active থাকলে সবুজ গ্লো করবে */
+            filter: drop-shadow(0 0 10px rgba(46, 204, 113, 0.6));
         }
         .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 3px; background-color: #2ecc71; border-radius: 3px 3px 0 0; box-shadow: 0 -2px 5px rgba(46, 204, 113, 0.5);}
-        .nav-badge { position: absolute; top: 2px; right: calc(50% - 22px); background-color: #e41e3f; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 50px; border: 2px solid #01160b; display: none; text-shadow: none;}
+        .nav-badge { position: absolute; top: 2px; right: calc(50% - 22px); background-color: #e41e3f; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 50px; border: 2px solid #01160b; display: none; text-shadow: none; -webkit-text-fill-color: white;}
         
         .main-content { max-width: 600px; margin: 0 auto; }
         .user-avatar { width: 40px; height: 40px; background-color: #2ecc71; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; flex-shrink: 0; color: #000; }
