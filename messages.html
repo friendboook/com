@@ -580,4 +580,16 @@
             document.querySelectorAll('.reaction-menu.show').forEach(el => el.classList.remove('show'));
         };
 
-        window.addMsgReaction
+        window.addMsgReaction = async (msgId, emoji, event) => {
+            event.stopPropagation();
+            closeAllReactions();
+            try {
+                await updateDoc(doc(db, "chats", currentChatId, "messages", msgId), {
+                    reaction: emoji
+                });
+            } catch(e) { console.error("Reaction failed", e); }
+        };
+
+    </script>
+</body>
+</html>
