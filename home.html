@@ -36,49 +36,17 @@
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .active-dot { position: absolute; bottom: 0; right: 0; width: 13px; height: 13px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; }
 
-        /* --- Menu View Styles (NEW) --- */
+        /* Menu View Styles */
         #menu-view { display: none; padding: 15px; }
         .menu-header { font-size: 24px; font-weight: bold; margin-bottom: 15px; padding-left: 5px;}
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         
-        /* Glassmorphism Card Style */
-        .menu-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 16px; 
-            padding: 20px 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px; 
-            cursor: pointer; 
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .menu-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .menu-card:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
         .menu-card i { font-size: 28px; }
         .menu-card span { font-size: 15px; font-weight: bold; color: #e4e6eb; }
 
-        /* List Button Style for Help & Logout */
-        .menu-list-btn { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 12px; 
-            padding: 15px 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            margin-bottom: 12px;
-            font-size: 16px;
-            font-weight: bold;
-        }
+        .menu-list-btn { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px; font-size: 16px; font-weight: bold; }
         .menu-list-btn:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.1); }
         .menu-list-btn i { font-size: 22px; width: 30px; text-align: center; }
         .logout-btn { color: #ff4757; }
@@ -125,7 +93,7 @@
         .story-reactions span { transition: 0.2s; }
         .story-reactions span:active { transform: scale(1.3); }
 
-        /* --- Follow Button --- */
+        /* Follow Button */
         .follow-btn { color: #2ecc71; font-weight: bold; cursor: pointer; margin-left: 8px; font-size: 14px; display: flex; align-items: center; transition: 0.2s; }
         .follow-btn::before { content: '•'; margin-right: 8px; color: #8c9e94; }
         .follow-btn.following { color: #8c9e94; }
@@ -166,7 +134,7 @@
         input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 10px 20px; border-radius: 30px; color: black; display: none; z-index: 2000; font-weight: bold;}
 
-        /* --- Friends List Tab --- */
+        /* Friends List Tab */
         .friends-list-container { max-width: 600px; margin: 0 auto; display: none; padding-bottom: 20px; }
         .friends-header-title { padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #0a2e1a; }
         .friend-list-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #0a2e1a; transition: 0.2s; }
@@ -177,6 +145,29 @@
         .friend-name { font-size: 16px; font-weight: bold; display: flex; align-items: center; }
         .friend-view-btn { background: rgba(255,255,255,0.1); color: #e4e6eb; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 14px; transition: 0.2s; }
         .friend-view-btn:active { background: rgba(255,255,255,0.2); }
+
+        /* --- NEW: Custom Alert Modal Styles --- */
+        .custom-alert-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            z-index: 5000; display: none; justify-content: center; align-items: center;
+        }
+        .custom-alert-box {
+            background: #01160b; border: 1px solid #0a2e1a; border-radius: 16px;
+            padding: 25px; width: 80%; max-width: 320px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: alertPop 0.3s ease-out;
+        }
+        @keyframes alertPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .alert-icon { font-size: 40px; color: #2ecc71; margin-bottom: 15px; }
+        .alert-message { font-size: 16px; color: #e4e6eb; margin-bottom: 20px; line-height: 1.5; }
+        .alert-btn-group { display: flex; gap: 10px; width: 100%; justify-content: center; }
+        .alert-ok-btn { background: #2ecc71; color: #000; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; transition: 0.2s; }
+        .alert-ok-btn:active { transform: scale(0.95); }
+        .alert-cancel-btn { background: #3a3b3c; color: #fff; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; transition: 0.2s; }
+        .alert-cancel-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -265,7 +256,7 @@
                 <i class="fa-brands fa-facebook-messenger" style="color: #8c7ae6;"></i>
                 <span>Messenger</span>
             </div>
-            <div class="menu-card" onclick="alert('জন্মদিন ফিচারটি শীঘ্রই আসছে!')">
+            <div class="menu-card" onclick="showCustomAlert('জন্মদিন ফিচারটি শীঘ্রই আসছে!')">
                 <i class="fa-solid fa-cake-candles" style="color: #f39c12;"></i>
                 <span>Birthdays</span>
             </div>
@@ -273,17 +264,17 @@
                 <i class="fa-solid fa-newspaper" style="color: #1877F2;"></i>
                 <span>Newsfeed</span>
             </div>
-            <div class="menu-card" onclick="alert('গেমস অপশনটি শীঘ্রই আসছে!')">
+            <div class="menu-card" onclick="showCustomAlert('গেমস অপশনটি শীঘ্রই আসছে!')">
                 <i class="fa-solid fa-gamepad" style="color: #e84393;"></i>
                 <span>Games</span>
             </div>
         </div>
 
-        <div class="menu-list-btn" onclick="alert('সাপোর্ট অপশনটি খুব শীঘ্রই চালু হবে আমরা এটি নিয়ে কাজ করছি 😊')">
+        <div class="menu-list-btn" onclick="showCustomAlert('সাপোর্ট অপশনটি খুব শীঘ্রই চালু হবে আমরা এটি নিয়ে কাজ করছি 😊')">
             <i class="fa-solid fa-circle-question" style="color: #00cec9;"></i>
             <span>Help & Support</span>
         </div>
-        <div class="menu-list-btn logout-btn" onclick="logoutUser()">
+        <div class="menu-list-btn logout-btn" onclick="showLogoutConfirm()">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span>Log Out</span>
         </div>
@@ -314,6 +305,25 @@
     
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
+    <div id="customAlertModal" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <i class="fa-solid fa-circle-info alert-icon"></i>
+            <div class="alert-message" id="customAlertMessage"></div>
+            <button class="alert-ok-btn" onclick="closeCustomAlert()">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <div id="customConfirmModal" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <i class="fa-solid fa-right-from-bracket alert-icon" style="color: #ff4757;"></i>
+            <div class="alert-message">আপনি কি সত্যিই লগ আউট করতে চান?</div>
+            <div class="alert-btn-group">
+                <button class="alert-cancel-btn" onclick="closeLogoutConfirm()">না</button>
+                <button class="alert-ok-btn" style="background: #ff4757; color: white;" onclick="executeLogout()">হ্যাঁ</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.getElementById('searchToggleBtn').onclick = () => {
             const searchBox = document.getElementById('searchContainerOverlay');
@@ -323,16 +333,13 @@
         };
 
         window.switchTab = (tab) => {
-            // Remove active classes
             document.getElementById('tab-home').classList.remove('active');
             document.getElementById('tab-friends').classList.remove('active');
             
-            // Hide all views
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('friends-view').style.display = 'none';
             document.getElementById('menu-view').style.display = 'none';
             
-            // Show selected view
             if(tab === 'home') {
                 document.getElementById('tab-home').classList.add('active');
                 document.getElementById('home-view').style.display = 'block';
@@ -341,15 +348,29 @@
                 document.getElementById('friends-view').style.display = 'block';
                 if(window.renderFriendsList) window.renderFriendsList();
             } else if (tab === 'menu') {
-                // Menu tab doesn't have a bottom border active state in this layout
                 document.getElementById('menu-view').style.display = 'block';
             }
+        };
+
+        // --- NEW: Custom Alert Scripts ---
+        window.showCustomAlert = (msg) => {
+            document.getElementById('customAlertMessage').innerText = msg;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        };
+        window.closeCustomAlert = () => {
+            document.getElementById('customAlertModal').style.display = 'none';
+        };
+
+        window.showLogoutConfirm = () => {
+            document.getElementById('customConfirmModal').style.display = 'flex';
+        };
+        window.closeLogoutConfirm = () => {
+            document.getElementById('customConfirmModal').style.display = 'none';
         };
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        // IMPORT SIGNOUT
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteField, arrayUnion, arrayRemove, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
@@ -362,14 +383,31 @@
         window.openComments = {}; window.currentStoryId = null; window.currentStoryOwnerId = null; let storyTimer = null; 
         window.currentUserFollowing = []; 
 
-        // --- NEW: Logout Logic ---
-        window.logoutUser = () => {
-            if(confirm('আপনি কি সত্যিই লগ আউট করতে চান?')) {
-                signOut(auth).then(() => {
-                    window.location.href = "index.html";
-                }).catch((error) => {
-                    alert("লগ আউট করতে সমস্যা হয়েছে!");
-                });
+        // Execute Logout Function
+        window.executeLogout = () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                window.showCustomAlert("লগ আউট করতে সমস্যা হয়েছে!");
+            });
+        };
+
+        // --- Custom Alert for Post Deletion ---
+        window.deleteCurrentStory = async () => {
+            if(!window.currentStoryId) return;
+            const confirmDelete = confirm("আপনি কি সত্যিই এই স্টোরিটি ডিলিট করতে চান?"); // This can also be changed to a custom modal later if you want
+            if (confirmDelete) {
+                try {
+                    await deleteDoc(doc(db, "stories", window.currentStoryId));
+                    const statusText = document.getElementById('upload-status');
+                    statusText.style.display = 'block';
+                    statusText.innerText = "স্টোরি ডিলিট হয়েছে!";
+                    setTimeout(() => statusText.style.display = 'none', 2000);
+                    closeStory();
+                } catch(e) {
+                    console.error("Error deleting story: ", e);
+                    window.showCustomAlert("ডিলিট করতে সমস্যা হয়েছে!");
+                }
             }
         };
 
@@ -559,24 +597,6 @@
             clearTimeout(storyTimer); storyTimer = setTimeout(() => { closeStory(); }, 5000);
         };
 
-        window.deleteCurrentStory = async () => {
-            if(!window.currentStoryId) return;
-            const confirmDelete = confirm("আপনি কি সত্যিই এই স্টোরিটি ডিলিট করতে চান?");
-            if (confirmDelete) {
-                try {
-                    await deleteDoc(doc(db, "stories", window.currentStoryId));
-                    const statusText = document.getElementById('upload-status');
-                    statusText.style.display = 'block';
-                    statusText.innerText = "স্টোরি ডিলিট হয়েছে!";
-                    setTimeout(() => statusText.style.display = 'none', 2000);
-                    closeStory();
-                } catch(e) {
-                    console.error("Error deleting story: ", e);
-                    alert("ডিলিট করতে সমস্যা হয়েছে!");
-                }
-            }
-        };
-
         window.reactToStory = async (emoji) => {
             if(!window.currentStoryId || !window.currentStoryOwnerId) return;
             document.getElementById('upload-status').style.display = 'block';
@@ -606,7 +626,7 @@
         window.toggleLike = async (id, postUid, has) => { const ref = doc(db, "posts", id); if(has) { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); } else { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); if(postUid !== currentUser.uid) await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_like`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.addReaction = async (id, postUid, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); if(postUid !== currentUser.uid) { await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; } else { el.style.display = 'block'; window.openComments[id] = true; } };
-        window.sendComment = async (id, postUid) => { const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return; window.openComments[id] = true; try { await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) }); if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); } } catch(e) { alert("Error: " + e.message); } input.value = ""; };
+        window.sendComment = async (id, postUid) => { const input = document.getElementById(`comment-input-${id}`); const txt = input.value; if(!txt.trim()) return; window.openComments[id] = true; try { await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() }) }); if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: txt, isRead: false, timestamp: serverTimestamp() }); } } catch(e) { window.showCustomAlert("Error: " + e.message); } input.value = ""; };
 
         function loadAllPosts() {
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
@@ -686,7 +706,7 @@
                                     </div>
                                 </div>
                                 <span class="footer-item" onclick="toggleCommentSection('${postId}')">${commentBtnHTML}</span>
-                                <span class="footer-item" onclick="alert('Share feature coming soon!')">${shareBtnHTML}</span>
+                                <span class="footer-item" onclick="showCustomAlert('Share feature coming soon!')">${shareBtnHTML}</span>
                             </div>
                             <div class="comments-section" id="comments-${postId}" style="display: ${isCommentOpen};">
                                 <div class="comment-input-area"><input type="text" id="comment-input-${postId}" placeholder="Write a comment..."><button class="comment-btn" onclick="sendComment('${postId}', '${post.uid}')">Send</button></div>
