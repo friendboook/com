@@ -36,6 +36,55 @@
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .active-dot { position: absolute; bottom: 0; right: 0; width: 13px; height: 13px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; }
 
+        /* --- Menu View Styles (NEW) --- */
+        #menu-view { display: none; padding: 15px; }
+        .menu-header { font-size: 24px; font-weight: bold; margin-bottom: 15px; padding-left: 5px;}
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        
+        /* Glassmorphism Card Style */
+        .menu-card { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 16px; 
+            padding: 20px 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; 
+            cursor: pointer; 
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .menu-card:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
+        .menu-card i { font-size: 28px; }
+        .menu-card span { font-size: 15px; font-weight: bold; color: #e4e6eb; }
+
+        /* List Button Style for Help & Logout */
+        .menu-list-btn { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 12px; 
+            padding: 15px 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .menu-list-btn:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.1); }
+        .menu-list-btn i { font-size: 22px; width: 30px; text-align: center; }
+        .logout-btn { color: #ff4757; }
+        .logout-btn i { color: #ff4757; }
+
+        /* General Post Box */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 10px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
@@ -90,7 +139,7 @@
         .post-image { width: 100%; max-height: 500px; object-fit: cover; display: block; border-top: 1px solid #0a2e1a; border-bottom: 1px solid #0a2e1a; }
         .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
         
-        .post-footer { display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .post-footer { display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
         .footer-item { background-color: rgba(255,255,255,0.08); border-radius: 20px; color: #e4e6eb; cursor: pointer; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; flex: 1; transition: 0.2s; }
         .footer-item:active { transform: scale(0.95); background-color: rgba(255,255,255,0.15); }
         
@@ -138,7 +187,7 @@
             <div class="top-icons">
                 <div class="icon-btn"><i class="fa-solid fa-plus"></i></div>
                 <div class="icon-btn" id="searchToggleBtn"><i class="fa-solid fa-magnifying-glass"></i></div>
-                <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fa-solid fa-bars"></i></div>
+                <div class="icon-btn" onclick="switchTab('menu')"><i class="fa-solid fa-bars"></i></div>
             </div>
         </div>
         
@@ -200,6 +249,46 @@
         </div>
     </div>
 
+    <div class="main-content" id="menu-view">
+        <div class="menu-header">Menu</div>
+        
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='profile.html'">
+                <i class="fa-solid fa-circle-user" style="color: #2ecc71;"></i>
+                <span>Profile</span>
+            </div>
+            <div class="menu-card" onclick="switchTab('friends')">
+                <i class="fa-solid fa-user-group" style="color: #0984e3;"></i>
+                <span>All Users</span>
+            </div>
+            <div class="menu-card" onclick="window.location.href='messages.html'">
+                <i class="fa-brands fa-facebook-messenger" style="color: #8c7ae6;"></i>
+                <span>Messenger</span>
+            </div>
+            <div class="menu-card" onclick="alert('জন্মদিন ফিচারটি শীঘ্রই আসছে!')">
+                <i class="fa-solid fa-cake-candles" style="color: #f39c12;"></i>
+                <span>Birthdays</span>
+            </div>
+            <div class="menu-card" onclick="switchTab('home')">
+                <i class="fa-solid fa-newspaper" style="color: #1877F2;"></i>
+                <span>Newsfeed</span>
+            </div>
+            <div class="menu-card" onclick="alert('গেমস অপশনটি শীঘ্রই আসছে!')">
+                <i class="fa-solid fa-gamepad" style="color: #e84393;"></i>
+                <span>Games</span>
+            </div>
+        </div>
+
+        <div class="menu-list-btn" onclick="alert('সাপোর্ট অপশনটি খুব শীঘ্রই চালু হবে আমরা এটি নিয়ে কাজ করছি 😊')">
+            <i class="fa-solid fa-circle-question" style="color: #00cec9;"></i>
+            <span>Help & Support</span>
+        </div>
+        <div class="menu-list-btn logout-btn" onclick="logoutUser()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Out</span>
+        </div>
+    </div>
+
     <div id="storyModal" class="story-modal">
         <div class="story-progress-container"><div class="story-progress-fill" id="storyProgressFill"></div></div>
         <div class="story-modal-header">
@@ -234,35 +323,55 @@
         };
 
         window.switchTab = (tab) => {
+            // Remove active classes
             document.getElementById('tab-home').classList.remove('active');
             document.getElementById('tab-friends').classList.remove('active');
             
+            // Hide all views
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('friends-view').style.display = 'none';
+            document.getElementById('menu-view').style.display = 'none';
+            
+            // Show selected view
             if(tab === 'home') {
                 document.getElementById('tab-home').classList.add('active');
                 document.getElementById('home-view').style.display = 'block';
-                document.getElementById('friends-view').style.display = 'none';
             } else if (tab === 'friends') {
                 document.getElementById('tab-friends').classList.add('active');
-                document.getElementById('home-view').style.display = 'none';
                 document.getElementById('friends-view').style.display = 'block';
                 if(window.renderFriendsList) window.renderFriendsList();
+            } else if (tab === 'menu') {
+                // Menu tab doesn't have a bottom border active state in this layout
+                document.getElementById('menu-view').style.display = 'block';
             }
         };
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        // IMPORT SIGNOUT
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteField, arrayUnion, arrayRemove, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
-        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; min-width: 16px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 16px; height: 16px; min-width: 16px; vertical-align: middle; margin-left: 5px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-622 622c-.19.19-.43.28-.67.28z"/></svg>`;
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {}; window.currentStoryId = null; window.currentStoryOwnerId = null; let storyTimer = null; 
         window.currentUserFollowing = []; 
+
+        // --- NEW: Logout Logic ---
+        window.logoutUser = () => {
+            if(confirm('আপনি কি সত্যিই লগ আউট করতে চান?')) {
+                signOut(auth).then(() => {
+                    window.location.href = "index.html";
+                }).catch((error) => {
+                    alert("লগ আউট করতে সমস্যা হয়েছে!");
+                });
+            }
+        };
 
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
@@ -425,7 +534,6 @@
             document.getElementById('storyModalAuthor').innerHTML = author + (author.toLowerCase().includes("sobuj mia") ? verifiedSvg : "");
             document.getElementById('storyModalAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
             
-            // Delete button logic (Only Admin or Owner can see it)
             const deleteBtn = document.getElementById('storyDeleteBtn');
             if (currentUser.uid === authorUid || currentUserName.toLowerCase().includes("sobuj mia")) {
                 deleteBtn.style.display = 'block';
@@ -451,7 +559,6 @@
             clearTimeout(storyTimer); storyTimer = setTimeout(() => { closeStory(); }, 5000);
         };
 
-        // --- NEW: Delete Story Logic ---
         window.deleteCurrentStory = async () => {
             if(!window.currentStoryId) return;
             const confirmDelete = confirm("আপনি কি সত্যিই এই স্টোরিটি ডিলিট করতে চান?");
