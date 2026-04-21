@@ -45,7 +45,7 @@
         .green-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; display: none;} 
         .active-name { font-size: 12px; color: #e4e6eb; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
-        /* --- Chat List (All Users Vertical List) --- */
+        /* --- Chat List (Recent Chats) --- */
         .chat-list-title { font-size: 14px; font-weight: bold; color: #8c9e94; padding: 15px 15px 5px 15px; text-transform: uppercase; }
         .chat-list { padding-bottom: 20px; display: flex; flex-direction: column; }
         .chat-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -88,7 +88,7 @@
         
         .message-bubble {
             padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word;
-            -webkit-touch-callout: none; user-select: none; /* Prevents text selection on long press */
+            -webkit-touch-callout: none; user-select: none; 
         }
         .message-wrapper.mine .message-bubble {
             background: linear-gradient(135deg, #0084ff, #00c6ff); color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(0, 132, 255, 0.3);
@@ -110,7 +110,7 @@
         .like-sticker { font-size: 45px; background: transparent !important; padding: 0 !important; box-shadow: none !important; animation: popUp 0.3s ease; color: #2ecc71; text-shadow: 0 2px 5px rgba(46, 204, 113, 0.4);}
         @keyframes popUp { 0% { transform: scale(0.5); opacity: 0;} 100% { transform: scale(1); opacity: 1;} }
 
-        /* Reaction Badge attached perfectly */
+        /* Reaction Badge */
         .msg-reaction-badge {
             position: absolute; bottom: -10px; background: #242526; border: 1px solid #3a3b3c; border-radius: 20px; padding: 2px 6px; font-size: 12px; display: flex; align-items: center; gap: 3px; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5); white-space: nowrap;
         }
@@ -208,10 +208,11 @@
             <div style="color: #8c9e94; font-size: 13px; padding: 20px; width: 100%; text-align: center;">ইউজার লোড হচ্ছে...</div>
         </div>
 
-        <div class="chat-list-title">All Users</div>
+        <div class="chat-list-title">Recent Chats</div>
         
         <div class="chat-list" id="chatListContainer">
-            </div>
+            <div style="text-align:center; padding: 20px; color:#8c9e94;">চ্যাট লোড হচ্ছে...</div>
+        </div>
 
     </div>
 
@@ -294,7 +295,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, collection, doc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        // import limit to query only the latest message for recent chats
+        import { getFirestore, collection, doc, query, orderBy, limit, onSnapshot, serverTimestamp, updateDoc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
@@ -305,6 +307,10 @@
         let currentChatId = null;
         let unsubscribeMessages = null;
         let replyingToMsg = null;
+        
+        // NEW: Stores recent chats data dynamically
+        let recentChatsData = {}; 
+        let chatListeners = {};
 
         function formatMsgTime(timestamp) {
             if (!timestamp) return "Just now";
@@ -321,20 +327,19 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // 1. Crash-Proof Load ALL Users
+        // Load ALL Users for the top bar and listen for recent chats
         function loadAllUsers() {
             onSnapshot(collection(db, "users"), (snap) => {
                 allUsers = [];
                 snap.forEach(doc => { 
                     if(doc.id !== currentUser.uid) {
                         const data = doc.data();
-                        // সেফটি চেক: যদি কারো নাম না থাকে, তাহলে "User" ধরে নেবে
                         if(!data.displayName) data.displayName = "User";
                         allUsers.push({ id: doc.id, ...data }); 
                     }
                 });
                 renderActiveUsersRow();
-                renderChatList();
+                listenToRecentChats(); // Start tracking who you talked to
             });
         }
 
@@ -369,22 +374,62 @@
             });
         }
 
-        // Bottom Vertical Chat List (All Registered Users)
-        function renderChatList() {
+        // NEW: Listen to latest message of each user to build Recent Chats list
+        function listenToRecentChats() {
+            allUsers.forEach(u => {
+                const chatId = currentUser.uid < u.id ? `${currentUser.uid}_${u.id}` : `${u.id}_${currentUser.uid}`;
+                
+                if (!chatListeners[u.id]) {
+                    const q = query(collection(db, "chats", chatId, "messages"), orderBy("timestamp", "desc"), limit(1));
+                    chatListeners[u.id] = onSnapshot(q, (snap) => {
+                        if (!snap.empty) {
+                            const msgDoc = snap.docs[0].data();
+                            recentChatsData[u.id] = {
+                                user: u,
+                                lastMsg: msgDoc.type === 'image' ? 'Sent a photo' : (msgDoc.type === 'like' ? '👍' : msgDoc.text),
+                                timestamp: msgDoc.timestamp ? msgDoc.timestamp.toMillis() : Date.now(),
+                                isMine: msgDoc.senderId === currentUser.uid
+                            };
+                        } else {
+                            if(recentChatsData[u.id]) delete recentChatsData[u.id];
+                        }
+                        renderRecentChatsList();
+                    });
+                } else {
+                    // Just update user info if profile pic/name changed
+                    if (recentChatsData[u.id]) {
+                        recentChatsData[u.id].user = u;
+                    }
+                    renderRecentChatsList();
+                }
+            });
+            // Initial render call
+            renderRecentChatsList();
+        }
+
+        // Bottom Vertical Chat List (Only users with chat history)
+        function renderRecentChatsList() {
             const container = document.getElementById('chatListContainer');
             container.innerHTML = "";
             
-            if(allUsers.length === 0) {
-                container.innerHTML = "<div style='text-align:center; padding: 20px; color:#8c9e94;'>কোনো ইউজার পাওয়া যায়নি।</div>";
+            // Convert to array and sort by latest message time
+            const chatArray = Object.values(recentChatsData).sort((a, b) => b.timestamp - a.timestamp);
+
+            if(chatArray.length === 0) {
+                container.innerHTML = "<div style='text-align:center; padding: 20px; color:#8c9e94;'>কোনো চ্যাট হিস্ট্রি নেই। ওপর থেকে কাউকে সিলেক্ট করে মেসেজ দিন।</div>";
                 return;
             }
 
-            allUsers.forEach(u => {
+            chatArray.forEach(chat => {
+                const u = chat.user;
                 const dName = u.displayName || "User";
                 const avatar = u.profilePic ? `<img src="${u.profilePic}">` : dName.charAt(0);
                 const isVIP = dName.toLowerCase().includes("sobuj mia");
                 const badge = isVIP ? verifiedSvg : "";
                 const glowClass = isVIP ? "admin-glow-avatar" : "";
+                
+                let prefix = chat.isMine ? "You: " : "";
+                let snippetText = prefix + chat.lastMsg;
 
                 container.innerHTML += `
                     <div class="chat-item" onclick="openChat('${u.id}', '${dName.replace(/'/g, "\\'")}', '${u.profilePic||''}', ${isVIP})">
@@ -394,7 +439,7 @@
                         </div>
                         <div class="chat-info">
                             <div class="chat-name">${dName}${badge}</div>
-                            <div class="chat-snippet">Tap to chat...</div>
+                            <div class="chat-snippet">${snippetText}</div>
                         </div>
                     </div>
                 `;
@@ -427,7 +472,7 @@
             cancelReply();
         };
 
-        // --- Long Press Logic (Fixed to prevent accidental open on scroll) ---
+        // --- Long Press Logic ---
         let pressTimer;
         window.startPress = (msgId, event) => {
             pressTimer = setTimeout(() => {
@@ -475,7 +520,7 @@
                         contentHtml = `<div class="message-bubble" ${touchEvents}>${replyHtml}${msg.text}</div>`;
                     }
 
-                    // Perfect Reaction Badge HTML
+                    // Reaction Badge 
                     let reactionBadge = msg.reaction ? `<div class="msg-reaction-badge">${msg.reaction}</div>` : "";
 
                     // Reaction Menu (Includes Reply Button)
@@ -490,7 +535,7 @@
                         </div>
                     `;
 
-                    // Perfect Structure using bubble-inner
+                    // Wrapper Structure
                     msgsArea.innerHTML += `
                         <div class="message-wrapper ${wrapClass}">
                             <div class="bubble-inner">
