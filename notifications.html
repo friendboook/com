@@ -2,104 +2,231 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FriendBook - Notifications</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000000; color: #ffffff; font-family: -apple-system, sans-serif; padding-bottom: 30px; }
-        header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo { color: #2ecc71; font-size: 20px; font-weight: bold; }
+        body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; padding-bottom: 20px; }
         
-        .main-content { max-width: 600px; margin: 0 auto; background-color: #01160b; min-height: 100vh; border-left: 1px solid #0a2e1a; border-right: 1px solid #0a2e1a; }
-        .notif-item { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #0a2e1a; transition: 0.3s; }
-        .notif-item.unread { background-color: rgba(46, 204, 113, 0.1); }
+        /* --- Header Styles --- */
+        header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; box-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; padding: 15px; }
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
         
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #2ecc71; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; overflow: hidden; flex-shrink: 0; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .notif-text { font-size: 15px; line-height: 1.4; color: #e4e6eb; }
-        .notif-text b { color: #ffffff; }
-        .notif-time { font-size: 12px; color: #8c9e94; margin-top: 5px; }
-        .accept-btn { background-color: #1877F2; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.2s; }
-        .accept-btn:active { transform: scale(0.9); }
+        .main-container { max-width: 600px; margin: 0 auto; }
+
+        /* --- Notification List Styles --- */
+        .notification-list { display: flex; flex-direction: column; }
+        
+        .notification-item { 
+            display: flex; align-items: flex-start; gap: 15px; padding: 15px; 
+            border-bottom: 1px solid rgba(10, 46, 26, 0.8); cursor: pointer; transition: 0.2s; 
+            background-color: #000a05;
+        }
+        .notification-item:active { background-color: rgba(255,255,255,0.05); }
+        .notification-item.unread { background-color: #01160b; border-left: 3px solid #1877F2; }
+        
+        .notif-avatar { 
+            width: 50px; height: 50px; border-radius: 50%; background: #2ecc71; 
+            display: flex; justify-content: center; align-items: center; font-size: 20px; 
+            font-weight: bold; color: #000; overflow: hidden; flex-shrink: 0; border: 1px solid #0a2e1a;
+        }
+        .notif-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .notif-content-area { flex-grow: 1; }
+        .notif-text { font-size: 15px; color: #e4e6eb; line-height: 1.4; }
+        .notif-text strong { color: #ffffff; }
+        
+        /* Time Display */
+        .notif-time { font-size: 12px; color: #8c9e94; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        
+        /* Action Button (e.g. Accept Request) */
+        .notif-action-btn { 
+            background: #1877F2; color: #ffffff; border: none; padding: 8px 16px; 
+            border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; 
+            margin-top: 10px; transition: 0.2s; display: inline-block; box-shadow: 0 2px 5px rgba(24, 119, 242, 0.3);
+        }
+        .notif-action-btn:active { transform: scale(0.95); }
+
+        .admin-glow-avatar { border: 2px solid #f1c40f !important; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5) !important; padding: 2px; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #8c9e94; font-size: 16px; }
+
     </style>
 </head>
 <body>
+
     <header>
         <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> হোম</a>
-        <div class="logo">Notifications</div>
+        <div class="header-title">Notifications</div>
     </header>
-    
-    <div class="main-content" id="notifList">
-        <div style="text-align: center; padding: 50px; color: #8c9e94;">লোড হচ্ছে...</div>
+
+    <div class="main-container">
+        <div class="notification-list" id="notificationList">
+            <div style="text-align:center; padding: 30px; color:#8c9e94;">নোটিফিকেশন লোড হচ্ছে...</div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove, writeBatch } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; min-width: 14px; vertical-align: middle; margin-left: 3px; flex-shrink: 0;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
+
         let currentUser = null;
 
+        // --- ADVANCED TIME AGO CALCULATION ---
+        function timeAgo(timestamp) {
+            if (!timestamp) return "সবেমাত্র";
+            
+            let past;
+            // Check if it's a Firestore Timestamp object with toDate()
+            if (typeof timestamp.toDate === 'function') {
+                past = timestamp.toDate();
+            } else if (typeof timestamp === 'number') {
+                past = new Date(timestamp);
+            } else {
+                return "সবেমাত্র";
+            }
+            
+            const now = new Date();
+            const diffMs = now - past;
+            
+            // If the time is in the future (due to local clock difference), show "সবেমাত্র"
+            if (diffMs < 0) return "সবেমাত্র";
+
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHrs = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return "সবেমাত্র";
+            if (diffMins < 60) return `${diffMins} মিনিট আগে`;
+            if (diffHrs < 24) return `${diffHrs} ঘণ্টা আগে`;
+            if (diffDays < 7) return `${diffDays} দিন আগে`;
+            
+            return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
         onAuthStateChanged(auth, (user) => {
-            if (user) { currentUser = user; loadNotifications(); } 
-            else { window.location.href = "index.html"; }
+            if (user) {
+                currentUser = user;
+                loadNotifications();
+                markAllAsRead(); // Clear notification badge when opened
+            } else {
+                window.location.href = "index.html";
+            }
         });
 
+        async function markAllAsRead() {
+            // This clears the unread count locally (implementation depends on how you track it in home.html)
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { unreadCounts: {} });
+            } catch(e) {}
+        }
+
+        window.acceptFriendRequest = async (senderId, notifId, event) => {
+            if(event) event.stopPropagation();
+            try {
+                const batch = writeBatch(db);
+                // 1. Update My Document
+                const myRef = doc(db, "users", currentUser.uid);
+                batch.update(myRef, { 
+                    receivedRequests: arrayRemove(senderId), 
+                    friends: arrayUnion(senderId) 
+                });
+                
+                // 2. Update Sender's Document
+                const senderRef = doc(db, "users", senderId);
+                batch.update(senderRef, { 
+                    sentRequests: arrayRemove(currentUser.uid), 
+                    friends: arrayUnion(currentUser.uid) 
+                });
+
+                // 3. Mark notification as processed/read so button disappears
+                const notifRef = doc(db, "users", currentUser.uid, "notifications", notifId);
+                batch.update(notifRef, { isProcessed: true });
+
+                await batch.commit();
+                alert('ফ্রেন্ড রিকোয়েস্ট এক্সেপ্ট করা হয়েছে!');
+            } catch (error) {
+                console.error(error);
+                alert('সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+            }
+        };
+
         function loadNotifications() {
+            const listContainer = document.getElementById('notificationList');
             const q = query(collection(db, "users", currentUser.uid, "notifications"), orderBy("timestamp", "desc"));
+            
             onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('notifList');
-                list.innerHTML = "";
-                if(snapshot.empty) { list.innerHTML = `<div style="text-align: center; padding: 50px; color: #8c9e94;"><i class="fa-solid fa-bell-slash" style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;"></i><br>কোনো নতুন নোটিফিকেশন নেই</div>`; return; }
+                listContainer.innerHTML = "";
+                
+                if(snapshot.empty) {
+                    listContainer.innerHTML = `<div class="empty-state"><i class="fa-regular fa-bell" style="font-size:40px; margin-bottom:10px;"></i><br>আপনার কোনো নতুন নোটিফিকেশন নেই।</div>`;
+                    return;
+                }
 
                 snapshot.forEach((docSnap) => {
                     const notif = docSnap.data();
-                    const nid = docSnap.id;
-                    let actionHtml = ""; let text = "";
+                    const notifId = docSnap.id;
                     
-                    if(notif.type === 'friend_request') {
-                        text = "আপনাকে ফ্রেন্ড রিকুয়েস্ট পাঠিয়েছে।";
-                        actionHtml = `<button class="accept-btn" onclick="acceptReq('${notif.senderId}', '${nid}')">Accept Request</button>`;
-                    } else if(notif.type === 'like') {
-                        text = "আপনার পোস্টে রিয়েক্ট করেছে।";
-                    } else if(notif.type === 'comment') {
-                        text = `আপনার পোস্টে কমেন্ট করেছে: "${notif.commentText}"`;
-                    } else if(notif.type === 'story_react') {
-                        text = `আপনার স্টোরিতে রিয়েক্ট করেছে ${notif.emoji}`;
-                    } else if(notif.type === 'follow') {
-                        text = "আপনাকে ফলো করেছে।";
-                    } else if(notif.type === 'accepted') {
-                        text = notif.text;
+                    const senderName = notif.senderName || "Unknown User";
+                    const senderPhoto = notif.senderPhoto ? `<img src="${notif.senderPhoto}">` : senderName.charAt(0);
+                    const isVIP = senderName.toLowerCase().includes("sobuj mia");
+                    const badge = isVIP ? verifiedSvg : "";
+                    const glowClass = isVIP ? "admin-glow-avatar" : "";
+                    
+                    const timeStr = timeAgo(notif.timestamp);
+                    let actionText = "";
+                    let extraActionHtml = "";
+
+                    // Determine the notification text based on type
+                    if (notif.type === 'like') {
+                        actionText = "আপনার পোস্টে রিয়েক্ট করেছে।";
+                    } 
+                    else if (notif.type === 'comment') {
+                        actionText = `আপনার পোস্টে কমেন্ট করেছে: "${notif.commentText}"`;
+                    } 
+                    else if (notif.type === 'follow') {
+                        actionText = "আপনাকে ফলো করেছে।";
+                    } 
+                    else if (notif.type === 'story_react') {
+                        actionText = `আপনার স্টোরিতে রিয়েক্ট করেছে ${notif.emoji || '❤️'}`;
+                    } 
+                    else if (notif.type === 'friend_request') {
+                        actionText = "আপনাকে ফ্রেন্ড রিকোয়েস্ট পাঠিয়েছে।";
+                        if (!notif.isProcessed) {
+                            extraActionHtml = `<button class="notif-action-btn" onclick="acceptFriendRequest('${notif.senderId}', '${notifId}', event)">Accept Request</button>`;
+                        } else {
+                            extraActionHtml = `<div style="color: #8c9e94; font-size: 13px; margin-top: 5px;"><i class="fa-solid fa-check"></i> Request Accepted</div>`;
+                        }
                     }
 
-                    const avatar = notif.senderPhoto ? `<img src="${notif.senderPhoto}">` : notif.senderName.charAt(0);
                     const unreadClass = notif.isRead ? "" : "unread";
 
-                    list.innerHTML += `
-                        <div class="notif-item ${unreadClass}">
-                            <div class="avatar">${avatar}</div>
-                            <div>
-                                <div class="notif-text"><b>${notif.senderName}</b> ${text}</div>
-                                <div class="notif-time">সবেমাত্র</div>
-                                ${actionHtml}
+                    // Build Notification HTML
+                    const html = `
+                        <div class="notification-item ${unreadClass}" onclick="window.location.href='profile.html?id=${notif.senderId}'">
+                            <div class="notif-avatar ${glowClass}">${senderPhoto}</div>
+                            <div class="notif-content-area">
+                                <div class="notif-text"><strong>${senderName}</strong>${badge} ${actionText}</div>
+                                ${extraActionHtml}
+                                <div class="notif-time">${timeStr}</div>
                             </div>
                         </div>
                     `;
-
-                    if(!notif.isRead) { updateDoc(doc(db, "users", currentUser.uid, "notifications", nid), { isRead: true }); }
+                    listContainer.innerHTML += html;
+                    
+                    // Automatically mark as read if it was unread
+                    if(!notif.isRead) {
+                        updateDoc(doc(db, "users", currentUser.uid, "notifications", notifId), { isRead: true }).catch(e=>{});
+                    }
                 });
             });
         }
-
-        window.acceptReq = async (senderId, notifId) => {
-            await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(senderId), friends: arrayUnion(senderId) });
-            await updateDoc(doc(db, "users", senderId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) });
-            await updateDoc(doc(db, "users", currentUser.uid, "notifications", notifId), { type: 'accepted', text: 'আপনি ফ্রেন্ড রিকুয়েস্ট একসেপ্ট করেছেন। আপনারা এখন ফ্রেন্ড!' });
-        };
     </script>
 </body>
 </html>
