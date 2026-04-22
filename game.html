@@ -14,7 +14,13 @@
         .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; }
 
         .games-container { max-width: 600px; margin: 0 auto; padding: 20px 15px; }
-        .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* এই ক্লাসটিই ২ কলাম তৈরি করে */
+        .games-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+        }
 
         .game-card { 
             background: rgba(255, 255, 255, 0.05); 
@@ -36,14 +42,11 @@
             align-items: center;
             font-size: 40px;
             color: #2ecc71;
-            background-size: cover;
-            background-position: center;
         }
 
         .game-info { padding: 12px; text-align: center; }
         .game-name { font-size: 15px; font-weight: bold; color: #e4e6eb; }
         
-        /* Premium Badges */
         .coming-soon-badge {
             position: absolute;
             top: 10px;
@@ -63,7 +66,6 @@
         .alert-icon { font-size: 40px; color: #2ecc71; margin-bottom: 15px; }
         .alert-msg { font-size: 16px; color: #e4e6eb; margin-bottom: 20px; }
         .alert-btn { background: #2ecc71; color: #000; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
-
     </style>
 </head>
 <body>
@@ -74,33 +76,36 @@
     </header>
 
     <div class="games-container">
-        <div class="game-card" onclick="window.location.href='ludo.html'">
-    <div class="game-thumbnail"><i class="fa-solid fa-dice"></i></div>
-    <div class="game-info">
-        <div class="game-name">Ludo Master</div>
-    </div>
-</div>
+        <div class="games-grid">
+            <div class="game-card" onclick="window.location.href='ludo.html'">
+                <div class="game-thumbnail"><i class="fa-solid fa-dice"></i></div>
+                <div class="game-info"><div class="game-name">Ludo Master</div></div>
             </div>
+            
             <div class="game-card" onclick="showGameAlert('Cricket League')">
                 <div class="game-thumbnail"><i class="fa-solid fa-baseball-bat-ball"></i></div>
                 <div class="coming-soon-badge">Soon</div>
                 <div class="game-info"><div class="game-name">Cricket League</div></div>
             </div>
+            
             <div class="game-card" onclick="showGameAlert('Racing Rivals')">
                 <div class="game-thumbnail"><i class="fa-solid fa-car-burst"></i></div>
                 <div class="coming-soon-badge">Soon</div>
                 <div class="game-info"><div class="game-name">Racing Rivals</div></div>
             </div>
+            
             <div class="game-card" onclick="showGameAlert('Bubble Shooter')">
                 <div class="game-thumbnail"><i class="fa-solid fa-circle-nodes"></i></div>
                 <div class="coming-soon-badge">Soon</div>
                 <div class="game-info"><div class="game-name">Bubble Shooter</div></div>
             </div>
+            
             <div class="game-card" onclick="showGameAlert('Chess Pro')">
                 <div class="game-thumbnail"><i class="fa-solid fa-chess"></i></div>
                 <div class="coming-soon-badge">Soon</div>
                 <div class="game-info"><div class="game-name">Chess Pro</div></div>
             </div>
+            
             <div class="game-card" onclick="showGameAlert('Puzzle Blast')">
                 <div class="game-thumbnail"><i class="fa-solid fa-puzzle-piece"></i></div>
                 <div class="coming-soon-badge">Soon</div>
