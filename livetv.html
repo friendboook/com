@@ -35,7 +35,7 @@
         .main-container {
             display: flex;
             flex: 1;
-            flex-direction: column; /* মোবাইলের জন্য ডিফল্ট কলাম */
+            flex-direction: column; 
             overflow: hidden;
         }
 
@@ -140,6 +140,8 @@
             color: #2ecc71;
         }
         .channel-item.active i { color: #2ecc71; }
+        
+        .yt-icon { color: #ff4757 !important; }
 
         /* Desktop View */
         @media (min-width: 768px) {
@@ -159,7 +161,7 @@
     <div class="main-container">
         <div class="player-section" id="playerWrapper">
             <div class="iframe-container">
-                <iframe id="mainFrame" src="http://10.99.99.99/" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                <iframe id="mainFrame" src="https://www.youtube.com/embed/TU4rD5cxXr4?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             
             <div class="bottom-bar">
@@ -171,18 +173,35 @@
         <div class="sidebar">
             <div class="sidebar-header">চ্যানেল লিস্ট</div>
             <div class="channel-list">
-                <div class="channel-item active" onclick="changeChannel('http://10.99.99.99/', this)">
-                    <i class="fa-solid fa-satellite-dish"></i> <span>Main Server TV</span>
+                
+                <div class="channel-item active" onclick="changeChannel('https://www.youtube.com/embed/TU4rD5cxXr4?autoplay=1', this)">
+                    <i class="fa-brands fa-youtube yt-icon"></i> <span>Jamuna TV</span>
                 </div>
-                <div class="channel-item" onclick="changeChannel('http://10.99.99.100/', this)">
-                    <i class="fa-solid fa-tv"></i> <span>Sports Channel</span>
+                
+                <div class="channel-item" onclick="changeChannel('https://www.youtube.com/embed/ABnvuDjicEE?autoplay=1', this)">
+                    <i class="fa-brands fa-youtube yt-icon"></i> <span>Somoy TV</span>
                 </div>
-                <div class="channel-item" onclick="changeChannel('http://10.99.99.101/', this)">
+                
+                <div class="channel-item" onclick="changeChannel('https://www.youtube.com/embed/ChU8FA-MtLo?autoplay=1', this)">
+                    <i class="fa-brands fa-youtube yt-icon"></i> <span>Independent TV</span>
+                </div>
+                
+                <div class="channel-item" onclick="changeChannel('https://www.youtube.com/embed/8foVIwbsDEo?autoplay=1', this)">
+                    <i class="fa-brands fa-youtube yt-icon"></i> <span>BTV</span>
+                </div>
+
+                <div class="channel-item" onclick="changeChannel('http://dhakamovie.com/', this)">
                     <i class="fa-solid fa-film"></i> <span>Movie Server</span>
                 </div>
-                <div class="channel-item" onclick="changeChannel('https://www.youtube.com/embed/live_stream_id', this)">
-                    <i class="fa-brands fa-youtube"></i> <span>YouTube Live Demo</span>
+
+                <div class="channel-item" onclick="changeChannel('http://10.99.99.99/', this)">
+                    <i class="fa-solid fa-satellite-dish"></i> <span>Local Server 1</span>
                 </div>
+                
+                <div class="channel-item" onclick="changeChannel('http://10.99.99.100/', this)">
+                    <i class="fa-solid fa-tv"></i> <span>Local Sports</span>
+                </div>
+
             </div>
         </div>
     </div>
@@ -194,9 +213,9 @@
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen(); // Safari
+                elem.webkitRequestFullscreen(); 
             } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen(); // IE11
+                elem.msRequestFullscreen(); 
             }
         }
 
@@ -215,7 +234,6 @@
         // রিলোড ফাংশন
         function refreshFrame() {
             const iframe = document.getElementById("mainFrame");
-            // ফ্রেম রিলোড করার ট্রিক
             iframe.src = iframe.src;
         }
     </script>
