@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FriendBook Ludo Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #000a05; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header { 
+            width: 100%; background-color: #01160b; padding: 15px; 
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #0a2e1a; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; }
+        .game-title { color: #2ecc71; font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+
+        /* --- Board & Grid Styles --- */
+        .game-wrapper {
+            margin-top: 20px; position: relative;
+            padding: 10px; background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px; border: 1px solid rgba(46, 204, 113, 0.2);
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.1);
+        }
+
+        .board {
+            width: 360px; height: 360px;
+            display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr);
+            background: #000; border: 2px solid #2ecc71; position: relative;
+        }
+
+        .cell { border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: center; align-items: center; }
+        
+        /* Safe Zones & Colors */
+        .safe-green { background-color: rgba(46, 204, 113, 0.3); }
+        .safe-yellow { background-color: rgba(241, 196, 15, 0.3); }
+        .safe-red { background-color: rgba(231, 76, 60, 0.3); }
+        .safe-blue { background-color: rgba(52, 152, 219, 0.3); }
+        .star { color: rgba(255,255,255,0.5); font-size: 10px; }
+
+        /* Home Bases */
+        .home { position: absolute; width: 40%; height: 40%; display: flex; justify-content: center; align-items: center; }
+        .home.green { top: 0; left: 0; background: linear-gradient(135deg, #145a32, #2ecc71); border-right: 2px solid #000; border-bottom: 2px solid #000;}
+        .home.yellow { top: 0; right: 0; background: linear-gradient(135deg, #b7950b, #f1c40f); border-left: 2px solid #000; border-bottom: 2px solid #000;}
+        .home.red { bottom: 0; right: 0; background: linear-gradient(135deg, #7b241c, #e74c3c); border-left: 2px solid #000; border-top: 2px solid #000;}
+        .home.blue { bottom: 0; left: 0; background: linear-gradient(135deg, #154360, #3498db); border-right: 2px solid #000; border-top: 2px solid #000;}
+        
+        .home-inner { width: 60%; height: 60%; background: rgba(0,0,0,0.5); border-radius: 15px; display: grid; grid-template-columns: 1fr 1fr; padding: 10px; gap: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .base-spot { background: rgba(255,255,255,0.2); border-radius: 50%; width: 100%; height: 100%; position: relative;}
+
+        /* Center Home Finish */
+        .center-finish { position: absolute; top: 40%; left: 40%; width: 20%; height: 20%; background: url('https://raw.githubusercontent.com/friendboook/com/refs/heads/main/Picsart_26-04-17_14-56-52-632.png') center/cover; opacity: 0.8;}
+
+        /* --- Pawns (গুটি) --- */
+        .pawn {
+            position: absolute; width: 18px; height: 18px; border-radius: 50%;
+            border: 2px solid #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset 0 -2px 5px rgba(0,0,0,0.5);
+            transition: all 0.4s ease-in-out; z-index: 10; cursor: pointer;
+            transform: translate(-50%, -50%); /* Center perfectly on grid lines */
+        }
+        .pawn.green { background: #2ecc71; }
+        .pawn.active { animation: bounce 0.6s infinite alternate; box-shadow: 0 0 15px #fff; }
+        
+        @keyframes bounce { 0% { transform: translate(-50%, -50%) scale(1); } 100% { transform: translate(-50%, -60%) scale(1.2); } }
+
+        /* --- Controls Area --- */
+        .controls { width: 100%; max-width: 380px; margin-top: 20px; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); border-radius: 15px; }
+        
+        .status-box { flex-grow: 1; }
+        .turn-text { font-size: 14px; color: #8c9e94; font-weight: bold; text-transform: uppercase; }
+        .msg-text { font-size: 18px; color: #2ecc71; font-weight: bold; margin-top: 5px; }
+
+        .dice-btn {
+            width: 60px; height: 60px; background: linear-gradient(135deg, #fff, #e4e6eb);
+            border-radius: 12px; color: #000; font-size: 30px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: none; transition: 0.2s;
+        }
+        .dice-btn:active { transform: scale(0.9) rotate(10deg); }
+        .dice-btn.rolling { animation: diceRoll 0.4s infinite linear; pointer-events: none;}
+        
+        @keyframes diceRoll { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="game.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="game-title">FriendBook Ludo</div>
+        </div>
+        <i class="fa-solid fa-gear" style="color: #8c9e94; font-size: 20px;"></i>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="board" id="ludoBoard">
+            <div class="home green"><div class="home-inner"><div class="base-spot" id="g-base-1"></div><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div></div></div>
+            <div class="home yellow"><div class="home-inner"><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div></div></div>
+            <div class="home red"><div class="home-inner"><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div></div></div>
+            <div class="home blue"><div class="home-inner"><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div><div class="base-spot"></div></div></div>
+            
+            <div class="center-finish"></div>
+
+            <div class="pawn green" id="pawn-g1"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="status-box">
+            <div class="turn-text" id="turnIndicator">আপনার চাল (সবুজ)</div>
+            <div class="msg-text" id="gameMsg">ছক্কা ঘোরান!</div>
+        </div>
+        <button class="dice-btn" id="diceBtn" onclick="rollDice()">
+            <i class="fa-solid fa-dice-one"></i>
+        </button>
+    </div>
+
+    <script>
+        const board = document.getElementById('ludoBoard');
+        const cellSize = 24; // 360px / 15
+        
+        // জেনারেট ব্যাকগ্রাউন্ড গ্রিড সেলস
+        for(let i=0; i<225; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            board.appendChild(cell);
+        }
+
+        // --- Paths Coordinates for Green (Row and Col indices 0-14) ---
+        // শুধুমাত্র সবুজ গুটির মুভমেন্ট দেখানোর জন্য একটি সিম্পল পাথ (সম্পূর্ণ পাথ অনেক বড় হয়)
+        const greenPath = [
+            {r: 6, c: 1}, {r: 6, c: 2}, {r: 6, c: 3}, {r: 6, c: 4}, {r: 6, c: 5}, // বের হওয়ার পথ
+            {r: 5, c: 6}, {r: 4, c: 6}, {r: 3, c: 6}, {r: 2, c: 6}, {r: 1, c: 6}, {r: 0, c: 6}, // উপরের দিকে
+            {r: 0, c: 7}, {r: 0, c: 8}, // ডানে 
+            {r: 1, c: 8}, {r: 2, c: 8}, {r: 3, c: 8}, {r: 4, c: 8}, {r: 5, c: 8}, // নিচে
+            {r: 6, c: 9}, {r: 6, c: 10}, {r: 6, c: 11}, {r: 6, c: 12}, {r: 6, c: 13}, {r: 6, c: 14}, // ডানে
+            {r: 7, c: 14}, {r: 8, c: 14}, // নিচে
+            {r: 8, c: 13}, {r: 8, c: 12}, {r: 8, c: 11}, {r: 8, c: 10}, {r: 8, c: 9}, // বামে
+            {r: 9, c: 8}, {r: 10, c: 8}, {r: 11, c: 8}, {r: 12, c: 8}, {r: 13, c: 8}, {r: 14, c: 8}, // নিচে
+            {r: 14, c: 7}, {r: 14, c: 6}, // বামে
+            {r: 13, c: 6}, {r: 12, c: 6}, {r: 11, c: 6}, {r: 10, c: 6}, {r: 9, c: 6}, // উপরে
+            {r: 8, c: 5}, {r: 8, c: 4}, {r: 8, c: 3}, {r: 8, c: 2}, {r: 8, c: 1}, {r: 8, c: 0}, // বামে
+            {r: 7, c: 0}, // উপরে
+            // Green Home Stretch (সবুজ ঘরের ভেতরের রাস্তা)
+            {r: 7, c: 1}, {r: 7, c: 2}, {r: 7, c: 3}, {r: 7, c: 4}, {r: 7, c: 5}, {r: 7, c: 6} // ফিনিশ!
+        ];
+
+        // গেম স্টেট
+        let pawnPosIndex = -1; // -1 মানে গুটি ঘরে আছে
+        let currentDiceValue = 0;
+        let isDiceRolled = false;
+        
+        const pawnElement = document.getElementById('pawn-g1');
+        const diceBtn = document.getElementById('diceBtn');
+        const msgEl = document.getElementById('gameMsg');
+
+        // গুটিকে তার বেস (ঘরে) সেট করার ফাংশন
+        function setPawnToHome() {
+            const baseSpot = document.getElementById('g-base-1').getBoundingClientRect();
+            const boardRect = board.getBoundingClientRect();
+            // Calculate relative position within the board
+            const x = baseSpot.left - boardRect.left + (baseSpot.width / 2);
+            const y = baseSpot.top - boardRect.top + (baseSpot.height / 2);
+            pawnElement.style.left = `${x}px`;
+            pawnElement.style.top = `${y}px`;
+        }
+        
+        // পেজ লোড হলে গুটি ঘরে থাকবে
+        setTimeout(setPawnToHome, 100); 
+
+        // নির্দিষ্ট পজিশনে গুটি মুভ করানোর ফাংশন
+        function movePawnToPath(index) {
+            const coord = greenPath[index];
+            const x = (coord.c * cellSize) + (cellSize / 2);
+            const y = (coord.r * cellSize) + (cellSize / 2);
+            pawnElement.style.left = `${x}px`;
+            pawnElement.style.top = `${y}px`;
+        }
+
+        // --- ছক্কা ঘোরানোর লজিক ---
+        const diceFaces = ['one', 'two', 'three', 'four', 'five', 'six'];
+        
+        function rollDice() {
+            if(isDiceRolled) return; // চাল না দেওয়া পর্যন্ত আবার ছক্কা ঘুরাতে পারবে না
+            
+            diceBtn.classList.add('rolling');
+            msgEl.innerText = "ঘুরছে...";
+
+            setTimeout(() => {
+                diceBtn.classList.remove('rolling');
+                currentDiceValue = Math.floor(Math.random() * 6) + 1;
+                diceBtn.innerHTML = `<i class="fa-solid fa-dice-${diceFaces[currentDiceValue-1]}"></i>`;
+                isDiceRolled = true;
+
+                checkMoves();
+            }, 500);
+        }
+
+        // --- চাল দেওয়ার লজিক ---
+        function checkMoves() {
+            if(pawnPosIndex === -1) {
+                if(currentDiceValue === 6) {
+                    msgEl.innerText = "গুটি বের করুন! (গুটিতে ক্লিক করুন)";
+                    pawnElement.classList.add('active');
+                } else {
+                    msgEl.innerText = `${currentDiceValue} উঠেছে। ৬ ছাড়া গুটি বের হবে না।`;
+                    setTimeout(resetTurn, 1500);
+                }
+            } else {
+                if(pawnPosIndex + currentDiceValue < greenPath.length) {
+                    msgEl.innerText = "চাল দিন! (গুটিতে ক্লিক করুন)";
+                    pawnElement.classList.add('active');
+                } else {
+                    msgEl.innerText = "চাল দেওয়ার জায়গা নেই!";
+                    setTimeout(resetTurn, 1500);
+                }
+            }
+        }
+
+        // গুটিতে ক্লিক করলে মুভ করবে
+        pawnElement.onclick = () => {
+            if(!pawnElement.classList.contains('active')) return;
+            
+            pawnElement.classList.remove('active');
+            
+            if(pawnPosIndex === -1 && currentDiceValue === 6) {
+                // গুটি ঘর থেকে বের হয়ে স্টার্টিং পয়েন্টে আসবে (Index 0)
+                pawnPosIndex = 0;
+                movePawnToPath(pawnPosIndex);
+                msgEl.innerText = "৬ উঠেছে! আবার ছক্কা ঘোরান।";
+                isDiceRolled = false; // ৬ উঠলে আবার চাল
+            } else {
+                // গুটি সামনের দিকে এগোবে
+                pawnPosIndex += currentDiceValue;
+                movePawnToPath(pawnPosIndex);
+                
+                if(pawnPosIndex === greenPath.length - 1) {
+                    msgEl.innerText = "অভিনন্দন! গুটি পেকে গেছে! 🎉";
+                    return; // Game Over for this pawn
+                }
+
+                if(currentDiceValue === 6) {
+                    msgEl.innerText = "৬ উঠেছে! আবার ছক্কা ঘোরান।";
+                    isDiceRolled = false;
+                } else {
+                    resetTurn();
+                }
+            }
+        };
+
+        function resetTurn() {
+            isDiceRolled = false;
+            msgEl.innerText = "আবার ছক্কা ঘোরান!";
+            diceBtn.innerHTML = `<i class="fa-solid fa-dice-one"></i>`;
+            // মাল্টিপ্লেয়ার হলে এখানে টার্ন চেঞ্জ হয়ে অন্য প্লেয়ারের কাছে যেত।
+        }
+    </script>
+</body>
+</html>
