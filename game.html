@@ -15,7 +15,6 @@
 
         .games-container { max-width: 600px; margin: 0 auto; padding: 20px 15px; }
         
-        /* এই ক্লাসটিই ২ কলাম তৈরি করে */
         .games-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
@@ -82,6 +81,11 @@
                 <div class="game-info"><div class="game-name">Ludo Master</div></div>
             </div>
             
+            <div class="game-card" onclick="window.location.href='snake.html'">
+                <div class="game-thumbnail"><i class="fa-solid fa-staff-snake"></i></div>
+                <div class="game-info"><div class="game-name">Classic Snake</div></div>
+            </div>
+            
             <div class="game-card" onclick="showGameAlert('Cricket League')">
                 <div class="game-thumbnail"><i class="fa-solid fa-baseball-bat-ball"></i></div>
                 <div class="coming-soon-badge">Soon</div>
@@ -92,12 +96,6 @@
                 <div class="game-thumbnail"><i class="fa-solid fa-car-burst"></i></div>
                 <div class="coming-soon-badge">Soon</div>
                 <div class="game-info"><div class="game-name">Racing Rivals</div></div>
-            </div>
-            
-            <div class="game-card" onclick="showGameAlert('Bubble Shooter')">
-                <div class="game-thumbnail"><i class="fa-solid fa-circle-nodes"></i></div>
-                <div class="coming-soon-badge">Soon</div>
-                <div class="game-info"><div class="game-name">Bubble Shooter</div></div>
             </div>
             
             <div class="game-card" onclick="showGameAlert('Chess Pro')">
