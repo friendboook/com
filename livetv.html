@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FriendBook Live TV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -25,307 +26,275 @@
             align-items: center; 
             gap: 15px; 
             border-bottom: 1px solid #0a2e1a; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.8); 
             z-index: 1000;
         }
-        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; }
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; padding-right: 5px; cursor: pointer;}
         .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
-
-        /* --- Main Layout --- */
-        .main-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
-
-        /* --- Player Section --- */
-        .player-section {
-            flex: 1.2;
-            display: flex;
-            flex-direction: column;
-            background: #000;
-            position: relative;
-            border-bottom: 1px solid #0a2e1a;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            z-index: 10;
+        
+        .refresh-btn {
+            margin-left: auto; color: #8c9e94; font-size: 20px; cursor: pointer;
+            background: none; border: none; transition: 0.2s; display: none;
         }
+        .refresh-btn:active { color: #2ecc71; transform: scale(0.8); }
 
-        .iframe-container { flex: 1; position: relative; background: #000; display: flex; justify-content: center; align-items: center;}
-        iframe { width: 100%; height: 100%; border: none; background: #000; }
-
-        /* Controls */
-        .bottom-bar { padding: 10px 15px; background: #01160b; display: flex; justify-content: space-between; gap: 10px; }
-        .btn {
-            flex: 1; background: rgba(255, 255, 255, 0.05); color: #ffffff;
-            border: 1px solid rgba(46, 204, 113, 0.3); padding: 10px; border-radius: 8px;
-            cursor: pointer; font-weight: bold; font-size: 14px; display: flex;
-            justify-content: center; align-items: center; gap: 8px; transition: 0.2s;
+        /* ========================================== */
+        /* 1. SELECTION SCREEN (Landing Page) */
+        /* ========================================== */
+        .selection-wrapper {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            padding: 20px; background: #000a05;
         }
-        .btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
-        .btn-primary { background: #2ecc71; color: #000; border: none; }
-        .btn-primary:active { background: #27ae60; }
+        .server-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            width: 100%; max-width: 500px;
+        }
+        .server-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+            padding: 25px 10px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+            aspect-ratio: 1 / 1.1;
+        }
+        .server-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transition: 0.3s; z-index: 0;
+        }
+        .server-card > * { z-index: 1; position: relative; }
+        
+        .server-card:active { transform: scale(0.95); }
 
-        /* --- Sidebar & Grid --- */
+        /* YouTube Card Style */
+        .card-yt { border-color: rgba(255, 71, 87, 0.3); }
+        .card-yt::before { background: radial-gradient(circle, rgba(255, 71, 87, 0.15) 0%, transparent 70%); }
+        .card-yt:active::before { opacity: 1; }
+        .card-yt .server-icon { color: #ff4757; }
+
+        /* Local Card Style */
+        .card-local { border-color: rgba(0, 210, 255, 0.3); }
+        .card-local::before { background: radial-gradient(circle, rgba(0, 210, 255, 0.15) 0%, transparent 70%); }
+        .card-local:active::before { opacity: 1; }
+        .card-local .server-icon { color: #00d2ff; }
+
+        .server-icon { font-size: 45px; margin-bottom: 15px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); }
+        .server-title { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; line-height: 1.2; }
+        .server-subtitle { font-size: 11px; color: #8c9e94; font-weight: bold; }
+
+        /* ========================================== */
+        /* 2. YOUTUBE SERVER SCREEN */
+        /* ========================================== */
+        .youtube-wrapper { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .player-section { flex: 1.2; display: flex; flex-direction: column; background: #000; border-bottom: 1px solid #0a2e1a; }
+        .iframe-container { flex: 1; position: relative; background: #000; }
+        
+        .bottom-bar { padding: 10px 15px; background: #01160b; display: flex; justify-content: flex-end; }
+        .btn-primary { background: #2ecc71; color: #000; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:active { background: #27ae60; transform: scale(0.95); }
+
         .sidebar { flex: 1.8; background: #000a05; display: flex; flex-direction: column; overflow: hidden; }
-        .channel-list {
-            overflow-y: auto; padding: 15px; display: grid;
-            grid-template-columns: repeat(2, 1fr); gap: 12px;
-        }
+        .channel-list { overflow-y: auto; padding: 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .channel-list::-webkit-scrollbar { display: none; }
-
-        .section-title {
-            grid-column: span 2; font-size: 15px; font-weight: bold; color: #8c9e94;
-            margin-top: 10px; margin-bottom: 5px; border-bottom: 1px solid #0a2e1a; 
-            padding-bottom: 8px; letter-spacing: 0.5px;
-        }
-        .local-note {
-            font-size: 12px; color: #f39c12; font-weight: normal; 
-            display: block; margin-top: 4px;
-        }
-
-        /* --- Fixed Item Design --- */
+        
         .channel-item {
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
             border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 12px;
             padding: 15px 5px; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 8px; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative;
-            min-height: 90px;
+            justify-content: center; gap: 8px; cursor: pointer; transition: 0.3s; min-height: 90px;
         }
-        .channel-item:active { transform: scale(0.95); border-color: #2ecc71; }
-        .channel-item.active {
-            background: rgba(46, 204, 113, 0.15); border-color: #2ecc71;
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
-        }
-        
-        .channel-icon { font-size: 28px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)); transition: 0.3s; }
+        .channel-item.active { background: rgba(46, 204, 113, 0.15); border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); }
+        .channel-icon { font-size: 28px; color: #ff4757; transition: 0.3s; }
         .channel-item.active .channel-icon { transform: scale(1.1); }
-        
-        .channel-name {
-            font-size: 13px; font-weight: bold; color: #ffffff !important; 
-            text-align: center; width: 100%; display: block; 
-            line-height: 1.3; word-wrap: break-word;
-        }
+        .channel-name { font-size: 13px; font-weight: bold; color: #ffffff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Desktop View */
+        /* ========================================== */
+        /* 3. LOCAL SERVER SCREEN */
+        /* ========================================== */
+        .local-wrapper { display: none; flex: 1; background: #000; }
+        .local-iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        /* Desktop Adjustments */
         @media (min-width: 768px) {
-            .main-container { flex-direction: row; }
+            .youtube-wrapper { flex-direction: row; }
             .player-section { flex: 3; border-bottom: none; border-right: 1px solid #0a2e1a; }
             .sidebar { flex: 1.5; max-width: 400px; }
         }
     </style>
-    
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
     <header>
-        <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="header-title">Live TV Hub</div>
+        <div class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="header-title" id="headerTitle">Live TV Hub</div>
+        <button class="refresh-btn" id="refreshBtn" onclick="refreshCurrentView()"><i class="fa-solid fa-rotate-right"></i></button>
     </header>
 
-    <div class="main-container">
+    <div id="selectionScreen" class="selection-wrapper">
+        <div class="server-grid">
+            
+            <div class="server-card card-yt" onclick="openView('youtube')">
+                <i class="fa-brands fa-youtube server-icon"></i>
+                <div class="server-title">ইউটিউব সার্ভার</div>
+                <div class="server-subtitle">(সকল ইউজারদের জন্য)</div>
+            </div>
+
+            <div class="server-card card-local" onclick="openView('local')">
+                <i class="fa-solid fa-satellite-dish server-icon"></i>
+                <div class="server-title">লোকাল সার্ভার</div>
+                <div class="server-subtitle">(Wifi ইউজারদের জন্য)</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="youtubeScreen" class="youtube-wrapper">
         <div class="player-section" id="playerWrapper">
             <div class="iframe-container">
-                <div id="ytPlayer"></div>
-                
-                <iframe id="localFrame" style="display: none;" allow="autoplay; fullscreen; encrypted-media" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-top-navigation allow-popups" allowfullscreen></iframe>
-            </div>
-            
+                <div id="ytPlayer"></div> </div>
             <div class="bottom-bar">
-                <button class="btn" onclick="refreshFrame()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-                <button class="btn btn-primary" onclick="goFullScreen()"><i class="fa-solid fa-expand"></i> Fullscreen</button>
+                <button class="btn-primary" onclick="goFullScreen('playerWrapper')"><i class="fa-solid fa-expand"></i> Fullscreen</button>
             </div>
         </div>
 
         <div class="sidebar">
-            <div class="channel-list" id="channel-grid">
-                
-                <div class="section-title">ইউটিউব সার্ভার সমূহ</div>
-
+            <div class="channel-list">
                 <div class="channel-item active" onclick="playYouTube('DpRyTXZ8Wj8', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Jamuna TV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Jamuna TV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('luy2r7YQLts', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Independent TV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Independent TV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('Ij1g3GmORv8', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">71 TV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">71 TV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('Wp9gzJEQGlc', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Channel 24</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Channel 24</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('AF5wnXMbDso', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">RTV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">RTV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('yAkh4TX7PwE', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">DBC News</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">DBC News</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('tbkWU88p5ks', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">NTV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">NTV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('3LJzZDiajdQ', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Channel i</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Channel i</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('XVPubiGWI_Q', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Desh TV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Desh TV</span>
                 </div>
                 <div class="channel-item" onclick="playYouTube('xVbGmFbKc4U', this)">
-                    <i class="fa-brands fa-youtube channel-icon" style="color: #ff4757;"></i>
-                    <span class="channel-name">Ekhon TV</span>
+                    <i class="fa-brands fa-youtube channel-icon"></i><span class="channel-name">Ekhon TV</span>
                 </div>
-
-                <div class="section-title">
-                    লোকাল সার্ভার
-                    <span class="local-note">শুধুমাত্র ওয়াইফাই ইউজারদের জন্য।</span>
-                </div>
-
-                </div>
+            </div>
         </div>
     </div>
 
+    <div id="localScreen" class="local-wrapper">
+        <iframe id="localFrame" class="local-iframe" src="" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
     <script>
+        let currentView = 'selection';
         let ytPlayer;
         let isYtReady = false;
 
         // ==========================================
-        // YOUTUBE API PLAYER LOGIC
+        // VIEW NAVIGATION LOGIC
         // ==========================================
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('ytPlayer', {
-                height: '100%',
-                width: '100%',
-                videoId: 'DpRyTXZ8Wj8', // Default Jamuna TV
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 1,
-                    'rel': 0,
-                    'modestbranding': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady
+        function openView(viewName) {
+            document.getElementById('selectionScreen').style.display = 'none';
+            document.getElementById('youtubeScreen').style.display = 'none';
+            document.getElementById('localScreen').style.display = 'none';
+            document.getElementById('refreshBtn').style.display = 'block';
+
+            currentView = viewName;
+
+            if (viewName === 'youtube') {
+                document.getElementById('youtubeScreen').style.display = 'flex';
+                document.getElementById('headerTitle').innerText = 'YouTube Server';
+                // Play YT if paused
+                if(isYtReady) ytPlayer.playVideo();
+            } 
+            else if (viewName === 'local') {
+                document.getElementById('localScreen').style.display = 'block';
+                document.getElementById('headerTitle').innerText = 'Local Server';
+                // Load the portal URL only when opened
+                const localFrame = document.getElementById('localFrame');
+                if(!localFrame.src || localFrame.src === window.location.href) {
+                    localFrame.src = "https://sobujmiashuvo.github.io/tv";
                 }
-            });
-        }
-
-        function onPlayerReady(event) {
-            isYtReady = true;
-            event.target.playVideo();
-        }
-
-        // ==========================================
-        // CHANNEL SWITCHING LOGIC
-        // ==========================================
-        function setActiveStyle(element) {
-            document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        function playYouTube(videoId, element) {
-            setActiveStyle(element);
-            
-            // Hide Local Frame
-            const localFrame = document.getElementById("localFrame");
-            localFrame.style.display = 'none';
-            localFrame.src = '';
-            
-            document.getElementById("ytPlayer").style.display = 'block';
-
-            if(isYtReady) {
-                ytPlayer.loadVideoById(videoId);
             }
         }
 
-        function playLocal(url, element) {
-            setActiveStyle(element);
-            
-            // Pause & Hide YouTube
-            document.getElementById("ytPlayer").style.display = 'none';
-            if(isYtReady) ytPlayer.pauseVideo();
-
-            // Play inside the Local Frame
-            const localFrame = document.getElementById("localFrame");
-            localFrame.style.display = 'block';
-            localFrame.src = url;
+        function goBack() {
+            if (currentView === 'selection') {
+                // If on main selection screen, go back to home
+                window.location.href = 'home.html';
+            } else {
+                // If inside a player, go back to selection screen
+                document.getElementById('selectionScreen').style.display = 'flex';
+                document.getElementById('youtubeScreen').style.display = 'none';
+                document.getElementById('localScreen').style.display = 'none';
+                document.getElementById('refreshBtn').style.display = 'none';
+                document.getElementById('headerTitle').innerText = 'Live TV Hub';
+                
+                // Pause YouTube
+                if(isYtReady) ytPlayer.pauseVideo();
+                
+                // Stop Local audio by resetting src
+                const localFrame = document.getElementById('localFrame');
+                localFrame.src = localFrame.src; 
+                
+                currentView = 'selection';
+            }
         }
 
-        // ==========================================
-        // OTHER CONTROLS
-        // ==========================================
-        function goFullScreen() {
-            const elem = document.getElementById("playerWrapper");
-            if (elem.requestFullscreen) elem.requestFullscreen(); 
-            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen(); 
-            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-        }
-
-        function refreshFrame() {
-            const localFrame = document.getElementById("localFrame");
-            if (localFrame.style.display === 'block') {
-                localFrame.src = localFrame.src;
-            } else if (isYtReady) {
+        function refreshCurrentView() {
+            if (currentView === 'local') {
+                const f = document.getElementById('localFrame');
+                f.src = f.src;
+            } else if (currentView === 'youtube' && isYtReady) {
                 ytPlayer.playVideo();
             }
         }
 
         // ==========================================
-        // AUTO GENERATE LOCAL CHANNELS
+        // YOUTUBE API LOGIC (No-Blink)
         // ==========================================
-        const localChannels = [
-            { id: 1, name: "T SPORTS" }, { id: 2, name: "STAR SPORTS 1 HD" }, { id: 3, name: "STAR SPORTS 2 HD" },
-            { id: 4, name: "COLORS HD" }, { id: 5, name: "AND PICTURS HD" }, { id: 6, name: "SONY BBC EARTH HD" },
-            { id: 7, name: "ZEE TV HD" }, { id: 8, name: "CARTOON NETWORK" }, { id: 9, name: "TLC HD" },
-            { id: 10, name: "COLORS CINEPLEX HD" }, { id: 11, name: "SONY ENT HD" }, { id: 12, name: "COLORS BANGLA HD" },
-            { id: 13, name: "ZEE CINEMA HD" }, { id: 14, name: "ZEE BANGLA HD" }, { id: 15, name: "HISTORY TV HD" },
-            { id: 16, name: "STAR SPORTS SELECT 2" }, { id: 17, name: "SUN BANGLA HD" }, { id: 18, name: "STAR JALSHA HD" },
-            { id: 19, name: "JALSHA MOVIES HD" }, { id: 20, name: "STAR GOLD HD" }, { id: 21, name: "SONY MAX HD" },
-            { id: 22, name: "DISCOVERY HD" }, { id: 23, name: "NATGEO WILD HD" }, { id: 24, name: "STAR PLUS HD" },
-            { id: 25, name: "NATGEO HD" }, { id: 26, name: "ANIMAL PLANET HD" }, { id: 27, name: "STAR MOVIES SELECT" },
-            { id: 28, name: "STAR SELECT 1 HD" }, { id: 29, name: "SONY SPORTS 2 HD" }, { id: 30, name: "SONY SPORTS 3" },
-            { id: 31, name: "STAR SPORTS 3" }, { id: 32, name: "SONY PIX HD" }, { id: 33, name: "MNX HD" },
-            { id: 34, name: "ROMEDY NOW" }, { id: 35, name: "AND FLIX HD" }, { id: 36, name: "MN PLUS" },
-            { id: 37, name: "ZEE CAFE HD" }, { id: 38, name: "STAR MOVIES HD" }, { id: 39, name: "MOVIES NOW HD" },
-            { id: 40, name: "EUROSPORTS HD" }, { id: 41, name: "AND PRIVE HD" }, { id: 42, name: "ZOOM" },
-            { id: 43, name: "ZEE BANGLA CINEMA" }, { id: 44, name: "SONY AAT" }, { id: 45, name: "SONIC" },
-            { id: 46, name: "NICK" }, { id: 47, name: "COLORS B CINEMA" }, { id: 48, name: "POGO" },
-            { id: 49, name: "HUNGAMA" }, { id: 50, name: "BAL BHARAT" }, { id: 51, name: "NICK JR" },
-            { id: 53, name: "ZING" }, { id: 54, name: "NAGORIK" }, { id: 56, name: "GTV" },
-            { id: 61, name: "AND XPLORE" }, { id: 62, name: "TRAVEL XP" }, { id: 66, name: "GOLF SPORTS" },
-            { id: 67, name: "LOVE NATURE" }, { id: 68, name: "DURANTA TV" }, { id: 69, name: "STAR GOLD 2 HD" },
-            { id: 70, name: "HITZ MUSIC" }, { id: 71, name: "STAR GOLD SELECT" }, { id: 72, name: "SONY SPORTS 4" },
-            { id: 74, name: "SONY SPORTS 1 HD" }, { id: 75, name: "SUPER HUNGAMA" }, { id: 76, name: "JAMUNA TV" },
-            { id: 77, name: "INDEPENDENT TV" }, { id: 78, name: "MAASRANGA HD" }, { id: 79, name: "SOMOY TV" },
-            { id: 80, name: "ATN BANGLA" }, { id: 81, name: "CHANNEL I" }, { id: 82, name: "CHANNEL 24" },
-            { id: 83, name: "MADANI TV HD" }, { id: 84, name: "ENTERR 10" }, { id: 85, name: "ALJAZEERA HD" },
-            { id: 86, name: "PEACE TV BANGLA" }, { id: 87, name: "FAST SPORTS HD" }, { id: 88, name: "A SPORTS HD" },
-            { id: 89, name: "HUM TV" }, { id: 90, name: "GEO NEWS HD" }, { id: 91, name: "LOTUS TV" },
-            { id: 92, name: "PTV SPORTS HD" }, { id: 93, name: "SONY YAY" }, { id: 95, name: "ATN NEWS" },
-            { id: 96, name: "SSC SPORTS" }, { id: 97, name: "AXN HD" }, { id: 100, name: "STAR BHARAT HD" },
-            { id: 101, name: "SONY SPORTS 5 HD" }, { id: 102, name: "BBC EARTH HD" }, { id: 103, name: "SSC SPORTS 5" }
-        ];
-
-        window.onload = () => {
-            const grid = document.getElementById('channel-grid');
-            const localBaseUrl = "http://10.99.99.99/player.php?stream=";
-
-            localChannels.forEach(ch => {
-                const div = document.createElement('div');
-                div.className = 'channel-item';
-                div.onclick = function() { playLocal(localBaseUrl + ch.id, this); };
-                
-                div.innerHTML = `
-                    <i class="fa-solid fa-satellite-dish channel-icon" style="color: #00d2ff;"></i>
-                    <span class="channel-name">${ch.name}</span>
-                `;
-                grid.appendChild(div);
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('ytPlayer', {
+                height: '100%', width: '100%',
+                videoId: 'DpRyTXZ8Wj8', // Jamuna TV Default
+                playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0, 'modestbranding': 1, 'playsinline': 1 },
+                events: {
+                    'onReady': (event) => { isYtReady = true; }
+                }
             });
-        };
+        }
+
+        function playYouTube(videoId, element) {
+            // UI Active State
+            document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Load Video without blinking
+            if(isYtReady) {
+                ytPlayer.loadVideoById(videoId);
+            }
+        }
+
+        // ==========================================
+        // FULLSCREEN LOGIC
+        // ==========================================
+        function goFullScreen(elementId) {
+            const elem = document.getElementById(elementId);
+            if (elem.requestFullscreen) elem.requestFullscreen(); 
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen(); 
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+        }
     </script>
 </body>
 </html>
