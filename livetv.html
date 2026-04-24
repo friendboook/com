@@ -60,6 +60,9 @@
         .btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
         .btn-primary { background: #2ecc71; color: #000; border: none; }
         .btn-primary:active { background: #27ae60; }
+        
+        .btn-warning { background: linear-gradient(135deg, #00d2ff, #3a7bd5); color: #000; border: none; }
+        .btn-warning:active { background: #2980b9; }
 
         /* --- Sidebar & Grid --- */
         .sidebar { flex: 1.8; background: #000a05; display: flex; flex-direction: column; overflow: hidden; }
@@ -75,7 +78,7 @@
             padding-bottom: 8px; letter-spacing: 0.5px;
         }
         .local-note {
-            font-size: 12px; color: #f39c12; font-weight: normal; 
+            font-size: 12px; color: #00d2ff; font-weight: normal; 
             display: block; margin-top: 4px;
         }
 
@@ -130,7 +133,8 @@
             
             <div class="bottom-bar">
                 <button class="btn" onclick="refreshFrame()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-                <button class="btn btn-primary" onclick="goFullScreen()"><i class="fa-solid fa-expand"></i> Fullscreen</button>
+                <button class="btn btn-warning" id="externalBtn" style="display: none;" onclick="openExternalLocal()"><i class="fa-solid fa-play"></i> Direct Play</button>
+                <button class="btn btn-primary" id="fullscreenBtn" onclick="goFullScreen()"><i class="fa-solid fa-expand"></i> Fullscreen</button>
             </div>
         </div>
 
@@ -182,7 +186,7 @@
 
                 <div class="section-title">
                     লোকাল সার্ভার
-                    <span class="local-note">শুধুমাত্র ওয়াইফাই ইউজারদের জন্য।</span>
+                    <span class="local-note">ভিডিও সাদা হলে Direct Play-তে ক্লিক করুন।</span>
                 </div>
 
                 </div>
@@ -192,6 +196,7 @@
     <script>
         let ytPlayer;
         let isYtReady = false;
+        let currentLocalUrl = "";
 
         // ==========================================
         // YOUTUBE API PLAYER LOGIC
@@ -200,7 +205,7 @@
             ytPlayer = new YT.Player('ytPlayer', {
                 height: '100%',
                 width: '100%',
-                videoId: 'DpRyTXZ8Wj8', // Default Jamuna TV
+                videoId: 'DpRyTXZ8Wj8', 
                 playerVars: {
                     'autoplay': 1,
                     'controls': 1,
@@ -230,10 +235,11 @@
         function playYouTube(videoId, element) {
             setActiveStyle(element);
             
-            // Hide Local Frame
             const localFrame = document.getElementById("localFrame");
             localFrame.style.display = 'none';
             localFrame.src = '';
+            document.getElementById("externalBtn").style.display = 'none'; 
+            document.getElementById("fullscreenBtn").style.display = 'flex'; 
             
             document.getElementById("ytPlayer").style.display = 'block';
 
@@ -245,14 +251,17 @@
         function playLocal(url, element) {
             setActiveStyle(element);
             
-            // Pause & Hide YouTube
             document.getElementById("ytPlayer").style.display = 'none';
             if(isYtReady) ytPlayer.pauseVideo();
 
-            // Play inside the Local Frame
             const localFrame = document.getElementById("localFrame");
+            currentLocalUrl = url;
             localFrame.style.display = 'block';
             localFrame.src = url;
+
+            // Direct Play বাটনটি শো করবে এবং Fullscreen বাটন হাইড হবে
+            document.getElementById("externalBtn").style.display = 'flex';
+            document.getElementById("fullscreenBtn").style.display = 'none';
         }
 
         // ==========================================
@@ -271,6 +280,12 @@
                 localFrame.src = localFrame.src;
             } else if (isYtReady) {
                 ytPlayer.playVideo();
+            }
+        }
+
+        function openExternalLocal() {
+            if(currentLocalUrl) {
+                window.open(currentLocalUrl, '_blank');
             }
         }
 
