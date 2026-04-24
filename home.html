@@ -71,7 +71,7 @@
         .menu-card i { font-size: 28px; }
         .menu-card span { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);}
 
-        .menu-list-btn { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px; font-size: 16px; font-weight: bold; color: #ffffff;}
+        .menu-list-btn { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 12px; font-size: 16px; font-weight: bold; color: #ffffff;}
         .menu-list-btn:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.1); }
         .menu-list-btn i { font-size: 22px; width: 30px; text-align: center; }
         .logout-btn { color: #ff4757; }
@@ -79,17 +79,24 @@
 
         /* General Post Box */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
-        .post-input-top { display: flex; align-items: center; gap: 10px; }
+        .post-input-top { display: flex; align-items: center; gap: 8px; }
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
-        .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 20px; color: #ffffff; outline: none; font-size: 15px; }
-        .gallery-icon-label { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; width: 50px; }
-        .gallery-icon-label i { color: #45bd62; font-size: 24px; transition: 0.2s; margin-bottom: 2px; }
-        .gallery-icon-label span { font-size: 12px; font-weight: 600; color: #b0b3b8; }
+        .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 15px; color: #ffffff; outline: none; font-size: 15px; }
+        .gallery-icon-label { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; width: 45px; }
+        .gallery-icon-label i { font-size: 22px; transition: 0.2s; margin-bottom: 2px; }
+        .gallery-icon-label span { font-size: 11px; font-weight: 600; color: #b0b3b8; }
         
         .post-actions { border-top: 1px solid #0a2e1a; padding-top: 10px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-        #post-image-preview { display: none; margin-top: 10px; border-radius: 10px; overflow: hidden; position: relative; }
-        #post-image-preview img { width: 100%; display: block; }
+        #post-image-preview { display: none; margin-top: 10px; border-radius: 10px; overflow: hidden; position: relative; background: #000; }
+        #post-image-preview img { width: 100%; display: block; object-fit: contain; max-height: 400px; }
         #remove-preview-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+
+        /* Sticker Modal */
+        .sticker-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 4000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .sticker-modal-box { background: #01160b; border: 1px solid #0a2e1a; border-radius: 16px; padding: 15px; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .sticker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 300px; overflow-y: auto; margin-top: 10px;}
+        .sticker-item { width: 100%; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; background: #fff;}
+        .sticker-item:hover, .sticker-item:active { border-color: #2ecc71; transform: scale(0.95); }
 
         /* Stories Section */
         .stories-container { background-color: #01160b; padding: 15px 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
@@ -129,7 +136,7 @@
         .post-author { font-weight: bold; color: #e4e6eb; font-size: 16px; display: flex; align-items: center; }
         .post-time { font-size: 12px; color: #b0b3b8; display: flex; align-items: center; gap: 5px;}
         .post-text { color: #e4e6eb; font-size: 15px; padding: 0 15px; margin-bottom: 10px; white-space: pre-wrap; line-height: 1.5; }
-        .post-image { width: 100%; max-height: 500px; object-fit: cover; display: block; border-top: 1px solid #0a2e1a; border-bottom: 1px solid #0a2e1a; }
+        .post-image { width: 100%; max-height: 500px; object-fit: contain; background: #01160b; display: block; border-top: 1px solid #0a2e1a; border-bottom: 1px solid #0a2e1a; }
         .post-stats { display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; padding: 10px 15px; margin-bottom: 5px; }
         
         .post-footer { display: flex; justify-content: space-between; padding: 8px 15px; gap: 10px; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
@@ -227,13 +234,21 @@
                 <div class="fake-input-box">
                     <input type="text" id="newPostText" placeholder="What's on your mind?">
                 </div>
+                
+                <div class="gallery-icon-label" onclick="window.openStickerModal()">
+                    <i class="fa-solid fa-face-smile" style="color: #f1c40f;"></i>
+                    <span>Sticker</span>
+                </div>
+                
                 <label for="postImageUpload" class="gallery-icon-label">
-                    <i class="fa-solid fa-images"></i>
+                    <i class="fa-solid fa-images" style="color: #45bd62;"></i>
                     <span>Photo</span>
                 </label>
                 <input type="file" id="postImageUpload" accept="image/*">
             </div>
+            
             <div id="post-image-preview"><img id="preview-img" src=""><button id="remove-preview-btn">X</button></div>
+            
             <div class="post-actions" id="postActionsArea" style="display: none;">
                 <button id="submitPostBtn" style="background: #1877F2; color: white; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">Post</button>
             </div>
@@ -321,9 +336,29 @@
         </div>
     </div>
     
+    <div id="stickerModalOverlay" class="sticker-modal-overlay">
+        <div class="sticker-modal-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                <h3 style="color:white; margin:0; font-size: 16px;">Select a Sticker</h3>
+                <i class="fa-solid fa-xmark" style="color:#ff4757; font-size:22px; cursor:pointer;" onclick="window.closeStickerModal()"></i>
+            </div>
+            <div class="sticker-grid">
+                <img src="https://media.giphy.com/media/3o7TKrEzvLbgzG1k0E/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/3o7TKrEzvLbgzG1k0E/giphy.gif')">
+                <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif')">
+                <img src="https://media.giphy.com/media/OPU6wzx8JrHna/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/OPU6wzx8JrHna/giphy.gif')">
+                <img src="https://media.giphy.com/media/11tTNkNy1SdXGg/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/11tTNkNy1SdXGg/giphy.gif')">
+                <img src="https://media.giphy.com/media/l4Ho0At2UD2d7WyD6/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/l4Ho0At2UD2d7WyD6/giphy.gif')">
+                <img src="https://media.giphy.com/media/blSTtZehjAZ8I/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/blSTtZehjAZ8I/giphy.gif')">
+                <img src="https://media.giphy.com/media/Is1O1TWV0IGM0M65Dl/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/Is1O1TWV0IGM0M65Dl/giphy.gif')">
+                <img src="https://media.giphy.com/media/ZfK4cXKJTTay1SmRbP/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/ZfK4cXKJTTay1SmRbP/giphy.gif')">
+                <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" class="sticker-item" onclick="window.selectSticker('https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif')">
+            </div>
+        </div>
+    </div>
+
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
-    <div id="customAlertModal" class="custom-alert-overlay">
+    <div id="customAlertModal" class="custom-alert-overlay" style="z-index: 5000;">
         <div class="custom-alert-box">
             <i class="fa-solid fa-circle-info alert-icon"></i>
             <div class="alert-message" id="customAlertMessage"></div>
@@ -331,7 +366,7 @@
         </div>
     </div>
 
-    <div id="customConfirmModal" class="custom-alert-overlay">
+    <div id="customConfirmModal" class="custom-alert-overlay" style="z-index: 5000;">
         <div class="custom-alert-box">
             <i class="fa-solid fa-right-from-bracket alert-icon" style="color: #ff4757;"></i>
             <div class="alert-message">আপনি কি সত্যিই লগ আউট করতে চান?</div>
@@ -397,7 +432,7 @@
             return `${Math.round(diffHrs/24)}d`;
         };
 
-        // NEW: Comment Reply System Logic
+        // Comment Reply System Logic
         window.replyingToCommentMap = {};
 
         window.startCommentReply = (postId, authorName) => {
@@ -410,6 +445,14 @@
         window.cancelCommentReply = (postId) => {
             delete window.replyingToCommentMap[postId];
             document.getElementById(`reply-preview-${postId}`).style.display = 'none';
+        };
+
+        // NEW: Sticker UI Logic
+        window.openStickerModal = () => {
+            document.getElementById('stickerModalOverlay').style.display = 'flex';
+        };
+        window.closeStickerModal = () => {
+            document.getElementById('stickerModalOverlay').style.display = 'none';
         };
 
     </script>
@@ -427,13 +470,10 @@
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", postImageFile = null, allUsers = []; 
         window.openComments = {}; window.currentStoryId = null; window.currentStoryOwnerId = null; let storyTimer = null; 
         window.currentUserFollowing = []; 
+        let selectedStickerUrl = null; // NEW: Track selected sticker
 
         window.executeLogout = () => {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            }).catch((error) => {
-                window.showCustomAlert("লগ আউট করতে সমস্যা হয়েছে!");
-            });
+            signOut(auth).then(() => { window.location.href = "index.html"; }).catch((error) => { window.showCustomAlert("লগ আউট করতে সমস্যা হয়েছে!"); });
         };
 
         window.deleteCurrentStory = async () => {
@@ -443,14 +483,10 @@
                 try {
                     await deleteDoc(doc(db, "stories", window.currentStoryId));
                     const statusText = document.getElementById('upload-status');
-                    statusText.style.display = 'block';
-                    statusText.innerText = "স্টোরি ডিলিট হয়েছে!";
+                    statusText.style.display = 'block'; statusText.innerText = "স্টোরি ডিলিট হয়েছে!";
                     setTimeout(() => statusText.style.display = 'none', 2000);
                     closeStory();
-                } catch(e) {
-                    console.error("Error deleting story: ", e);
-                    window.showCustomAlert("ডিলিট করতে সমস্যা হয়েছে!");
-                }
+                } catch(e) { window.showCustomAlert("ডিলিট করতে সমস্যা হয়েছে!"); }
             }
         };
 
@@ -493,6 +529,95 @@
                 });
             } else { window.location.href = "index.html"; }
         });
+
+        // ==========================================
+        // NEW: Real-time Post Button Logic
+        // ==========================================
+        const postInputBox = document.getElementById('newPostText');
+        
+        window.togglePostActions = () => {
+            const hasText = postInputBox.value.trim().length > 0;
+            const hasImage = postImageFile !== null;
+            const hasSticker = selectedStickerUrl !== null;
+            document.getElementById('postActionsArea').style.display = (hasText || hasImage || hasSticker) ? 'flex' : 'none';
+        };
+
+        // Text type event
+        postInputBox.addEventListener('input', () => {
+            window.togglePostActions();
+        });
+
+        // Image upload event
+        document.getElementById('postImageUpload').onchange = (e) => { 
+            if(e.target.files.length > 0) { 
+                postImageFile = e.target.files[0]; 
+                selectedStickerUrl = null; // Clear sticker if image is chosen
+                const reader = new FileReader(); 
+                reader.onload = (e) => { 
+                    document.getElementById('preview-img').src = e.target.result; 
+                    document.getElementById('post-image-preview').style.display = 'block'; 
+                    window.togglePostActions();
+                }; 
+                reader.readAsDataURL(postImageFile); 
+            } 
+        };
+
+        // Remove Preview (Image or Sticker)
+        document.getElementById('remove-preview-btn').onclick = () => { 
+            postImageFile = null; 
+            selectedStickerUrl = null;
+            document.getElementById('post-image-preview').style.display = 'none'; 
+            document.getElementById('postImageUpload').value = "";
+            window.togglePostActions();
+        };
+
+        // Select Sticker
+        window.selectSticker = (url) => {
+            selectedStickerUrl = url;
+            postImageFile = null; // Clear image if sticker is chosen
+            document.getElementById('postImageUpload').value = "";
+            document.getElementById('preview-img').src = url;
+            document.getElementById('post-image-preview').style.display = 'block';
+            window.togglePostActions();
+            window.closeStickerModal();
+        };
+
+        // Submit Post (Updated to handle text, image, and sticker together)
+        document.getElementById('submitPostBtn').onclick = async () => {
+            const text = postInputBox.value; 
+            if(!text.trim() && !postImageFile && !selectedStickerUrl) return;
+            
+            const statusText = document.getElementById('upload-status'); 
+            statusText.style.display = 'block'; statusText.innerText = "Posting..."; 
+            
+            // If sticker is selected, use it as final image. Otherwise wait for upload.
+            let finalImg = selectedStickerUrl; 
+            document.getElementById('submitPostBtn').disabled = true;
+            
+            try {
+                if(postImageFile) { 
+                    const fd = new FormData(); fd.append("image", postImageFile); fd.append("key", IMGBB_API_KEY); 
+                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
+                    const data = await res.json(); 
+                    if(data.success) finalImg = data.data.display_url; 
+                }
+                
+                await addDoc(collection(db, "posts"), { 
+                    uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, 
+                    content: text, image: finalImg, reactions: {}, comments: [], timestamp: serverTimestamp() 
+                });
+                
+                document.getElementById('newPostText').value = ""; 
+                document.getElementById('remove-preview-btn').click(); 
+                document.getElementById('postActionsArea').style.display = 'none'; 
+                statusText.innerText = "Posted!"; setTimeout(() => statusText.style.display = 'none', 2000);
+            } catch (e) { 
+                statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); 
+            }
+            finally { document.getElementById('submitPostBtn').disabled = false; }
+        };
+
+        // ==========================================
 
         window.toggleFollow = async (targetUid, event) => {
             if(event) event.stopPropagation();
@@ -650,27 +775,10 @@
 
         window.closeStory = () => { clearTimeout(storyTimer); document.getElementById('storyModal').style.display = 'none'; document.getElementById('storyProgressFill').style.width = '0%'; document.getElementById('storyModalImage').src = ''; window.currentStoryId = null; window.currentStoryOwnerId = null; };
 
-        document.getElementById('postImageUpload').onchange = (e) => { 
-            if(e.target.files.length > 0) { postImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('preview-img').src = e.target.result; document.getElementById('post-image-preview').style.display = 'block'; document.getElementById('postActionsArea').style.display = 'flex';}; reader.readAsDataURL(postImageFile); } 
-        };
-        document.getElementById('remove-preview-btn').onclick = () => { postImageFile = null; document.getElementById('post-image-preview').style.display = 'none'; if(!document.getElementById('newPostText').value.trim()) document.getElementById('postActionsArea').style.display = 'none';};
-
-        document.getElementById('submitPostBtn').onclick = async () => {
-            const text = document.getElementById('newPostText').value; if(!text.trim() && !postImageFile) return;
-            const statusText = document.getElementById('upload-status'); statusText.style.display = 'block'; statusText.innerText = "Posting..."; let finalImg = null; document.getElementById('submitPostBtn').disabled = true;
-            try {
-                if(postImageFile) { const fd = new FormData(); fd.append("image", postImageFile); fd.append("key", IMGBB_API_KEY); const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); const data = await res.json(); if(data.success) finalImg = data.data.display_url; }
-                await addDoc(collection(db, "posts"), { uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, content: text, image: finalImg, reactions: {}, comments: [], timestamp: serverTimestamp() });
-                document.getElementById('newPostText').value = ""; document.getElementById('remove-preview-btn').click(); document.getElementById('postActionsArea').style.display = 'none'; statusText.innerText = "Posted!"; setTimeout(() => statusText.style.display = 'none', 2000);
-            } catch (e) { statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); }
-            finally { document.getElementById('submitPostBtn').disabled = false; }
-        };
-
         window.toggleLike = async (id, postUid, has) => { const ref = doc(db, "posts", id); if(has) { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: deleteField() }); } else { await updateDoc(ref, { [`reactions.${currentUser.uid}`]: 'like' }); if(postUid !== currentUser.uid) await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_like`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.addReaction = async (id, postUid, type) => { await updateDoc(doc(db, "posts", id), { [`reactions.${currentUser.uid}`]: type }); if(postUid !== currentUser.uid) { await setDoc(doc(db, "users", postUid, "notifications", `${id}_${currentUser.uid}_react`), { type: 'like', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); } };
         window.toggleCommentSection = (id) => { const el = document.getElementById(`comments-${id}`); if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; window.cancelCommentReply(id); } else { el.style.display = 'block'; window.openComments[id] = true; } };
         
-        // --- MODIFIED: Send Comment with Reply Logic ---
         window.sendComment = async (id, postUid) => { 
             const input = document.getElementById(`comment-input-${id}`); 
             const txt = input.value.trim(); 
@@ -750,7 +858,6 @@
                     let likeBtnHTML = `${likeIcon} ${displayLikesBtn}`; let commentBtnHTML = `<i class="fa-regular fa-message"></i> ${displayCommentsBtn}`; let shareBtnHTML = `<i class="fa-solid fa-share"></i> ${displaySharesBtn}`;
                     let imageHTML = post.image ? `<img src="${post.image}" class="post-image">` : "";
                     
-                    // --- MODIFIED: Comments rendering with Reply Option ---
                     let cList = ""; 
                     comments.forEach(c => { 
                         let replyTag = c.replyTo ? `<span style="color:#2ecc71; font-weight:bold; margin-right:5px;">@${c.replyTo}</span>` : "";
@@ -813,7 +920,7 @@
                             
                             <div class="comments-section" id="comments-${postId}" style="display: ${isCommentOpen};">
                                 
-                                <div id="reply-preview-${postId}" style="display:none; font-size:12px; color:#2ecc71; margin-bottom:8px; padding-left:5px; align-items:center; gap:5px; background: rgba(46, 204, 113, 0.1); padding: 5px; border-radius: 5px;\">
+                                <div id="reply-preview-${postId}" style="display:none; font-size:12px; color:#2ecc71; margin-bottom:8px; padding-left:5px; align-items:center; gap:5px; background: rgba(46, 204, 113, 0.1); padding: 5px; border-radius: 5px;">
                                     <i class="fa-solid fa-reply"></i> Replying to <span id="reply-name-${postId}" style="font-weight:bold; color:white;"></span>
                                     <i class="fa-solid fa-xmark" style="color:#ff4757; cursor:pointer; margin-left:auto;" onclick="cancelCommentReply('${postId}')"></i>
                                 </div>
