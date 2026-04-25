@@ -38,6 +38,10 @@
         .duration-badge { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; font-size: 12px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .play-icon-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; color: rgba(255,255,255,0.8); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); }
 
+        /* Admin Delete Button */
+        .video-delete-btn { position: absolute; top: 10px; right: 10px; background: rgba(255, 71, 87, 0.8); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; z-index: 10; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .video-delete-btn:active { transform: scale(0.8); background: #ff4757; }
+
         .video-info { display: flex; padding: 12px; gap: 12px; }
         .channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2ecc71; flex-shrink: 0; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; }
         .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -188,11 +192,9 @@
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
-        // Cloudinary API Config
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dinle5vhi/video/upload";
         const CLOUDINARY_PRESET = "Shuvofrn";
 
-        // Smart Back Button
         function handleBack() {
             const playerModal = document.getElementById('playerModal');
             const uploadModal = document.getElementById('uploadModal');
@@ -212,7 +214,6 @@
             nativeVideo.src = '';
         }
 
-        // Play Video Logic (Enhanced for Cloudinary)
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -230,7 +231,6 @@
             
             loadingSpinner.style.display = 'flex';
 
-            // If Cloudinary Direct Video or Direct MP4 Link
             if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
                 nativePlayer.src = rawUrl;
                 nativePlayer.style.display = 'block';
@@ -238,7 +238,6 @@
                 nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
                 nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
             }
-            // Fallback for old Drive Links
             else if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
@@ -248,7 +247,6 @@
                     iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
-            // Fallback for YouTube Links
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
@@ -283,7 +281,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        // MODIFIED: Imported 'deleteDoc'
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
@@ -292,6 +291,22 @@
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "";
         let thumbFile = null, selectedVideoFile = null;
+
+        // NEW: Global Delete Function
+        window.deleteVideo = async (videoId) => {
+            const confirmDel = window.confirm("আপনি কি সত্যিই এই ভিডিওটি ডিলিট করতে চান?");
+            if(confirmDel) {
+                try {
+                    await deleteDoc(doc(db, "videos", videoId));
+                    const statusText = document.getElementById('upload-status');
+                    statusText.style.display = 'block';
+                    statusText.innerText = "ভিডিও সফলভাবে ডিলিট করা হয়েছে!";
+                    setTimeout(() => statusText.style.display = 'none', 2500);
+                } catch(e) {
+                    window.alert("ডিলিট করতে সমস্যা হয়েছে!");
+                }
+            }
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -307,7 +322,6 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // UI Listeners for Files
         document.getElementById('videoUploadInput').onchange = (e) => {
             if(e.target.files.length > 0) {
                 selectedVideoFile = e.target.files[0];
@@ -330,12 +344,11 @@
             } 
         };
 
-        // Complete Upload Flow (Cloudinary + ImgBB + Firebase)
         document.getElementById('submitVideoBtn').onclick = async () => {
             const title = document.getElementById('videoTitle').value.trim();
             
             if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
-            if(selectedVideoFile.size > 100 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১০০ এমবির কম হতে হবে!"); return; } // 100MB Limit precaution
+            if(selectedVideoFile.size > 100 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১০০ এমবির কম হতে হবে!"); return; } 
             
             const statusText = document.getElementById('upload-status'); 
             statusText.style.display = 'block'; 
@@ -346,7 +359,6 @@
             let finalThumbUrl = "";
 
             try {
-                // 1. Upload Video to Cloudinary
                 const vidFormData = new FormData(); 
                 vidFormData.append("file", selectedVideoFile); 
                 vidFormData.append("upload_preset", CLOUDINARY_PRESET);
@@ -356,13 +368,11 @@
                 
                 if(vidData.secure_url) {
                     finalVideoUrl = vidData.secure_url;
-                    // Auto generate thumbnail by changing .mp4 to .jpg if user didn't upload one
                     finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
                 } else {
                     throw new Error("Cloudinary Upload Failed");
                 }
 
-                // 2. Upload Custom Thumbnail to ImgBB (If provided)
                 if(thumbFile) { 
                     statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
                     const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
@@ -371,7 +381,6 @@
                     if(data.success) finalThumbUrl = data.data.display_url; 
                 }
                 
-                // 3. Save to Firebase
                 statusText.innerHTML = "ফিনিশিং হচ্ছে...";
                 await addDoc(collection(db, "videos"), { 
                     uid: currentUser.uid, 
@@ -384,7 +393,6 @@
                     timestamp: serverTimestamp() 
                 });
                 
-                // Reset Form
                 document.getElementById('videoTitle').value = ""; 
                 document.getElementById('videoUploadInput').value = ""; 
                 document.getElementById('videoUploadLabel').classList.remove('video-selected');
@@ -430,6 +438,10 @@
 
                 videos.forEach((vid) => {
                     const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : (vid.author ? vid.author.charAt(0) : 'U');
+                    
+                    // Determine if the logged in user is Admin OR Owner
+                    const amISobujMia = currentUserName.toLowerCase().includes("sobuj mia");
+                    const isOwner = vid.uid === currentUser.uid;
                     const isVIP = vid.author && vid.author.toLowerCase().includes("sobuj mia");
                     const badge = isVIP ? verifiedSvg : "";
                     
@@ -444,11 +456,18 @@
                         }
                     };
 
+                    // NEW: Add Delete Button HTML only for Admin or Owner
+                    let deleteBtnHTML = "";
+                    if (amISobujMia || isOwner) {
+                        deleteBtnHTML = `<div class="video-delete-btn" onclick="event.stopPropagation(); window.deleteVideo('${vid.id}')"><i class="fa-solid fa-trash"></i></div>`;
+                    }
+
                     const cardHTML = `
                         <div class="video-card" onclick="window.play_${vid.id}()">
                             <div class="thumbnail-container">
                                 <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
                                 <i class="fa-solid fa-circle-play play-icon-overlay"></i>
+                                ${deleteBtnHTML}
                             </div>
                             <div class="video-info">
                                 <div class="channel-avatar">${avatar}</div>
