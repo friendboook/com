@@ -12,9 +12,8 @@
         /* Header Styling */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer;}
-        
-        .header-title { color: #2ecc71; font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
-        .header-title img { height: 22px; width: auto; object-fit: contain; border-radius: 4px; }
+        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
+        .header-title img { height: 26px; object-fit: contain; border-radius: 4px; }
         
         .upload-btn-header { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .upload-btn-header:active { transform: scale(0.95); background: #2ecc71; color: #000; }
@@ -79,10 +78,12 @@
         .player-close { color: white; font-size: 24px; cursor: pointer; transition: 0.2s; }
         .player-close:active { transform: scale(0.8); }
 
+        /* --- MAGIC CROP FOR DRIVE --- */
         .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
+        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
         
-        /* Iframe Styles */
-        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
+        /* This hides the top 55px of the Drive player where the Pop-out icon is! */
+        .iframe-wrapper iframe.drive-mode { top: -55px; height: calc(100% + 55px); }
         
         .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
 
@@ -101,7 +102,7 @@
         <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
         <div class="header-title">
             <img src="FriendPlay.png" alt="FriendPlay" onerror="this.style.display='none'"> 
-            FriendPlay
+            FRIENDBOOK VIDS
         </div>
         <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
     </header>
@@ -164,7 +165,6 @@
             <div class="loading-overlay" id="videoLoadingText">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
             </div>
-            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
             <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         
@@ -201,12 +201,9 @@
         function closePlayer() { 
             document.getElementById('playerModal').style.display = 'none'; 
             document.getElementById('videoIframe').src = ''; 
-            const nativeVideo = document.getElementById('nativeVideo');
-            nativeVideo.pause();
-            nativeVideo.src = '';
         }
 
-        // 1-Click Open Player & Link Processor
+        // Open Player & Link Processor
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -214,46 +211,41 @@
             document.getElementById('pChannel').innerHTML = author + badge;
             
             const iframe = document.getElementById('videoIframe');
-            const nativePlayer = document.getElementById('nativeVideo');
             const loadingSpinner = document.getElementById('videoLoadingText');
             
             iframe.style.display = 'none';
-            nativePlayer.style.display = 'none';
-            nativePlayer.pause();
             iframe.src = '';
-            
             loadingSpinner.style.display = 'flex';
 
+            // Check if it's Google Drive
             if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
-                    nativePlayer.src = directUrl;
-                    nativePlayer.style.display = 'block';
-                    
-                    nativePlayer.play().then(() => {
-                        loadingSpinner.style.display = 'none';
-                    }).catch(e => {
-                        loadingSpinner.style.display = 'none';
-                    });
-
-                    nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
-                    nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
+                    // Use standard preview embed (100% stable)
+                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
+                    // Add magic crop class to hide pop-out icon
+                    iframe.className = 'drive-mode';
+                    iframe.style.display = 'block';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
+            // Check if it's YouTube
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
                 if (match && match[2].length === 11) {
                     iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
+                    iframe.className = '';
                     iframe.style.display = 'block';
-                    loadingSpinner.style.display = 'none';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
+            // Fallback for any other links
             else {
                 iframe.src = rawUrl;
+                iframe.className = '';
                 iframe.style.display = 'block';
-                loadingSpinner.style.display = 'none';
+                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
             }
             
             document.getElementById('playerModal').style.display = 'flex';
@@ -361,7 +353,6 @@
                     videos.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                // JavaScript-based Sorting (Fixes missing timestamp issue cleanly)
                 videos.sort((a, b) => {
                     let tA = 0, tB = 0;
                     if (a.timestamp && typeof a.timestamp.toMillis === 'function') {
