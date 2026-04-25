@@ -12,8 +12,9 @@
         /* Header Styling */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer;}
-        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
-        .header-title img { height: 26px; object-fit: contain; border-radius: 4px; }
+        
+        .header-title { color: #2ecc71; font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
+        .header-title img { height: 22px; width: auto; object-fit: contain; border-radius: 4px; }
         
         .upload-btn-header { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .upload-btn-header:active { transform: scale(0.95); background: #2ecc71; color: #000; }
@@ -80,10 +81,8 @@
 
         .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
         
-        /* Iframe Styles and Drive Crop Hack */
-        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
-        /* This hides the top 60px of the Drive player where the Pop-out icon is! */
-        .iframe-wrapper iframe.drive-fallback { height: calc(100% + 60px); margin-top: -60px; }
+        /* Iframe Styles */
+        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
         
         .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
 
@@ -101,8 +100,8 @@
     <header>
         <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
         <div class="header-title">
-            <img src="FriendPlay.png" alt="" onerror="this.style.display='none'"> 
-            FRIENDBOOK VIDS
+            <img src="FriendPlay.png" alt="FriendPlay" onerror="this.style.display='none'"> 
+            FriendPlay
         </div>
         <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
     </header>
@@ -165,6 +164,7 @@
             <div class="loading-overlay" id="videoLoadingText">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
             </div>
+            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
             <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         
@@ -201,9 +201,12 @@
         function closePlayer() { 
             document.getElementById('playerModal').style.display = 'none'; 
             document.getElementById('videoIframe').src = ''; 
+            const nativeVideo = document.getElementById('nativeVideo');
+            nativeVideo.pause();
+            nativeVideo.src = '';
         }
 
-        // Open Player & Link Processor
+        // 1-Click Open Player & Link Processor
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -211,39 +214,46 @@
             document.getElementById('pChannel').innerHTML = author + badge;
             
             const iframe = document.getElementById('videoIframe');
+            const nativePlayer = document.getElementById('nativeVideo');
             const loadingSpinner = document.getElementById('videoLoadingText');
             
             iframe.style.display = 'none';
+            nativePlayer.style.display = 'none';
+            nativePlayer.pause();
             iframe.src = '';
+            
             loadingSpinner.style.display = 'flex';
 
-            // Check if it's Google Drive
             if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                    iframe.className = 'drive-fallback'; // applies CSS crop to hide pop-out icon
-                    iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+                    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+                    nativePlayer.src = directUrl;
+                    nativePlayer.style.display = 'block';
+                    
+                    nativePlayer.play().then(() => {
+                        loadingSpinner.style.display = 'none';
+                    }).catch(e => {
+                        loadingSpinner.style.display = 'none';
+                    });
+
+                    nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
+                    nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
                 }
             } 
-            // Check if it's YouTube
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
                 if (match && match[2].length === 11) {
                     iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-                    iframe.className = '';
                     iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+                    loadingSpinner.style.display = 'none';
                 }
             } 
-            // Fallback for any other links
             else {
                 iframe.src = rawUrl;
-                iframe.className = '';
                 iframe.style.display = 'block';
-                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+                loadingSpinner.style.display = 'none';
             }
             
             document.getElementById('playerModal').style.display = 'flex';
@@ -312,4 +322,103 @@
             
             try {
                 if(thumbFile) { 
-                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_
+                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
+                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
+                    const data = await res.json(); 
+                    if(data.success) thumbUrl = data.data.display_url; 
+                }
+                
+                await addDoc(collection(db, "videos"), { 
+                    uid: currentUser.uid, 
+                    author: currentUserName, 
+                    authorPhoto: currentUserPhoto, 
+                    title: title, 
+                    videoUrl: link, 
+                    thumbnail: thumbUrl, 
+                    views: [], 
+                    timestamp: serverTimestamp() 
+                });
+                
+                document.getElementById('videoTitle').value = ""; 
+                document.getElementById('videoLink').value = ""; 
+                thumbFile = null;
+                document.getElementById('thumbPreview').style.display = 'none';
+                closeUploadModal();
+                
+                statusText.innerText = "Published Successfully!"; setTimeout(() => statusText.style.display = 'none', 2000);
+            } catch (e) { 
+                statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); 
+            }
+            finally { document.getElementById('submitVideoBtn').disabled = false; }
+        };
+
+        function loadVideos() {
+            onSnapshot(collection(db, "videos"), (snapshot) => {
+                const grid = document.getElementById('videoGrid'); grid.innerHTML = "";
+                let videos = [];
+                
+                snapshot.forEach((docSnap) => {
+                    videos.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // JavaScript-based Sorting (Fixes missing timestamp issue cleanly)
+                videos.sort((a, b) => {
+                    let tA = 0, tB = 0;
+                    if (a.timestamp && typeof a.timestamp.toMillis === 'function') {
+                        tA = a.timestamp.toMillis();
+                    } else if (a.timestamp && a.timestamp.seconds) {
+                        tA = a.timestamp.seconds * 1000;
+                    }
+                    if (b.timestamp && typeof b.timestamp.toMillis === 'function') {
+                        tB = b.timestamp.toMillis();
+                    } else if (b.timestamp && b.timestamp.seconds) {
+                        tB = b.timestamp.seconds * 1000;
+                    }
+                    return tB - tA;
+                });
+
+                if(videos.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
+                    return;
+                }
+
+                videos.forEach((vid) => {
+                    const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : (vid.author ? vid.author.charAt(0) : 'U');
+                    const isVIP = vid.author && vid.author.toLowerCase().includes("sobuj mia");
+                    const badge = isVIP ? verifiedSvg : "";
+                    
+                    const viewsArr = vid.views || [];
+                    const viewsCount = isVIP ? "1.2M" : viewsArr.length;
+                    const timeText = timeAgo(vid.timestamp);
+
+                    window[`play_${vid.id}`] = () => {
+                        openVideoPlayer(vid.id, vid.videoUrl, vid.title, vid.author, vid.authorPhoto, viewsCount, timeText, badge);
+                        if (!viewsArr.includes(currentUser.uid)) {
+                            updateDoc(doc(db, "videos", vid.id), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
+                        }
+                    };
+
+                    const cardHTML = `
+                        <div class="video-card" onclick="window.play_${vid.id}()">
+                            <div class="thumbnail-container">
+                                <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
+                                <i class="fa-solid fa-circle-play play-icon-overlay"></i>
+                            </div>
+                            <div class="video-info">
+                                <div class="channel-avatar">${avatar}</div>
+                                <div class="video-details">
+                                    <div class="video-title">${vid.title || 'Untitled Video'}</div>
+                                    <div class="channel-name">${vid.author || 'User'}${badge}</div>
+                                    <div class="video-meta">${viewsCount} Views • ${timeText}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                    grid.innerHTML += cardHTML;
+                });
+            }, (error) => {
+                document.getElementById('videoGrid').innerHTML = '<div style="text-align: center; color: #ff4757; grid-column: 1 / -1; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে!</div>';
+            });
+        }
+    </script>
+</body>
+</html>
