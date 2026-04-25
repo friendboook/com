@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FriendBook - Videos</title>
+    <title>FriendBook Vids</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,8 +11,8 @@
         
         /* Header Styling */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .header-title { color: #2ecc71; font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
+        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer;}
+        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;}
         
         .upload-btn-header { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .upload-btn-header:active { transform: scale(0.95); background: #2ecc71; color: #000; }
@@ -72,8 +72,12 @@
         .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #01160b; border-bottom: 1px solid #0a2e1a; }
         .player-close { color: white; font-size: 24px; cursor: pointer; }
-        .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; }
-        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+        
+        /* Iframe and Native Player Styling */
+        .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; position: relative; }
+        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; }
+        .iframe-wrapper iframe.drive-fallback { height: calc(100% + 55px); margin-top: -55px; } /* Fallback crop if needed */
+        
         .player-info { padding: 15px; flex: 1; overflow-y: auto; background: #000a05;}
         .player-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; line-height: 1.4;}
         .player-meta { color: #b0b3b8; font-size: 13px; margin-bottom: 15px; border-bottom: 1px solid #0a2e1a; padding-bottom: 15px; }
@@ -86,8 +90,8 @@
 <body>
 
     <header>
-        <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="header-title"><i class="fa-brands fa-youtube" style="color: #ff4757;"></i> FB Tube</div>
+        <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="header-title">FRIENDBOOK VIDS</div>
         <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
     </header>
 
@@ -139,11 +143,12 @@
 
     <div class="player-modal" id="playerModal">
         <div class="player-header">
-            <div style="color: #2ecc71; font-weight: bold;"><i class="fa-brands fa-youtube"></i> Player</div>
+            <div style="color: #2ecc71; font-weight: bold;"><i class="fa-solid fa-play"></i> Player</div>
             <i class="fa-solid fa-angle-down player-close" onclick="closePlayer()"></i>
         </div>
         <div class="iframe-wrapper">
-            <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
+            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
+            <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         <div class="player-info">
             <div class="player-title" id="pTitle">Video Title</div>
@@ -158,33 +163,86 @@
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
-        // Modal Logic
+        // Modal Logic & Smart Back Button
+        function handleBack() {
+            const playerModal = document.getElementById('playerModal');
+            const uploadModal = document.getElementById('uploadModal');
+            
+            if (playerModal.style.display === 'flex') {
+                closePlayer();
+            } else if (uploadModal.style.display === 'flex') {
+                closeUploadModal();
+            } else {
+                window.location.href = 'home.html';
+            }
+        }
+
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
         
         function closePlayer() { 
             document.getElementById('playerModal').style.display = 'none'; 
-            document.getElementById('videoIframe').src = ''; // Stop video playing in background
+            
+            // Stop both players completely
+            const iframe = document.getElementById('videoIframe');
+            iframe.src = ''; 
+            
+            const nativeVideo = document.getElementById('nativeVideo');
+            nativeVideo.pause();
+            nativeVideo.src = '';
         }
 
-        // Drive / YT Link Converter Logic
-        function getEmbedLink(url) {
-            // Check for Google Drive Link
-            if (url.includes('drive.google.com/file/d/')) {
-                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        // Open Player & Link Processor
+        function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
+            document.getElementById('pTitle').innerText = title;
+            document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
+            document.getElementById('pAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
+            document.getElementById('pChannel').innerHTML = author + badge;
+            
+            const iframe = document.getElementById('videoIframe');
+            const nativePlayer = document.getElementById('nativeVideo');
+            
+            iframe.style.display = 'none';
+            nativePlayer.style.display = 'none';
+            nativePlayer.pause();
+            iframe.src = '';
+
+            // Check if it's Google Drive
+            if (rawUrl.includes('drive.google.com')) {
+                const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    return `https://drive.google.com/file/d/${match[1]}/preview`;
+                    // Use Direct Stream Link to avoid Popout Icon and enable AutoPlay
+                    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+                    nativePlayer.src = directUrl;
+                    nativePlayer.style.display = 'block';
+                    
+                    nativePlayer.play().catch(e => {
+                        // Very rare fallback if the video is huge and Google requires virus scan confirmation
+                        nativePlayer.style.display = 'none';
+                        iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
+                        iframe.classList.add('drive-fallback'); // CSS crop to hide icon
+                        iframe.style.display = 'block';
+                    });
                 }
-            }
-            // Check for YouTube Link
-            else if (url.includes('youtube.com/watch') || url.includes('youtu.be/')) {
+            } 
+            // Check if it's YouTube
+            else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
+                const match = rawUrl.match(regExp);
                 if (match && match[2].length === 11) {
-                    return `https://www.youtube.com/embed/${match[2]}?autoplay=1`;
+                    iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
+                    iframe.classList.remove('drive-fallback');
+                    iframe.style.display = 'block';
                 }
+            } 
+            // Fallback for any other links
+            else {
+                iframe.src = rawUrl;
+                iframe.classList.remove('drive-fallback');
+                iframe.style.display = 'block';
             }
-            return url; // Fallback
+            
+            document.getElementById('playerModal').style.display = 'flex';
         }
 
         function timeAgo(timestamp) {
@@ -301,7 +359,6 @@
                     // Add to Window object for onClick access
                     window[`play_${vidId}`] = () => {
                         openVideoPlayer(vidId, vid.videoUrl, vid.title, vid.author, vid.authorPhoto, viewsCount, timeText, badge);
-                        // Update views array if not already viewed
                         if (!viewsArr.includes(currentUser.uid)) {
                             updateDoc(doc(db, "videos", vidId), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
                         }
@@ -329,19 +386,6 @@
                     grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
                 }
             });
-        }
-
-        // Open Player Logic
-        function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
-            const embedUrl = getEmbedLink(rawUrl);
-            document.getElementById('videoIframe').src = embedUrl;
-            document.getElementById('pTitle').innerText = title;
-            document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
-            
-            document.getElementById('pAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
-            document.getElementById('pChannel').innerHTML = author + badge;
-            
-            document.getElementById('playerModal').style.display = 'flex';
         }
     </script>
 </body>
