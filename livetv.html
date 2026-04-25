@@ -71,7 +71,7 @@
         .submit-btn { width: 100%; background: #2ecc71; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px;}
         .submit-btn:disabled { background: #8c9e94; cursor: not-allowed; }
 
-        /* --- VIDEO PLAYER MODAL WITH NEW PREMIUM FEATURES --- */
+        /* Video Player Modal */
         .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #01160b; border-bottom: 1px solid #0a2e1a; }
         .player-back-btn { color: #2ecc71; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; }
@@ -86,19 +86,7 @@
         .player-meta { color: #b0b3b8; font-size: 13px; margin-bottom: 15px; }
 
         /* Premium Glass Button Effect for Profile */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .player-channel-name { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 5px;}
         
         .player-follow-btn { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -240,7 +228,7 @@
 
             <div class="suggested-title">Suggested Videos</div>
             <div class="suggested-list" id="suggestedVideosList">
-                </div>
+            </div>
         </div>
     </div>
 
@@ -253,6 +241,107 @@
         window.allLoadedVideos = [];
         window.currentOpenedVideoId = null;
         window.currentOpenedAuthorUid = null;
+
+        // Make timeAgo globally available so the Player Modal can use it
+        window.timeAgoFromMs = function(ms) {
+            if(!ms) return "সবেমাত্র";
+            const diffMins = Math.round((Date.now() - ms) / 60000);
+            const diffHrs = Math.round(diffMins / 60);
+            const diffDays = Math.round(diffHrs / 24);
+            if (diffMins < 1) return "Just now";
+            if (diffMins < 60) return `${diffMins} mins ago`;
+            if (diffHrs < 24) return `${diffHrs} hours ago`;
+            return `${diffDays} days ago`;
+        };
+
+        // Make openVideoPlayer globally available
+        window.openVideoPlayer = function(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge, authorUid) {
+            window.currentOpenedVideoId = id;
+            window.currentOpenedAuthorUid = authorUid;
+            
+            document.getElementById('pTitle').innerText = title || "Untitled";
+            document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
+            document.getElementById('pAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : String(author || 'U').charAt(0);
+            document.getElementById('pChannel').innerHTML = (author || "User") + badge;
+            
+            const followBtn = document.getElementById('pFollowBtn');
+            if (window.currentUserGlobal && window.currentUserGlobal.uid === authorUid) {
+                followBtn.style.display = 'none';
+            } else {
+                followBtn.style.display = 'block';
+                if (window.currentUserFollowing && window.currentUserFollowing.includes(authorUid)) {
+                    followBtn.classList.add('following');
+                    followBtn.innerText = "Following";
+                } else {
+                    followBtn.classList.remove('following');
+                    followBtn.innerText = "Follow";
+                }
+            }
+            
+            const suggestedContainer = document.getElementById('suggestedVideosList');
+            suggestedContainer.innerHTML = "";
+            const suggestions = window.allLoadedVideos.filter(v => v.id !== id).slice(0, 6);
+            suggestions.forEach(v => {
+                const isVIP = String(v.author || '').toLowerCase().includes("sobuj mia");
+                let sViews = v.views ? v.views.length : 0;
+                if (isVIP) {
+                    let n1 = (v.id.charCodeAt(0) % 9) + 1 || 1;
+                    let n2 = (v.id.charCodeAt(1) % 10) || 0;
+                    sViews = `${n1}.${n2}M`;
+                }
+                const msTime = v.timestamp ? (typeof v.timestamp.toMillis === 'function' ? v.timestamp.toMillis() : v.timestamp.seconds * 1000) : null;
+                const sTime = window.timeAgoFromMs(msTime);
+                
+                suggestedContainer.innerHTML += `
+                    <div class="suggested-card" onclick="window.play_${v.id}()">
+                        <img src="${v.thumbnail || 'https://via.placeholder.com/120x68/022112/2ecc71'}" class="suggested-thumb">
+                        <div class="suggested-info">
+                            <div class="suggested-title-text">${v.title || 'Untitled'}</div>
+                            <div class="suggested-meta">${v.author || 'User'} • ${sViews} views</div>
+                        </div>
+                    </div>`;
+            });
+
+            if (window.currentVideoCommentUnsub) window.currentVideoCommentUnsub();
+            if (window.attachCommentListener) {
+                window.attachCommentListener(id);
+            }
+
+            const iframe = document.getElementById('videoIframe');
+            const nativePlayer = document.getElementById('nativeVideo');
+            const loadingSpinner = document.getElementById('videoLoadingText');
+            
+            iframe.style.display = 'none'; nativePlayer.style.display = 'none';
+            nativePlayer.pause(); iframe.src = ''; loadingSpinner.style.display = 'flex';
+
+            if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
+                nativePlayer.src = rawUrl; nativePlayer.style.display = 'block';
+                nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
+                nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; }; nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
+            }
+            else if (rawUrl.includes('drive.google.com')) {
+                const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
+                    iframe.className = 'drive-mode'; iframe.style.display = 'block';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+                }
+            } 
+            else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = rawUrl.match(regExp);
+                if (match && match[2].length === 11) {
+                    iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
+                    iframe.className = ''; iframe.style.display = 'block';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+                }
+            } else {
+                iframe.src = rawUrl; iframe.className = ''; iframe.style.display = 'block';
+                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
+            }
+            
+            document.getElementById('playerModal').style.display = 'flex';
+        };
 
         function handleBack() {
             const playerModal = document.getElementById('playerModal');
@@ -269,32 +358,16 @@
             document.getElementById('playerModal').style.display = 'none'; 
             document.getElementById('videoIframe').src = ''; 
             const nativeVideo = document.getElementById('nativeVideo');
-            nativeVideo.pause();
-            nativeVideo.src = '';
+            nativeVideo.pause(); nativeVideo.src = '';
             
-            // Clean up real-time comment listener if exists
             if (window.currentVideoCommentUnsub) {
                 window.currentVideoCommentUnsub();
                 window.currentVideoCommentUnsub = null;
             }
         }
 
-        function timeAgoFromMs(ms) {
-            if(!ms) return "সবেমাত্র";
-            const diffMins = Math.round((Date.now() - ms) / 60000);
-            const diffHrs = Math.round(diffMins / 60);
-            const diffDays = Math.round(diffHrs / 24);
-            if (diffMins < 1) return "Just now";
-            if (diffMins < 60) return `${diffMins} mins ago`;
-            if (diffHrs < 24) return `${diffHrs} hours ago`;
-            return `${diffDays} days ago`;
-        }
-
-        // Toggle Follow Button UI (Firebase update is in the module script below)
         window.toggleVideoFollow = function(btnElement) {
             if (!window.currentOpenedAuthorUid) return;
-            
-            // Call the global Firebase function from the module script
             if(window.executeVideoFollowToggle) {
                 window.executeVideoFollowToggle(window.currentOpenedAuthorUid, btnElement);
             }
@@ -313,9 +386,8 @@
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "";
         let thumbFile = null, selectedVideoFile = null;
-        window.currentUserFollowing = [];
 
-        // Delete Video 
+        // SAFE DELETE FUNCTION
         window.deleteVideo = async (videoId, event) => {
             event.stopPropagation(); 
             const confirmDel = confirm("আপনি কি সত্যিই এই ভিডিওটি ডিলিট করতে চান?");
@@ -333,6 +405,7 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                window.currentUserGlobal = user; // Set for global functions
                 onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data(); 
@@ -345,21 +418,50 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // Toggle Follow Firebase Execution
+        // Realtime Comments Listener Registration
+        window.attachCommentListener = (id) => {
+            window.currentVideoCommentUnsub = onSnapshot(doc(db, "videos", id), (docSnap) => {
+                if(docSnap.exists()){
+                    const vData = docSnap.data();
+                    const comments = vData.comments || [];
+                    const cListEl = document.getElementById('videoCommentsList');
+                    cListEl.innerHTML = "";
+                    if(comments.length === 0) {
+                        cListEl.innerHTML = "<div style='color:#8c9e94; font-size:13px; text-align:center;'>No comments yet. Be the first!</div>";
+                    } else {
+                        comments.forEach(c => {
+                            const safeAuthorName = String(c.author || 'User');
+                            const cAvatar = c.authorPhoto ? `<img src="${c.authorPhoto}">` : safeAuthorName.charAt(0);
+                            const cTime = window.timeAgoFromMs(c.timestamp);
+                            cListEl.innerHTML += `
+                            <div class="comment-item">
+                                <div class="comment-avatar">${cAvatar}</div>
+                                <div style="display:flex; flex-direction:column; max-width:85%;">
+                                    <div class="comment-bubble">
+                                        <div class="comment-author">${safeAuthorName}</div>
+                                        <div class="comment-content">${c.text}</div>
+                                    </div>
+                                    <div class="comment-time">${cTime}</div>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                }
+            });
+        };
+
         window.executeVideoFollowToggle = async (targetUid, btnElement) => {
             const isFollowing = window.currentUserFollowing.includes(targetUid);
             const myRef = doc(db, "users", currentUser.uid); 
             const targetRef = doc(db, "users", targetUid);
             
             if (isFollowing) {
-                // Unfollow
                 window.currentUserFollowing = window.currentUserFollowing.filter(id => id !== targetUid);
                 btnElement.classList.remove('following');
                 btnElement.innerText = "Follow";
                 await updateDoc(myRef, { following: arrayRemove(targetUid) }); 
                 await updateDoc(targetRef, { followers: arrayRemove(currentUser.uid) });
             } else {
-                // Follow
                 window.currentUserFollowing.push(targetUid);
                 btnElement.classList.add('following');
                 btnElement.innerText = "Following";
@@ -369,7 +471,6 @@
             }
         };
 
-        // Send Comment Logic
         document.getElementById('sendVideoCommentBtn').onclick = async () => {
             if(!window.currentOpenedVideoId) return;
             const input = document.getElementById('videoCommentInput');
@@ -377,11 +478,10 @@
             if(!txt) return;
             
             const newComment = { author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() };
-            input.value = ""; // clear instantly for better UX
+            input.value = ""; 
 
             try {
                 await updateDoc(doc(db, "videos", window.currentOpenedVideoId), { comments: arrayUnion(newComment) });
-                // Notification to video owner could be added here
             } catch(e) { alert("কমেন্ট করতে সমস্যা হয়েছে: " + e.message); }
         };
 
@@ -459,117 +559,6 @@
             finally { document.getElementById('submitVideoBtn').disabled = false; }
         };
 
-        // --- FULL PLAYER LOGIC WITH SUGGESTIONS & REALTIME COMMENTS ---
-        window.openVideoPlayerFull = (id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge, authorUid) => {
-            window.currentOpenedVideoId = id;
-            window.currentOpenedAuthorUid = authorUid;
-            
-            document.getElementById('pTitle').innerText = title;
-            document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
-            document.getElementById('pAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
-            document.getElementById('pChannel').innerHTML = author + badge;
-            
-            // Set Follow Button state based on authorUid
-            const followBtn = document.getElementById('pFollowBtn');
-            if (currentUser.uid === authorUid) {
-                followBtn.style.display = 'none';
-            } else {
-                followBtn.style.display = 'block';
-                if (window.currentUserFollowing.includes(authorUid)) {
-                    followBtn.classList.add('following');
-                    followBtn.innerText = "Following";
-                } else {
-                    followBtn.classList.remove('following');
-                    followBtn.innerText = "Follow";
-                }
-            }
-            
-            // Render Suggested Videos
-            const suggestedContainer = document.getElementById('suggestedVideosList');
-            suggestedContainer.innerHTML = "";
-            const suggestions = window.allLoadedVideos.filter(v => v.id !== id).slice(0, 6);
-            suggestions.forEach(v => {
-                const sViews = v.author.toLowerCase().includes("sobuj mia") ? `${(v.id.charCodeAt(0)%9)+1}.${v.id.charCodeAt(1)%10}M` : (v.views ? v.views.length : 0);
-                const sTime = window.timeAgoFromMs(v.timestamp ? (typeof v.timestamp.toMillis === 'function' ? v.timestamp.toMillis() : v.timestamp.seconds * 1000) : null);
-                
-                suggestedContainer.innerHTML += `
-                    <div class="suggested-card" onclick="window.play_${v.id}()">
-                        <img src="${v.thumbnail || 'https://via.placeholder.com/120x68/022112/2ecc71'}" class="suggested-thumb">
-                        <div class="suggested-info">
-                            <div class="suggested-title-text">${v.title || 'Untitled'}</div>
-                            <div class="suggested-meta">${v.author} • ${sViews} views</div>
-                        </div>
-                    </div>`;
-            });
-
-            // Set up Real-time Comments Listener
-            if (window.currentVideoCommentUnsub) window.currentVideoCommentUnsub();
-            window.currentVideoCommentUnsub = onSnapshot(doc(db, "videos", id), (docSnap) => {
-                if(docSnap.exists()){
-                    const vData = docSnap.data();
-                    const comments = vData.comments || [];
-                    const cListEl = document.getElementById('videoCommentsList');
-                    cListEl.innerHTML = "";
-                    if(comments.length === 0) {
-                        cListEl.innerHTML = "<div style='color:#8c9e94; font-size:13px; text-align:center;'>No comments yet. Be the first!</div>";
-                    } else {
-                        // Render in reverse to show latest at bottom (or top depending on your preference, here keeping normal flow)
-                        comments.forEach(c => {
-                            const cAvatar = c.authorPhoto ? `<img src="${c.authorPhoto}">` : c.author.charAt(0);
-                            const cTime = window.timeAgoFromMs(c.timestamp);
-                            cListEl.innerHTML += `
-                            <div class="comment-item">
-                                <div class="comment-avatar">${cAvatar}</div>
-                                <div style="display:flex; flex-direction:column; max-width:85%;">
-                                    <div class="comment-bubble">
-                                        <div class="comment-author">${c.author}</div>
-                                        <div class="comment-content">${c.text}</div>
-                                    </div>
-                                    <div class="comment-time">${cTime}</div>
-                                </div>
-                            </div>`;
-                        });
-                    }
-                }
-            });
-
-            // Video Load Logic (Same as before)
-            const iframe = document.getElementById('videoIframe');
-            const nativePlayer = document.getElementById('nativeVideo');
-            const loadingSpinner = document.getElementById('videoLoadingText');
-            
-            iframe.style.display = 'none'; nativePlayer.style.display = 'none';
-            nativePlayer.pause(); iframe.src = ''; loadingSpinner.style.display = 'flex';
-
-            if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
-                nativePlayer.src = rawUrl; nativePlayer.style.display = 'block';
-                nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
-                nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; }; nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
-            }
-            else if (rawUrl.includes('drive.google.com')) {
-                const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                    iframe.className = 'drive-mode'; iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } 
-            else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = rawUrl.match(regExp);
-                if (match && match[2].length === 11) {
-                    iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-                    iframe.className = ''; iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } else {
-                iframe.src = rawUrl; iframe.className = ''; iframe.style.display = 'block';
-                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-            }
-            
-            document.getElementById('playerModal').style.display = 'flex';
-        }
-
         function timeAgo(timestamp) {
             if (!timestamp) return "সবেমাত্র";
             try {
@@ -593,13 +582,12 @@
                     let tA = 0, tB = 0;
                     if (a.timestamp && typeof a.timestamp.toMillis === 'function') { tA = a.timestamp.toMillis(); } 
                     else if (a.timestamp && a.timestamp.seconds) { tA = a.timestamp.seconds * 1000; }
-                    
                     if (b.timestamp && typeof b.timestamp.toMillis === 'function') { tB = b.timestamp.toMillis(); } 
                     else if (b.timestamp && b.timestamp.seconds) { tB = b.timestamp.seconds * 1000; }
                     return tB - tA;
                 });
                 
-                window.allLoadedVideos = videos; // Store globally for suggestions
+                window.allLoadedVideos = videos;
 
                 if(videos.length === 0) {
                     grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
@@ -607,48 +595,57 @@
                 }
 
                 videos.forEach((vid) => {
-                    const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : (vid.author ? vid.author.charAt(0) : 'U');
-                    const isVIP = vid.author && vid.author.toLowerCase().includes("sobuj mia");
-                    const badge = isVIP ? verifiedSvg : "";
-                    
-                    const viewsArr = vid.views || [];
-                    let viewsCount = viewsArr.length;
-                    if (isVIP) {
-                        let n1 = (vid.id.charCodeAt(0) % 9) + 1; // 1 to 9
-                        let n2 = (vid.id.charCodeAt(1) % 10);    // 0 to 9
-                        viewsCount = `${n1}.${n2}M`;
-                    }
-
-                    const timeText = timeAgo(vid.timestamp);
-
-                    // Check for delete permission
-                    const canDelete = (vid.uid === currentUser.uid) || (currentUserName && currentUserName.toLowerCase().includes("sobuj mia"));
-                    const deleteBtnHTML = canDelete ? `<div class="delete-video-btn" onclick="window.deleteVideo('${vid.id}', event)"><i class="fa-solid fa-trash"></i></div>` : '';
-
-                    window[`play_${vid.id}`] = () => {
-                        window.openVideoPlayerFull(vid.id, vid.videoUrl, vid.title, vid.author, vid.authorPhoto, viewsCount, timeText, badge, vid.uid);
-                        if (!viewsArr.includes(currentUser.uid)) {
-                            updateDoc(doc(db, "videos", vid.id), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
+                    try {
+                        const safeAuthor = String(vid.author || 'User');
+                        const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : safeAuthor.charAt(0);
+                        const isVIP = safeAuthor.toLowerCase().includes("sobuj mia");
+                        const badge = isVIP ? verifiedSvg : "";
+                        
+                        const viewsArr = Array.isArray(vid.views) ? vid.views : [];
+                        let viewsCount = viewsArr.length;
+                        
+                        if (isVIP) {
+                            let n1 = (vid.id.charCodeAt(0) % 9) + 1 || 1; 
+                            let n2 = (vid.id.charCodeAt(1) % 10) || 0;    
+                            viewsCount = `${n1}.${n2}M`;
                         }
-                    };
 
-                    const cardHTML = `
-                        <div class="video-card" onclick="window.play_${vid.id}()">
-                            <div class="thumbnail-container">
-                                <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
-                                <i class="fa-solid fa-circle-play play-icon-overlay"></i>
-                                ${deleteBtnHTML}
-                            </div>
-                            <div class="video-info">
-                                <div class="channel-avatar">${avatar}</div>
-                                <div class="video-details">
-                                    <div class="video-title">${vid.title || 'Untitled Video'}</div>
-                                    <div class="channel-name">${vid.author || 'User'}${badge}</div>
-                                    <div class="video-meta">${viewsCount} Views • ${timeText}</div>
+                        const timeText = timeAgo(vid.timestamp);
+
+                        // SAFE PERMISSION CHECK
+                        const safeCurrentName = String(currentUserName || 'User');
+                        const canDelete = (vid.uid === currentUser.uid) || safeCurrentName.toLowerCase().includes("sobuj mia");
+                        const deleteBtnHTML = canDelete ? `<div class="delete-video-btn" onclick="window.deleteVideo('${vid.id}', event)"><i class="fa-solid fa-trash"></i></div>` : '';
+
+                        window[`play_${vid.id}`] = () => {
+                            if(window.openVideoPlayer) {
+                                window.openVideoPlayer(vid.id, vid.videoUrl, vid.title, safeAuthor, vid.authorPhoto, viewsCount, timeText, badge, vid.uid);
+                            }
+                            if (!viewsArr.includes(currentUser.uid)) {
+                                updateDoc(doc(db, "videos", vid.id), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
+                            }
+                        };
+
+                        const cardHTML = `
+                            <div class="video-card" onclick="window.play_${vid.id}()">
+                                <div class="thumbnail-container">
+                                    <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
+                                    <i class="fa-solid fa-circle-play play-icon-overlay"></i>
+                                    ${deleteBtnHTML}
                                 </div>
-                            </div>
-                        </div>`;
-                    grid.innerHTML += cardHTML;
+                                <div class="video-info">
+                                    <div class="channel-avatar">${avatar}</div>
+                                    <div class="video-details">
+                                        <div class="video-title">${vid.title || 'Untitled Video'}</div>
+                                        <div class="channel-name">${safeAuthor}${badge}</div>
+                                        <div class="video-meta">${viewsCount} Views • ${timeText}</div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        grid.innerHTML += cardHTML;
+                    } catch(err) {
+                        console.error("Skipped rendering a video", err);
+                    }
                 });
             }, (error) => {
                 document.getElementById('videoGrid').innerHTML = '<div style="text-align: center; color: #ff4757; grid-column: 1 / -1; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে!</div>';
