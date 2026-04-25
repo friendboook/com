@@ -79,7 +79,11 @@
         .player-close:active { transform: scale(0.8); }
 
         .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
-        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; }
+        
+        /* Iframe Styles and Drive Crop Hack */
+        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
+        /* This hides the top 60px of the Drive player where the Pop-out icon is! */
+        .iframe-wrapper iframe.drive-fallback { height: calc(100% + 60px); margin-top: -60px; }
         
         .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
 
@@ -98,7 +102,7 @@
         <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
         <div class="header-title">
             <img src="FriendPlay.png" alt="" onerror="this.style.display='none'"> 
-            FriendPlay
+            FRIENDBOOK VIDS
         </div>
         <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
     </header>
@@ -161,7 +165,6 @@
             <div class="loading-overlay" id="videoLoadingText">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
             </div>
-            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
             <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         
@@ -192,19 +195,15 @@
             }
         }
 
-        // Modal Logic
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
         
         function closePlayer() { 
             document.getElementById('playerModal').style.display = 'none'; 
             document.getElementById('videoIframe').src = ''; 
-            const nativeVideo = document.getElementById('nativeVideo');
-            nativeVideo.pause();
-            nativeVideo.src = '';
         }
 
-        // 1-Click Open Player & Link Processor
+        // Open Player & Link Processor
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -212,49 +211,52 @@
             document.getElementById('pChannel').innerHTML = author + badge;
             
             const iframe = document.getElementById('videoIframe');
-            const nativePlayer = document.getElementById('nativeVideo');
             const loadingSpinner = document.getElementById('videoLoadingText');
             
             iframe.style.display = 'none';
-            nativePlayer.style.display = 'none';
-            nativePlayer.pause();
             iframe.src = '';
-            
             loadingSpinner.style.display = 'flex';
 
+            // Check if it's Google Drive
             if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
-                    nativePlayer.src = directUrl;
-                    nativePlayer.style.display = 'block';
-                    
-                    nativePlayer.play().then(() => {
-                        loadingSpinner.style.display = 'none';
-                    }).catch(e => {
-                        loadingSpinner.style.display = 'none';
-                    });
-
-                    nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
-                    nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
+                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
+                    iframe.className = 'drive-fallback'; // applies CSS crop to hide pop-out icon
+                    iframe.style.display = 'block';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
+            // Check if it's YouTube
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
                 if (match && match[2].length === 11) {
                     iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
+                    iframe.className = '';
                     iframe.style.display = 'block';
-                    loadingSpinner.style.display = 'none';
+                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
+            // Fallback for any other links
             else {
                 iframe.src = rawUrl;
+                iframe.className = '';
                 iframe.style.display = 'block';
-                loadingSpinner.style.display = 'none';
+                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
             }
             
             document.getElementById('playerModal').style.display = 'flex';
+        }
+
+        function timeAgo(timestamp) {
+            if (!timestamp) return "সবেমাত্র";
+            try {
+                const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
+                const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
+                if (diffMins < 1) return "Just now"; if (diffMins < 60) return `${diffMins} mins ago`; if (diffHrs < 24) return `${diffHrs} hours ago`; if (diffDays < 7) return `${diffDays} days ago`;
+                return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
+            } catch(e) { return "সবেমাত্র"; }
         }
     </script>
 
@@ -269,16 +271,6 @@
         const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
 
         let currentUser = null, currentUserName = "User", currentUserPhoto = "", thumbFile = null;
-
-        function timeAgo(timestamp) {
-            if (!timestamp) return "সবেমাত্র";
-            try {
-                const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
-                const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
-                if (diffMins < 1) return "Just now"; if (diffMins < 60) return `${diffMins} mins ago`; if (diffHrs < 24) return `${diffHrs} hours ago`; if (diffDays < 7) return `${diffDays} days ago`;
-                return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
-            } catch(e) { return "সবেমাত্র"; }
-        }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -320,86 +312,4 @@
             
             try {
                 if(thumbFile) { 
-                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
-                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
-                    const data = await res.json(); 
-                    if(data.success) thumbUrl = data.data.display_url; 
-                }
-                
-                await addDoc(collection(db, "videos"), { 
-                    uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, 
-                    title: title, videoUrl: link, thumbnail: thumbUrl, views: [], timestamp: serverTimestamp() 
-                });
-                
-                document.getElementById('videoTitle').value = ""; document.getElementById('videoLink').value = ""; 
-                thumbFile = null; document.getElementById('thumbPreview').style.display = 'none';
-                closeUploadModal();
-                
-                statusText.innerText = "Published Successfully!"; setTimeout(() => statusText.style.display = 'none', 2000);
-            } catch (e) { 
-                statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); 
-            }
-            finally { document.getElementById('submitVideoBtn').disabled = false; }
-        };
-
-        function loadVideos() {
-            onSnapshot(collection(db, "videos"), (snapshot) => {
-                const grid = document.getElementById('videoGrid'); grid.innerHTML = "";
-                let videos = [];
-                
-                snapshot.forEach((docSnap) => {
-                    videos.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                // JavaScript-based Sorting (Fixes missing timestamp issue)
-                videos.sort((a, b) => {
-                    const tA = a.timestamp ? a.timestamp.toMillis() : 0;
-                    const tB = b.timestamp ? b.timestamp.toMillis() : 0;
-                    return tB - tA;
-                });
-
-                if(videos.length === 0) {
-                    grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
-                    return;
-                }
-
-                videos.forEach((vid) => {
-                    const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : (vid.author ? vid.author.charAt(0) : 'U');
-                    const isVIP = vid.author && vid.author.toLowerCase().includes("sobuj mia");
-                    const badge = isVIP ? verifiedSvg : "";
-                    
-                    const viewsArr = vid.views || [];
-                    const viewsCount = isVIP ? "1.2M" : viewsArr.length;
-                    const timeText = timeAgo(vid.timestamp);
-
-                    window[`play_${vid.id}`] = () => {
-                        openVideoPlayer(vid.id, vid.videoUrl, vid.title, vid.author, vid.authorPhoto, viewsCount, timeText, badge);
-                        if (!viewsArr.includes(currentUser.uid)) {
-                            updateDoc(doc(db, "videos", vid.id), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
-                        }
-                    };
-
-                    const cardHTML = `
-                        <div class="video-card" onclick="window.play_${vid.id}()">
-                            <div class="thumbnail-container">
-                                <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
-                                <i class="fa-solid fa-circle-play play-icon-overlay"></i>
-                            </div>
-                            <div class="video-info">
-                                <div class="channel-avatar">${avatar}</div>
-                                <div class="video-details">
-                                    <div class="video-title">${vid.title || 'Untitled Video'}</div>
-                                    <div class="channel-name">${vid.author || 'User'}${badge}</div>
-                                    <div class="video-meta">${viewsCount} Views • ${timeText}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                    grid.innerHTML += cardHTML;
-                });
-            }, (error) => {
-                document.getElementById('videoGrid').innerHTML = '<div style="text-align: center; color: #ff4757; grid-column: 1 / -1; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে!</div>';
-            });
-        }
-    </script>
-</body>
-</html>
+                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_
