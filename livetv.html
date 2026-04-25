@@ -3,486 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FriendPlay - Videos</title>
+    <title>FriendBook - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding-bottom: 30px; }
+        body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; overflow: hidden; }
         
-        /* Header Styling */
-        header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer;}
-        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
-        .header-title img { height: 26px; object-fit: contain; border-radius: 4px; }
+        /* --- NEW: Splash Screen Animation --- */
+        .splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #01160b; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
         
-        .upload-btn-header { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .upload-btn-header:active { transform: scale(0.95); background: #2ecc71; color: #000; }
+        .splash-logo {
+            width: 85px; height: 85px; border-radius: 50%; object-fit: cover;
+            margin-bottom: 40px; border: 2px solid #0a2e1a;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+            animation: floatLogo 3s ease-in-out infinite;
+        }
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
-        /* Categories Bar */
-        .category-bar { display: flex; gap: 10px; padding: 12px 15px; overflow-x: auto; background: #01160b; border-bottom: 1px solid #0a2e1a; }
-        .category-bar::-webkit-scrollbar { display: none; }
-        .cat-btn { background: rgba(255,255,255,0.1); color: #e4e6eb; border: none; padding: 6px 15px; border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat-btn.active { background: #e4e6eb; color: #000; font-weight: bold; }
+        .loading-dots { display: flex; gap: 10px; }
+        .dot {
+            width: 12px; height: 12px; border-radius: 50%; background-color: #ffffff;
+            animation: pulseGreen 1.5s infinite ease-in-out;
+        }
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        .dot:nth-child(4) { animation-delay: 0.6s; }
+        .dot:nth-child(5) { animation-delay: 0.8s; }
 
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; }
+        @keyframes pulseGreen {
+            0%, 100% { background-color: #ffffff; transform: scale(1); box-shadow: none; }
+            50% { background-color: #2ecc71; transform: scale(1.3); box-shadow: 0 0 10px rgba(46, 204, 113, 0.8); }
+        }
 
-        /* Video Grid */
-        .video-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media(min-width: 600px) { .video-grid { grid-template-columns: 1fr 1fr; } }
-
-        .video-card { background: #01160b; border: 1px solid #0a2e1a; border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .video-card:active { transform: scale(0.98); }
+        /* --- Auth Container Styles --- */
+        .auth-container { background: #01160b; border: 1px solid #0a2e1a; border-radius: 16px; padding: 30px 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; display: none; opacity: 0; animation: fadeIn 0.5s forwards; }
         
-        .thumbnail-container { position: relative; width: 100%; aspect-ratio: 16/9; background: #022112; }
-        .thumbnail-container img { width: 100%; height: 100%; object-fit: cover; }
-        .duration-badge { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; font-size: 12px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .play-icon-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; color: rgba(255,255,255,0.8); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); }
-        
-        /* DELETE VIDEO BUTTON */
-        .delete-video-btn { position: absolute; top: 10px; right: 10px; background: #ff4757; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 15px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.6); transition: 0.2s; border: 2px solid #01160b; }
-        .delete-video-btn:active { transform: scale(0.8); }
+        @keyframes fadeIn { to { opacity: 1; } }
 
-        .video-info { display: flex; padding: 12px; gap: 12px; }
-        .channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2ecc71; flex-shrink: 0; display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; overflow: hidden; }
-        .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .video-details { display: flex; flex-direction: column; overflow: hidden; }
-        .video-title { font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;}
-        .channel-name { font-size: 13px; color: #b0b3b8; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;}
-        .video-meta { font-size: 12px; color: #8c9e94; }
+        .logo-area { margin-bottom: 30px; }
+        .logo-area img { width: 65px; height: 65px; border-radius: 16px; object-fit: cover; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #0a2e1a; }
+        .logo-title { font-size: 28px; font-weight: 800; color: #2ecc71; letter-spacing: -0.5px; }
+        .subtitle { color: #8c9e94; font-size: 14px; margin-top: 5px; }
 
-        /* Upload Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); padding: 20px; }
-        .modal-box { background: #01160b; border: 1px solid #0a2e1a; width: 100%; max-width: 500px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;}
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #0a2e1a; padding-bottom: 10px; }
-        .modal-header h3 { color: #fff; display: flex; align-items: center; gap: 8px;}
-        .close-modal { color: #ff4757; font-size: 24px; cursor: pointer; transition: 0.2s;}
-        .close-modal:active { transform: scale(0.8); }
-        
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; color: #b0b3b8; font-size: 13px; margin-bottom: 5px; font-weight: bold;}
-        .input-group input[type="text"] { width: 100%; background: #022112; border: 1px solid #0f4024; color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
-        .input-group input[type="text"]:focus { border-color: #2ecc71; }
-        .helper-text { font-size: 11px; color: #f39c12; margin-top: 5px; display: block;}
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; color: #b0b3b8; font-size: 13px; margin-bottom: 5px; font-weight: bold; padding-left: 5px;}
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8c9e94; font-size: 16px; }
+        .input-group input { width: 100%; background: #022112; border: 1px solid #0f4024; color: white; padding: 14px 15px 14px 45px; border-radius: 30px; font-family: inherit; font-size: 15px; outline: none; transition: 0.3s;}
+        .input-group input:focus { border-color: #2ecc71; box-shadow: 0 0 8px rgba(46, 204, 113, 0.2); }
 
-        .file-upload-btn { background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); padding: 15px; text-align: center; border-radius: 8px; cursor: pointer; display: block; color: #e4e6eb; margin-top: 5px; transition: 0.2s;}
-        .file-upload-btn.video-selected { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
-        .file-upload-btn i { font-size: 24px; margin-bottom: 5px; color: #45bd62;}
-        #thumbPreview { width: 100%; margin-top: 10px; border-radius: 8px; display: none; border: 1px solid #0a2e1a; }
+        .primary-btn { width: 100%; background: #2ecc71; color: #01160b; border: none; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);}
+        .primary-btn:active { transform: scale(0.98); }
+        .primary-btn:disabled { background: #1a5c38; color: #8c9e94; cursor: not-allowed; box-shadow: none; }
 
-        .submit-btn { width: 100%; background: #2ecc71; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px;}
-        .submit-btn:active { transform: scale(0.98); }
-        .submit-btn:disabled { background: #8c9e94; cursor: not-allowed; }
+        .switch-auth { margin-top: 20px; font-size: 14px; color: #b0b3b8; }
+        .switch-auth span { color: #2ecc71; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .switch-auth span:hover { text-decoration: underline; }
 
-        /* Video Player Modal */
-        .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
-        .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #01160b; border-bottom: 1px solid #0a2e1a; }
-        
-        .player-back-btn { color: #2ecc71; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .player-back-btn:active { transform: scale(0.95); }
-        .player-close { color: white; font-size: 24px; cursor: pointer; transition: 0.2s; }
-        .player-close:active { transform: scale(0.8); }
+        .error-msg { color: #ff4757; font-size: 13px; margin-bottom: 15px; display: none; background: rgba(255, 71, 87, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 71, 87, 0.3); }
 
-        .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
-        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
-        .iframe-wrapper iframe.drive-mode { top: -55px; height: calc(100% + 55px); }
-        
-        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
-
-        .player-info { padding: 15px; flex: 1; overflow-y: auto; background: #000a05;}
-        .player-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; line-height: 1.4;}
-        .player-meta { color: #b0b3b8; font-size: 13px; margin-bottom: 15px; border-bottom: 1px solid #0a2e1a; padding-bottom: 15px; }
-        .player-channel { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .player-channel-name { font-weight: bold; font-size: 16px; }
-
-        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 12px 25px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 5000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; width: 80%; max-width: 300px;}
+        /* General Loader Overlay */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { font-size: 40px; color: #2ecc71; margin-bottom: 15px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: white; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
-        <div class="header-title">
-            <img src="FriendPlay.png" alt="FriendPlay" onerror="this.style.display='none'"> 
-            FriendPlay
-        </div>
-        <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
-    </header>
-
-    <div class="category-bar">
-        <button class="cat-btn active">All</button>
-        <button class="cat-btn">Gaming</button>
-        <button class="cat-btn">Music</button>
-        <button class="cat-btn">News</button>
-        <button class="cat-btn">Movies</button>
-    </div>
-
-    <div class="main-content">
-        <div class="video-grid" id="videoGrid">
-            <div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">ভিডিও লোড হচ্ছে...</div>
+    <div class="splash-screen" id="splashScreen">
+        <img src="icon.png" alt="FriendBook" class="splash-logo" onerror="this.style.display='none'">
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-video"></i> Share a Video</h3>
-                <i class="fa-solid fa-xmark close-modal" onclick="closeUploadModal()"></i>
-            </div>
-            
-            <div class="input-group">
-                <label>Video Title</label>
-                <input type="text" id="videoTitle" placeholder="Enter an attractive title...">
-            </div>
-            
-            <div class="input-group">
-                <label>Upload Video File</label>
-                <label for="videoUploadInput" class="file-upload-btn" id="videoUploadLabel">
-                    <i class="fa-solid fa-cloud-arrow-up"></i><br>
-                    <span id="videoUploadText">Click to select video (MP4, MOV)</span>
-                </label>
-                <input type="file" id="videoUploadInput" accept="video/*" style="display: none;">
-                <span class="helper-text">ভিডিও গ্যালারি থেকে সিলেক্ট করুন।</span>
-            </div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <i class="fa-solid fa-circle-notch spinner"></i>
+        <div class="loading-text" id="loadingText">অপেক্ষা করুন...</div>
+    </div>
 
-            <div class="input-group">
-                <label>Thumbnail Image (Optional)</label>
-                <label for="thumbUpload" class="file-upload-btn">
-                    <i class="fa-solid fa-image"></i><br>
-                    <span>Click to upload thumbnail</span>
-                </label>
-                <input type="file" id="thumbUpload" accept="image/*" style="display: none;">
-                <img id="thumbPreview" src="">
-                <span class="helper-text">না দিলে অটোমেটিক তৈরি হয়ে যাবে।</span>
-            </div>
+    <div class="auth-container" id="loginBox">
+        <div class="logo-area">
+            <img src="icon.png" alt="FriendBook Logo" onerror="this.style.display='none'">
+            <div class="logo-title">FriendBook</div>
+            <div class="subtitle">আমাদের নিজস্ব সোশ্যাল নেটওয়ার্ক</div>
+        </div>
 
-            <button class="submit-btn" id="submitVideoBtn">Publish Video</button>
+        <div class="error-msg" id="loginError"></div>
+
+        <div class="input-group">
+            <label>ইমেইল (Email)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="loginEmail" placeholder="আপনার ইমেইল দিন">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>পাসওয়ার্ড (Password)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="loginPassword" placeholder="আপনার পাসওয়ার্ড দিন">
+            </div>
+        </div>
+
+        <button class="primary-btn" id="loginBtn">লগইন করুন</button>
+
+        <div class="switch-auth">
+            অ্যাকাউন্ট নেই? <span onclick="switchForm('signup')">নতুন অ্যাকাউন্ট খুলুন</span>
         </div>
     </div>
 
-    <div class="player-modal" id="playerModal">
-        <div class="player-header">
-            <div class="player-back-btn" onclick="closePlayer()">
-                <i class="fa-solid fa-arrow-left"></i> ফিরে যান
-            </div>
-            <i class="fa-solid fa-xmark player-close" onclick="closePlayer()"></i>
+    <div class="auth-container" id="signupBox">
+        <div class="logo-area">
+            <img src="icon.png" alt="FriendBook Logo" onerror="this.style.display='none'">
+            <div class="logo-title">অ্যাকাউন্ট তৈরি করুন</div>
+            <div class="subtitle">আমাদের নিজস্ব সোশ্যাল নেটওয়ার্ক</div>
         </div>
-        
-        <div class="iframe-wrapper">
-            <div class="loading-overlay" id="videoLoadingText">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
+
+        <div class="error-msg" id="signupError"></div>
+
+        <div class="input-group">
+            <label>আপনার নাম (Full Name)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="signupName" placeholder="আপনার পুরো নাম দিন">
             </div>
-            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
-            <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
-        
-        <div class="player-info">
-            <div class="player-title" id="pTitle">Video Title</div>
-            <div class="player-meta" id="pMeta">0 Views • Just now</div>
-            <div class="player-channel">
-                <div class="channel-avatar" id="pAvatar">U</div>
-                <div class="player-channel-name" id="pChannel">User Name</div>
+
+        <div class="input-group">
+            <label>ইমেইল (Email)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="signupEmail" placeholder="আপনার ইমেইল দিন">
             </div>
+        </div>
+
+        <div class="input-group">
+            <label>পাসওয়ার্ড (Password)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="signupPassword" placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড">
+            </div>
+        </div>
+
+        <button class="primary-btn" id="signupBtn">সাইনআপ করুন</button>
+
+        <div class="switch-auth">
+            আগে থেকেই অ্যাকাউন্ট আছে? <span onclick="switchForm('login')">লগইন করুন</span>
         </div>
     </div>
-
-    <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
-        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dinle5vhi/video/upload";
-        const CLOUDINARY_PRESET = "Shuvofrn";
-
-        function handleBack() {
-            const playerModal = document.getElementById('playerModal');
-            const uploadModal = document.getElementById('uploadModal');
-            if (playerModal.style.display === 'flex') { closePlayer(); } 
-            else if (uploadModal.style.display === 'flex') { closeUploadModal(); } 
-            else { window.location.href = 'home.html'; }
-        }
-
-        function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
-        function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
-        
-        function closePlayer() { 
-            document.getElementById('playerModal').style.display = 'none'; 
-            document.getElementById('videoIframe').src = ''; 
-            const nativeVideo = document.getElementById('nativeVideo');
-            nativeVideo.pause();
-            nativeVideo.src = '';
-        }
-
-        function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
-            document.getElementById('pTitle').innerText = title;
-            document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
-            document.getElementById('pAvatar').innerHTML = authorPhoto ? `<img src="${authorPhoto}">` : author.charAt(0);
-            document.getElementById('pChannel').innerHTML = author + badge;
+        function switchForm(formType) {
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('signupError').style.display = 'none';
             
-            const iframe = document.getElementById('videoIframe');
-            const nativePlayer = document.getElementById('nativeVideo');
-            const loadingSpinner = document.getElementById('videoLoadingText');
-            
-            iframe.style.display = 'none';
-            nativePlayer.style.display = 'none';
-            nativePlayer.pause();
-            iframe.src = '';
-            
-            loadingSpinner.style.display = 'flex';
-
-            if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
-                nativePlayer.src = rawUrl;
-                nativePlayer.style.display = 'block';
-                nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
-                nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
-                nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
+            if(formType === 'signup') {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('signupBox').style.display = 'block';
+            } else {
+                document.getElementById('signupBox').style.display = 'none';
+                document.getElementById('loginBox').style.display = 'block';
             }
-            else if (rawUrl.includes('drive.google.com')) {
-                const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                    iframe.className = 'drive-mode';
-                    iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } 
-            else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = rawUrl.match(regExp);
-                if (match && match[2].length === 11) {
-                    iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-                    iframe.className = '';
-                    iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } 
-            else {
-                iframe.src = rawUrl;
-                iframe.className = '';
-                iframe.style.display = 'block';
-                iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-            }
-            
-            document.getElementById('playerModal').style.display = 'flex';
         }
 
-        function timeAgo(timestamp) {
-            if (!timestamp) return "সবেমাত্র";
-            try {
-                const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
-                const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
-                if (diffMins < 1) return "Just now"; if (diffMins < 60) return `${diffMins} mins ago`; if (diffHrs < 24) return `${diffHrs} hours ago`; if (diffDays < 7) return `${diffDays} days ago`;
-                return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
-            } catch(e) { return "সবেমাত্র"; }
+        function showError(elementId, msg) {
+            const el = document.getElementById(elementId);
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+
+        function showLoader(text) {
+            document.getElementById('loadingText').innerText = text;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoader() {
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
-        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
-        const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
-        const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
-
-        let currentUser = null, currentUserName = "User", currentUserPhoto = "";
-        let thumbFile = null, selectedVideoFile = null;
-
-        // Video Delete Function
-        window.deleteVideo = async (videoId, event) => {
-            event.stopPropagation(); 
-            const confirmDel = confirm("আপনি কি সত্যিই এই ভিডিওটি ডিলিট করতে চান?");
-            if(confirmDel) {
-                try {
-                    await deleteDoc(doc(db, "videos", videoId));
-                    const statusText = document.getElementById('upload-status');
-                    statusText.style.display = 'block';
-                    statusText.innerText = "ভিডিও ডিলিট করা হয়েছে!";
-                    setTimeout(() => statusText.style.display = 'none', 2000);
-                } catch(e) {
-                    alert("ডিলিট করতে সমস্যা হয়েছে!");
-                }
-            }
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", 
+            authDomain: "friendbook-e9569.firebaseapp.com", 
+            projectId: "friendbook-e9569", 
+            storageBucket: "friendbook-e9569.firebasestorage.app", 
+            messagingSenderId: "459682436919", 
+            appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" 
         };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data(); 
-                        currentUserName = data.displayName || "User"; 
-                        currentUserPhoto = data.profilePic || "";
-                    }
-                });
-                loadVideos();
-            } else { window.location.href = "index.html"; }
+        // --- Splash Screen & Auto-Login Logic ---
+        let authDetermined = false;
+        let isUserLoggedIn = false;
+        let splashTimeFinished = false;
+
+        // Minimum 2.5 seconds showing the splash screen for cool effect
+        setTimeout(() => {
+            splashTimeFinished = true;
+            processRedirect();
+        }, 2500);
+
+        // Firebase Auth listener checks session automatically
+        onAuthStateChanged(auth, (user) => {
+            authDetermined = true;
+            isUserLoggedIn = !!user;
+            processRedirect();
         });
 
-        document.getElementById('videoUploadInput').onchange = (e) => {
-            if(e.target.files.length > 0) {
-                selectedVideoFile = e.target.files[0];
-                const label = document.getElementById('videoUploadLabel');
-                const text = document.getElementById('videoUploadText');
-                label.classList.add('video-selected');
-                text.innerText = `Selected: ${selectedVideoFile.name.substring(0, 15)}...`;
-            }
-        };
-
-        document.getElementById('thumbUpload').onchange = (e) => { 
-            if(e.target.files.length > 0) { 
-                thumbFile = e.target.files[0]; 
-                const reader = new FileReader(); 
-                reader.onload = (e) => { 
-                    document.getElementById('thumbPreview').src = e.target.result; 
-                    document.getElementById('thumbPreview').style.display = 'block'; 
-                }; 
-                reader.readAsDataURL(thumbFile); 
-            } 
-        };
-
-        document.getElementById('submitVideoBtn').onclick = async () => {
-            const title = document.getElementById('videoTitle').value.trim();
-            
-            if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
-            if(selectedVideoFile.size > 100 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১০০ এমবির কম হতে হবে!"); return; }
-            
-            const statusText = document.getElementById('upload-status'); 
-            statusText.style.display = 'block'; 
-            statusText.innerHTML = "ভিডিও আপলোড হচ্ছে...<br><span style='font-size:11px;font-weight:normal;'>এতে কয়েক মিনিট সময় লাগতে পারে, পেজটি কাটবেন না।</span>"; 
-            document.getElementById('submitVideoBtn').disabled = true;
-            
-            let finalVideoUrl = "";
-            let finalThumbUrl = "";
-
-            try {
-                const vidFormData = new FormData(); 
-                vidFormData.append("file", selectedVideoFile); 
-                vidFormData.append("upload_preset", CLOUDINARY_PRESET);
-
-                const vidRes = await fetch(CLOUDINARY_URL, { method: "POST", body: vidFormData }); 
-                const vidData = await vidRes.json();
-                
-                if(vidData.secure_url) {
-                    finalVideoUrl = vidData.secure_url;
-                    finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
+        function processRedirect() {
+            // Only proceed if both the splash animation time is done AND Firebase told us the login status
+            if (splashTimeFinished && authDetermined) {
+                if (isUserLoggedIn) {
+                    // Auto-Login: User is already saved, go directly to home!
+                    window.location.href = "home.html";
                 } else {
-                    throw new Error("Cloudinary Upload Failed");
+                    // Not logged in: Hide splash screen and show login box
+                    const splash = document.getElementById('splashScreen');
+                    splash.style.opacity = '0';
+                    splash.style.visibility = 'hidden';
+                    
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.body.style.overflow = 'auto'; // allow scrolling if needed
+                        document.getElementById('loginBox').style.display = 'block';
+                    }, 600); // Wait for CSS fade out transition
                 }
-
-                if(thumbFile) { 
-                    statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
-                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
-                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
-                    const data = await res.json(); 
-                    if(data.success) finalThumbUrl = data.data.display_url; 
-                }
-                
-                statusText.innerHTML = "ফিনিশিং হচ্ছে...";
-                await addDoc(collection(db, "videos"), { 
-                    uid: currentUser.uid, 
-                    author: currentUserName, 
-                    authorPhoto: currentUserPhoto, 
-                    title: title, 
-                    videoUrl: finalVideoUrl, 
-                    thumbnail: finalThumbUrl, 
-                    views: [], 
-                    timestamp: serverTimestamp() 
-                });
-                
-                document.getElementById('videoTitle').value = ""; 
-                document.getElementById('videoUploadInput').value = ""; 
-                document.getElementById('videoUploadLabel').classList.remove('video-selected');
-                document.getElementById('videoUploadText').innerText = "Click to select video (MP4, MOV)";
-                selectedVideoFile = null;
-
-                thumbFile = null;
-                document.getElementById('thumbPreview').style.display = 'none';
-                document.getElementById('thumbUpload').value = "";
-                
-                closeUploadModal();
-                
-                statusText.innerText = "সফলভাবে আপলোড হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2500);
-            } catch (e) { 
-                statusText.innerText = "আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; setTimeout(() => statusText.style.display = 'none', 3000); 
             }
-            finally { document.getElementById('submitVideoBtn').disabled = false; }
-        };
-
-        function loadVideos() {
-            onSnapshot(collection(db, "videos"), (snapshot) => {
-                const grid = document.getElementById('videoGrid'); grid.innerHTML = "";
-                let videos = [];
-                
-                snapshot.forEach((docSnap) => {
-                    videos.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                videos.sort((a, b) => {
-                    let tA = 0, tB = 0;
-                    if (a.timestamp && typeof a.timestamp.toMillis === 'function') { tA = a.timestamp.toMillis(); } 
-                    else if (a.timestamp && a.timestamp.seconds) { tA = a.timestamp.seconds * 1000; }
-                    
-                    if (b.timestamp && typeof b.timestamp.toMillis === 'function') { tB = b.timestamp.toMillis(); } 
-                    else if (b.timestamp && b.timestamp.seconds) { tB = b.timestamp.seconds * 1000; }
-                    return tB - tA;
-                });
-
-                if(videos.length === 0) {
-                    grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
-                    return;
-                }
-
-                videos.forEach((vid) => {
-                    const avatar = vid.authorPhoto ? `<img src="${vid.authorPhoto}">` : (vid.author ? vid.author.charAt(0) : 'U');
-                    const isVIP = vid.author && vid.author.toLowerCase().includes("sobuj mia");
-                    const badge = isVIP ? verifiedSvg : "";
-                    
-                    const viewsArr = vid.views || [];
-                    
-                    let viewsCount = viewsArr.length;
-                    if (isVIP) {
-                        let n1 = (vid.id.charCodeAt(0) % 9) + 1; // 1 to 9
-                        let n2 = (vid.id.charCodeAt(1) % 10);    // 0 to 9
-                        viewsCount = `${n1}.${n2}M`;
-                    }
-
-                    const timeText = timeAgo(vid.timestamp);
-
-                    // Check for delete permission
-                    const canDelete = (vid.uid === currentUser.uid) || (currentUserName && currentUserName.toLowerCase().includes("sobuj mia"));
-                    const deleteBtnHTML = canDelete ? `<div class="delete-video-btn" onclick="window.deleteVideo('${vid.id}', event)"><i class="fa-solid fa-trash"></i></div>` : '';
-
-                    window[`play_${vid.id}`] = () => {
-                        openVideoPlayer(vid.id, vid.videoUrl, vid.title, vid.author, vid.authorPhoto, viewsCount, timeText, badge);
-                        if (!viewsArr.includes(currentUser.uid)) {
-                            updateDoc(doc(db, "videos", vid.id), { views: arrayUnion(currentUser.uid) }).catch(e=>{});
-                        }
-                    };
-
-                    const cardHTML = `
-                        <div class="video-card" onclick="window.play_${vid.id}()">
-                            <div class="thumbnail-container">
-                                <img src="${vid.thumbnail || 'https://via.placeholder.com/600x337/022112/2ecc71?text=Video'}" alt="Thumbnail">
-                                <i class="fa-solid fa-circle-play play-icon-overlay"></i>
-                                ${deleteBtnHTML}
-                            </div>
-                            <div class="video-info">
-                                <div class="channel-avatar">${avatar}</div>
-                                <div class="video-details">
-                                    <div class="video-title">${vid.title || 'Untitled Video'}</div>
-                                    <div class="channel-name">${vid.author || 'User'}${badge}</div>
-                                    <div class="video-meta">${viewsCount} Views • ${timeText}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                    grid.innerHTML += cardHTML;
-                });
-            }, (error) => {
-                document.getElementById('videoGrid').innerHTML = '<div style="text-align: center; color: #ff4757; grid-column: 1 / -1; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে!</div>';
-            });
         }
+
+        // LOGIN LOGIC
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+            
+            document.getElementById('loginError').style.display = 'none';
+
+            if (!email || !pass) {
+                showError('loginError', 'দয়া করে ইমেইল এবং পাসওয়ার্ড দিন!');
+                return;
+            }
+
+            showLoader('লগইন হচ্ছে...');
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                window.location.href = "home.html";
+            } catch (error) {
+                hideLoader();
+                let errMsg = "লগইন ব্যর্থ হয়েছে! ইমেইল বা পাসওয়ার্ড ভুল।";
+                if(error.code === 'auth/user-not-found') errMsg = "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি!";
+                if(error.code === 'auth/wrong-password') errMsg = "পাসওয়ার্ড ভুল হয়েছে!";
+                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল এর ফরম্যাট ঠিক নেই!";
+                showError('loginError', errMsg);
+            }
+        });
+
+        // SIGNUP LOGIC
+        document.getElementById('signupBtn').addEventListener('click', async () => {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const pass = document.getElementById('signupPassword').value.trim();
+            
+            document.getElementById('signupError').style.display = 'none';
+
+            if (!name || !email || !pass) {
+                showError('signupError', 'সবগুলো ঘর পূরণ করা আবশ্যক!');
+                return;
+            }
+            if (pass.length < 6) {
+                showError('signupError', 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!');
+                return;
+            }
+
+            showLoader('অ্যাকাউন্ট তৈরি হচ্ছে...');
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // Save user profile data in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    displayName: name,
+                    email: email,
+                    profilePic: "",
+                    coverPic: "",
+                    bio: "",
+                    followers: [],
+                    following: [],
+                    friends: [],
+                    sentRequests: [],
+                    receivedRequests: [],
+                    createdAt: serverTimestamp()
+                });
+
+                window.location.href = "home.html";
+            } catch (error) {
+                hideLoader();
+                let errMsg = "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে!";
+                if(error.code === 'auth/email-already-in-use') errMsg = "এই ইমেইল দিয়ে আগে থেকেই অ্যাকাউন্ট আছে!";
+                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল এর ফরম্যাট ঠিক নেই!";
+                showError('signupError', errMsg);
+            }
+        });
     </script>
 </body>
 </html>
