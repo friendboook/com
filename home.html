@@ -37,7 +37,6 @@
         .active-dot { position: absolute; bottom: 0; right: 0; width: 13px; height: 13px; background-color: #31a24c; border: 2px solid #01160b; border-radius: 50%; }
 
         /* Menu View Styles */
-        #menu-view { display: none; padding: 15px; }
         .menu-header { font-size: 24px; font-weight: bold; margin-bottom: 15px; padding-left: 5px; color: #ffffff; text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.3);}
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .menu-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -108,6 +107,11 @@
         .story-reactions span { transition: 0.2s; }
         .story-reactions span:active { transform: scale(1.3); }
 
+        /* Follow Button (FIXED GAP) */
+        .follow-btn { color: #2ecc71; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; align-items: center; transition: 0.2s; }
+        .follow-btn::before { content: '•'; margin-right: 8px; color: #8c9e94; }
+        .follow-btn.following { color: #8c9e94; }
+
         /* Feed Post Layout */
         .feed-post { background-color: #01160b; padding: 12px 0; margin-bottom: 8px; }
         .post-header { display: flex; align-items: center; gap: 10px; padding: 0 15px; margin-bottom: 8px; }
@@ -160,6 +164,17 @@
         .post-menu-delete { background: rgba(255, 71, 87, 0.1); border-color: rgba(255, 71, 87, 0.3); }
         .post-menu-delete i { color: #ff4757; }
         .post-menu-delete span { color: #ff4757; }
+
+        /* Friends List Tab (Fixed Display Issue) */
+        .friends-list-container { max-width: 600px; margin: 0 auto; display: none; padding-bottom: 20px; }
+        .friends-header-title { padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #0a2e1a; }
+        .friend-list-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #0a2e1a; transition: 0.2s; }
+        .friend-list-item:active { background-color: rgba(255,255,255,0.05); }
+        .friend-info { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; flex-grow: 1; }
+        .friend-avatar { width: 50px; height: 50px; border-radius: 50%; background: #2ecc71; display: flex; justify-content: center; align-items: center; font-size: 20px; color: black; font-weight: bold; overflow: hidden; }
+        .friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .friend-name { font-size: 16px; font-weight: bold; display: flex; align-items: center; }
+        .friend-view-btn { background: rgba(255,255,255,0.1); color: #e4e6eb; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 14px; transition: 0.2s; }
 
         /* Custom Alert */
         .custom-alert-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 5000; display: none; justify-content: center; align-items: center; }
@@ -245,14 +260,14 @@
         <div id="newsfeed"></div>
     </div>
 
-    <div class="friends-list-container" id="friends-view">
+    <div class="friends-list-container" id="friends-view" style="display: none;">
         <div class="friends-header-title">All FriendBook Users</div>
         <div id="friendsListContainer">
             <div style="text-align:center; padding: 20px; color:#8c9e94;">লোড হচ্ছে...</div>
         </div>
     </div>
 
-    <div class="main-content" id="menu-view">
+    <div class="main-content" id="menu-view" style="display: none;">
         <div class="menu-header">Menu</div>
         <div class="menu-grid">
             <div class="menu-card" onclick="window.location.href='profile.html'">
@@ -274,7 +289,6 @@
                 <i class="fa-solid fa-gamepad" style="color: #e84393;"></i><span>Games</span>
             </div>
         </div>
-
         <div class="menu-list-btn" onclick="showCustomAlert('সাপোর্ট অপশনটি খুব শীঘ্রই চালু হবে আমরা এটি নিয়ে কাজ করছি 😊')">
             <i class="fa-solid fa-circle-question" style="color: #00cec9;"></i><span>Help & Support</span>
         </div>
@@ -329,33 +343,28 @@
                 <i class="fa-solid fa-star" style="color: #f1c40f;"></i>
                 <span>Interested</span>
             </div>
-            
             <div class="post-menu-item" onclick="showCustomAlert('Post hidden. We will show you fewer posts like this.'); closePostMenu();">
                 <i class="fa-solid fa-circle-xmark" style="color: #b0b3b8;"></i>
                 <span>Not interested</span>
             </div>
-            
             <div class="post-menu-item" onclick="showCustomAlert('Post Saved to your collections.'); closePostMenu();">
                 <i class="fa-solid fa-bookmark" style="color: #9b59b6;"></i>
                 <span>Save post</span>
             </div>
-            
             <div class="post-menu-item" onclick="showCustomAlert('Share feature coming soon!'); closePostMenu();">
                 <i class="fa-solid fa-share" style="color: #3498db;"></i>
                 <span>Share</span>
             </div>
-            
             <div class="post-menu-item" onclick="showCustomAlert('Notifications turned on for this post.'); closePostMenu();">
                 <i class="fa-solid fa-bell" style="color: #f39c12;"></i>
                 <span>Turn on notifications for this post</span>
             </div>
-            
             <div class="post-menu-item" onclick="copyPostLink()">
                 <i class="fa-solid fa-link" style="color: #1abc9c;"></i>
                 <span>Copy link</span>
             </div>
 
-            <div class="post-menu-item post-menu-delete" id="postMenuDeleteBtn" onclick="deletePost()" style="display: none;">
+            <div class="post-menu-item post-menu-delete" id="postMenuDeleteBtn" style="display: none;">
                 <i class="fa-solid fa-trash"></i>
                 <span>Delete Post</span>
             </div>
@@ -420,18 +429,25 @@
         window.showLogoutConfirm = () => { document.getElementById('customConfirmModal').style.display = 'flex'; };
         window.closeLogoutConfirm = () => { document.getElementById('customConfirmModal').style.display = 'none'; };
 
-        // Post Menu Bottom Sheet Logic
+        // =====================================
+        // Post Menu Bottom Sheet Logic (FIXED)
+        // =====================================
         window.currentPostMenuId = null;
         
         window.openPostMenu = (postId, postOwnerId, authorName) => {
             window.currentPostMenuId = postId;
-            
-            // ADMIN DELETE LOGIC: Check if I am the post owner OR I am Sobuj Mia
             const deleteBtn = document.getElementById('postMenuDeleteBtn');
-            const amISobujMia = currentUserName.toLowerCase().includes("sobuj mia");
             
-            if (currentUser.uid === postOwnerId || amISobujMia) {
+            // Check Admin Power globally
+            const myName = window.currentUserNameGlobal ? window.currentUserNameGlobal.toLowerCase() : "";
+            const amISobujMia = myName.includes("sobuj mia");
+            const myUid = window.currentUserGlobal ? window.currentUserGlobal.uid : null;
+            
+            // Show Delete if I own the post OR if I am Sobuj Mia
+            if (myUid === postOwnerId || amISobujMia) {
                 deleteBtn.style.display = 'flex';
+                // Attach the delete function dynamically
+                deleteBtn.onclick = () => { window.deletePost(); };
             } else {
                 deleteBtn.style.display = 'none';
             }
@@ -509,7 +525,9 @@
 
         window.executeLogout = () => { signOut(auth).then(() => { window.location.href = "index.html"; }).catch((e) => { window.showCustomAlert("লগ আউট করতে সমস্যা হয়েছে!"); }); };
 
-        // Post & Story Delete System
+        // =====================================
+        // Post & Story Delete System (FIXED FOR MODULE)
+        // =====================================
         window.deletePost = async () => {
             if(!window.currentPostMenuId) return;
             const confirmDel = confirm("আপনি কি সত্যিই এই পোস্টটি ডিলিট করতে চান?");
@@ -542,19 +560,28 @@
         }
 
         let isFeedLoaded = false;
+        
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                // Expose to global window so the menu can check admin power
+                window.currentUserGlobal = user; 
+                
                 onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data(); currentUserName = data.displayName || "User"; currentUserPhoto = data.profilePic || "";
+                        
+                        window.currentUserNameGlobal = currentUserName; // Global expose
                         window.currentUserFollowing = data.following || []; 
+                        
                         const display = document.getElementById('profileDisplay');
                         if(currentUserPhoto) { display.innerHTML = `<img src="${currentUserPhoto}">`; document.getElementById('storyMyBg').innerHTML = `<img src="${currentUserPhoto}" style="width:100%; height:100%; object-fit:cover;">`; } 
                         else { display.innerText = currentUserName.charAt(0); document.getElementById('storyMyBg').innerText = currentUserName.charAt(0); }
+                        
                         const unreads = data.unreadCounts || {}; let count = 0; for(let k in unreads) count += unreads[k];
                         const badge = document.getElementById('msg-badge');
                         if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.style.display = 'block'; } else badge.style.display = 'none';
+                        
                         if(!isFeedLoaded) { loadAllPosts(); loadAllUsersForSearch(); loadStories(); isFeedLoaded = true; }
                     }
                 });
@@ -758,17 +785,21 @@
                     const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
                     const timeText = timeAgo(post.timestamp);
 
-                    // --- NEW: 3 Dot Menu Icon added in Header ---
+                    // =====================================
+                    // FIXED GAP FOR FOLLOW BUTTON
+                    // =====================================
                     const postHTML = `
                         <div class="feed-post">
                             <div class="post-header">
                                 <a href="profile.html?id=${post.uid}" style="text-decoration:none;"><div class="user-avatar">${avatar}</div></a>
                                 <div style="display:flex; flex-direction:column;">
-                                    <div style="display:flex; align-items:center;">
+                                    
+                                    <div style="display:flex; align-items:center; gap: 8px;">
                                         <a href="profile.html?id=${post.uid}" style="text-decoration:none; color:inherit;"><div class="post-author">${post.author}</div></a>
                                         ${badge}
                                         ${followBtnHtml}
                                     </div>
+                                    
                                     <div class="post-time">${timeText} <i class="fa-solid fa-earth-americas" style="margin-left: 4px; font-size: 10px;"></i></div>
                                 </div>
                                 <div style="margin-left: auto; cursor: pointer; padding: 5px 10px; color: #b0b3b8; font-size: 18px;" onclick="openPostMenu('${postId}', '${post.uid}', '${post.author.replace(/'/g, "\\'")}')">
