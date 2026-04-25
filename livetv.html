@@ -58,16 +58,18 @@
         
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; color: #b0b3b8; font-size: 13px; margin-bottom: 5px; font-weight: bold;}
-        .input-group input { width: 100%; background: #022112; border: 1px solid #0f4024; color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
-        .input-group input:focus { border-color: #2ecc71; }
+        .input-group input[type="text"] { width: 100%; background: #022112; border: 1px solid #0f4024; color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
+        .input-group input[type="text"]:focus { border-color: #2ecc71; }
         .helper-text { font-size: 11px; color: #f39c12; margin-top: 5px; display: block;}
 
-        .file-upload-btn { background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); padding: 15px; text-align: center; border-radius: 8px; cursor: pointer; display: block; color: #e4e6eb; margin-top: 5px;}
+        .file-upload-btn { background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); padding: 15px; text-align: center; border-radius: 8px; cursor: pointer; display: block; color: #e4e6eb; margin-top: 5px; transition: 0.2s;}
+        .file-upload-btn.video-selected { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
         .file-upload-btn i { font-size: 24px; margin-bottom: 5px; color: #45bd62;}
-        #thumbPreview { width: 100%; margin-top: 10px; border-radius: 8px; display: none; }
+        #thumbPreview { width: 100%; margin-top: 10px; border-radius: 8px; display: none; border: 1px solid #0a2e1a; }
 
         .submit-btn { width: 100%; background: #2ecc71; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px;}
         .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:disabled { background: #8c9e94; cursor: not-allowed; }
 
         /* Video Player Modal */
         .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
@@ -78,11 +80,9 @@
         .player-close { color: white; font-size: 24px; cursor: pointer; transition: 0.2s; }
         .player-close:active { transform: scale(0.8); }
 
-        /* --- MAGIC CROP FOR DRIVE --- */
         .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
-        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
+        .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; position: absolute; top: 0; left: 0; }
         
-        /* This hides the top 55px of the Drive player where the Pop-out icon is! */
         .iframe-wrapper iframe.drive-mode { top: -55px; height: calc(100% + 55px); }
         
         .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
@@ -93,7 +93,8 @@
         .player-channel { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .player-channel-name { font-weight: bold; font-size: 16px; }
 
-        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 10px 20px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 5000; }
+        /* Custom Processing Status */
+        #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 12px 25px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 5000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; width: 80%; max-width: 300px;}
     </style>
 </head>
 <body>
@@ -134,9 +135,13 @@
             </div>
             
             <div class="input-group">
-                <label>Video Link (Google Drive / YouTube)</label>
-                <input type="text" id="videoLink" placeholder="Paste video link here...">
-                <span class="helper-text">গুগল ড্রাইভের লিংক দিলে অবশ্যই 'Anyone with the link' করে দেবেন।</span>
+                <label>Upload Video File</label>
+                <label for="videoUploadInput" class="file-upload-btn" id="videoUploadLabel">
+                    <i class="fa-solid fa-cloud-arrow-up"></i><br>
+                    <span id="videoUploadText">Click to select video (MP4, MOV)</span>
+                </label>
+                <input type="file" id="videoUploadInput" accept="video/*" style="display: none;">
+                <span class="helper-text">ভিডিও গ্যালারি থেকে সিলেক্ট করুন।</span>
             </div>
 
             <div class="input-group">
@@ -147,6 +152,7 @@
                 </label>
                 <input type="file" id="thumbUpload" accept="image/*" style="display: none;">
                 <img id="thumbPreview" src="">
+                <span class="helper-text">না দিলে অটোমেটিক তৈরি হয়ে যাবে।</span>
             </div>
 
             <button class="submit-btn" id="submitVideoBtn">Publish Video</button>
@@ -165,6 +171,7 @@
             <div class="loading-overlay" id="videoLoadingText">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
             </div>
+            <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
             <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         
@@ -181,18 +188,17 @@
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
-        // Smart Back Button Logic
+        // Cloudinary API Config
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dinle5vhi/video/upload";
+        const CLOUDINARY_PRESET = "Shuvofrn";
+
+        // Smart Back Button
         function handleBack() {
             const playerModal = document.getElementById('playerModal');
             const uploadModal = document.getElementById('uploadModal');
-            
-            if (playerModal.style.display === 'flex') {
-                closePlayer();
-            } else if (uploadModal.style.display === 'flex') {
-                closeUploadModal();
-            } else {
-                window.location.href = 'home.html';
-            }
+            if (playerModal.style.display === 'flex') { closePlayer(); } 
+            else if (uploadModal.style.display === 'flex') { closeUploadModal(); } 
+            else { window.location.href = 'home.html'; }
         }
 
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
@@ -201,9 +207,12 @@
         function closePlayer() { 
             document.getElementById('playerModal').style.display = 'none'; 
             document.getElementById('videoIframe').src = ''; 
+            const nativeVideo = document.getElementById('nativeVideo');
+            nativeVideo.pause();
+            nativeVideo.src = '';
         }
 
-        // Open Player & Link Processor
+        // Play Video Logic (Enhanced for Cloudinary)
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -211,25 +220,35 @@
             document.getElementById('pChannel').innerHTML = author + badge;
             
             const iframe = document.getElementById('videoIframe');
+            const nativePlayer = document.getElementById('nativeVideo');
             const loadingSpinner = document.getElementById('videoLoadingText');
             
             iframe.style.display = 'none';
+            nativePlayer.style.display = 'none';
+            nativePlayer.pause();
             iframe.src = '';
+            
             loadingSpinner.style.display = 'flex';
 
-            // Check if it's Google Drive
-            if (rawUrl.includes('drive.google.com')) {
+            // If Cloudinary Direct Video or Direct MP4 Link
+            if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
+                nativePlayer.src = rawUrl;
+                nativePlayer.style.display = 'block';
+                nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
+                nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
+                nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
+            }
+            // Fallback for old Drive Links
+            else if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    // Use standard preview embed (100% stable)
                     iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                    // Add magic crop class to hide pop-out icon
                     iframe.className = 'drive-mode';
                     iframe.style.display = 'block';
                     iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
-            // Check if it's YouTube
+            // Fallback for YouTube Links
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
@@ -240,7 +259,6 @@
                     iframe.onload = () => { loadingSpinner.style.display = 'none'; };
                 }
             } 
-            // Fallback for any other links
             else {
                 iframe.src = rawUrl;
                 iframe.className = '';
@@ -272,7 +290,8 @@
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
         const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
 
-        let currentUser = null, currentUserName = "User", currentUserPhoto = "", thumbFile = null;
+        let currentUser = null, currentUserName = "User", currentUserPhoto = "";
+        let thumbFile = null, selectedVideoFile = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -288,6 +307,17 @@
             } else { window.location.href = "index.html"; }
         });
 
+        // UI Listeners for Files
+        document.getElementById('videoUploadInput').onchange = (e) => {
+            if(e.target.files.length > 0) {
+                selectedVideoFile = e.target.files[0];
+                const label = document.getElementById('videoUploadLabel');
+                const text = document.getElementById('videoUploadText');
+                label.classList.add('video-selected');
+                text.innerText = `Selected: ${selectedVideoFile.name.substring(0, 15)}...`;
+            }
+        };
+
         document.getElementById('thumbUpload').onchange = (e) => { 
             if(e.target.files.length > 0) { 
                 thumbFile = e.target.files[0]; 
@@ -300,46 +330,76 @@
             } 
         };
 
+        // Complete Upload Flow (Cloudinary + ImgBB + Firebase)
         document.getElementById('submitVideoBtn').onclick = async () => {
             const title = document.getElementById('videoTitle').value.trim();
-            const link = document.getElementById('videoLink').value.trim();
             
-            if(!title || !link) { window.alert("Please enter both Title and Link!"); return; }
+            if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
+            if(selectedVideoFile.size > 100 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১০০ এমবির কম হতে হবে!"); return; } // 100MB Limit precaution
             
             const statusText = document.getElementById('upload-status'); 
-            statusText.style.display = 'block'; statusText.innerText = "Publishing..."; 
+            statusText.style.display = 'block'; 
+            statusText.innerHTML = "ভিডিও আপলোড হচ্ছে...<br><span style='font-size:11px;font-weight:normal;'>এতে কয়েক মিনিট সময় লাগতে পারে, পেজটি কাটবেন না।</span>"; 
             document.getElementById('submitVideoBtn').disabled = true;
             
-            let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80"; 
-            
+            let finalVideoUrl = "";
+            let finalThumbUrl = "";
+
             try {
+                // 1. Upload Video to Cloudinary
+                const vidFormData = new FormData(); 
+                vidFormData.append("file", selectedVideoFile); 
+                vidFormData.append("upload_preset", CLOUDINARY_PRESET);
+
+                const vidRes = await fetch(CLOUDINARY_URL, { method: "POST", body: vidFormData }); 
+                const vidData = await vidRes.json();
+                
+                if(vidData.secure_url) {
+                    finalVideoUrl = vidData.secure_url;
+                    // Auto generate thumbnail by changing .mp4 to .jpg if user didn't upload one
+                    finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
+                } else {
+                    throw new Error("Cloudinary Upload Failed");
+                }
+
+                // 2. Upload Custom Thumbnail to ImgBB (If provided)
                 if(thumbFile) { 
+                    statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
                     const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
                     const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
                     const data = await res.json(); 
-                    if(data.success) thumbUrl = data.data.display_url; 
+                    if(data.success) finalThumbUrl = data.data.display_url; 
                 }
                 
+                // 3. Save to Firebase
+                statusText.innerHTML = "ফিনিশিং হচ্ছে...";
                 await addDoc(collection(db, "videos"), { 
                     uid: currentUser.uid, 
                     author: currentUserName, 
                     authorPhoto: currentUserPhoto, 
                     title: title, 
-                    videoUrl: link, 
-                    thumbnail: thumbUrl, 
+                    videoUrl: finalVideoUrl, 
+                    thumbnail: finalThumbUrl, 
                     views: [], 
                     timestamp: serverTimestamp() 
                 });
                 
+                // Reset Form
                 document.getElementById('videoTitle').value = ""; 
-                document.getElementById('videoLink').value = ""; 
+                document.getElementById('videoUploadInput').value = ""; 
+                document.getElementById('videoUploadLabel').classList.remove('video-selected');
+                document.getElementById('videoUploadText').innerText = "Click to select video (MP4, MOV)";
+                selectedVideoFile = null;
+
                 thumbFile = null;
                 document.getElementById('thumbPreview').style.display = 'none';
+                document.getElementById('thumbUpload').value = "";
+                
                 closeUploadModal();
                 
-                statusText.innerText = "Published Successfully!"; setTimeout(() => statusText.style.display = 'none', 2000);
+                statusText.innerText = "সফলভাবে আপলোড হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2500);
             } catch (e) { 
-                statusText.innerText = "Failed!"; setTimeout(() => statusText.style.display = 'none', 2000); 
+                statusText.innerText = "আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; setTimeout(() => statusText.style.display = 'none', 3000); 
             }
             finally { document.getElementById('submitVideoBtn').disabled = false; }
         };
@@ -355,16 +415,11 @@
 
                 videos.sort((a, b) => {
                     let tA = 0, tB = 0;
-                    if (a.timestamp && typeof a.timestamp.toMillis === 'function') {
-                        tA = a.timestamp.toMillis();
-                    } else if (a.timestamp && a.timestamp.seconds) {
-                        tA = a.timestamp.seconds * 1000;
-                    }
-                    if (b.timestamp && typeof b.timestamp.toMillis === 'function') {
-                        tB = b.timestamp.toMillis();
-                    } else if (b.timestamp && b.timestamp.seconds) {
-                        tB = b.timestamp.seconds * 1000;
-                    }
+                    if (a.timestamp && typeof a.timestamp.toMillis === 'function') { tA = a.timestamp.toMillis(); } 
+                    else if (a.timestamp && a.timestamp.seconds) { tA = a.timestamp.seconds * 1000; }
+                    
+                    if (b.timestamp && typeof b.timestamp.toMillis === 'function') { tB = b.timestamp.toMillis(); } 
+                    else if (b.timestamp && b.timestamp.seconds) { tB = b.timestamp.seconds * 1000; }
                     return tB - tA;
                 });
 
