@@ -22,55 +22,25 @@
         .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
         
         /* --- VIP Admin Styles --- */
-        .admin-glow-avatar {
-            border: 4px solid #f1c40f !important;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.6) !important;
-        }
-        .admin-badge-tag {
-            display: inline-block;
-            background: linear-gradient(135deg, #f39c12, #f1c40f);
-            color: #000;
-            font-size: 12px;
-            font-weight: 900;
-            padding: 3px 8px;
-            border-radius: 12px;
-            margin-left: 10px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 8px rgba(241, 196, 15, 0.5);
-            letter-spacing: 0.5px;
-        }
+        .admin-glow-avatar { border: 4px solid #f1c40f !important; box-shadow: 0 0 20px rgba(241, 196, 15, 0.6) !important; }
+        .admin-badge-tag { display: inline-block; background: linear-gradient(135deg, #f39c12, #f1c40f); color: #000; font-size: 12px; font-weight: 900; padding: 3px 8px; border-radius: 12px; margin-left: 10px; text-transform: uppercase; box-shadow: 0 2px 8px rgba(241, 196, 15, 0.5); letter-spacing: 0.5px; }
 
         /* --- Typing Animation Styles --- */
-        .golden-gradient-text {
-            background: linear-gradient(135deg, #f39c12, #f1c40f, #f39c12);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-            text-shadow: 0px 2px 10px rgba(241, 196, 15, 0.2);
-            letter-spacing: 1px;
-        }
-        .typing-cursor {
-            display: inline-block;
-            width: 3px;
-            height: 22px;
-            background-color: #f1c40f;
-            margin-left: 3px;
-            vertical-align: middle;
-            animation: blinkCursor 0.8s infinite;
-        }
-        @keyframes blinkCursor {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        .golden-gradient-text { background: linear-gradient(135deg, #f39c12, #f1c40f, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; text-shadow: 0px 2px 10px rgba(241, 196, 15, 0.2); letter-spacing: 1px; }
+        .typing-cursor { display: inline-block; width: 3px; height: 22px; background-color: #f1c40f; margin-left: 3px; vertical-align: middle; animation: blinkCursor 0.8s infinite; }
+        @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .edit-profile-btn { position: absolute; bottom: 10px; right: 5px; background-color: #3a3b3c; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #01160b; z-index: 60; }
         .profile-name { margin-top: 12px; font-size: 26px; font-weight: 600; color: #ffffff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.3px; }
         .follower-count { font-size: 15px; color: #b0b3b8; margin-top: 4px; }
         .follower-count span { color: #ffffff; font-weight: 600; }
         
-        .friend-actions { display: none; gap: 10px; margin-top: 15px; justify-content: center; width: 100%; }
-        .btn-friend { background-color: #1877F2; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; max-width: 150px; transition: 0.2s; }
-        .btn-message { background-color: #3a3b3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; max-width: 150px; }
+        /* Action Buttons Area */
+        .friend-actions { display: none; gap: 8px; margin-top: 15px; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .btn-friend { background-color: #1877F2; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; flex: 1; min-width: 100px; transition: 0.2s; }
+        .btn-follow { background-color: #2ecc71; color: #01160b; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; flex: 1; min-width: 100px; transition: 0.2s; }
+        .btn-follow.following { background-color: rgba(255,255,255,0.1); color: #fff; }
+        .btn-message { background-color: #3a3b3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; flex: 1; min-width: 100px; }
         
         .profile-body { padding: 15px 20px; }
         
@@ -78,25 +48,8 @@
         .bio-section { text-align: center; margin-bottom: 20px; position: relative;}
         .bio-text { font-size: 15px; color: #e4e6eb; white-space: pre-wrap; line-height: 1.6; transition: 0.3s;}
         
-        /* Golden Gradient Text for Bio (Admin Only) */
-        .admin-bio-text {
-            background: linear-gradient(135deg, #f39c12, #f1c40f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
-            text-shadow: 0px 1px 3px rgba(241, 196, 15, 0.2);
-        }
-
-        /* Golden Gradient Rounded Border only for Admin */
-        .admin-bio-border {
-            border: 2px solid transparent;
-            border-radius: 20px;
-            padding: 15px;
-            position: relative;
-            background: linear-gradient(#01160b, #01160b) padding-box,
-                        linear-gradient(135deg, #f39c12, #f1c40f) border-box;
-            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.1);
-        }
+        .admin-bio-text { background: linear-gradient(135deg, #f39c12, #f1c40f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; text-shadow: 0px 1px 3px rgba(241, 196, 15, 0.2); }
+        .admin-bio-border { border: 2px solid transparent; border-radius: 20px; padding: 15px; position: relative; background: linear-gradient(#01160b, #01160b) padding-box, linear-gradient(135deg, #f39c12, #f1c40f) border-box; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.1); }
 
         .edit-action-btn { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         
@@ -116,7 +69,7 @@
         .fake-input-box { flex-grow: 1; display: flex; align-items: center; }
         .fake-input-box input { width: 100%; background: #022112; border: 1px solid #0f4024; border-radius: 30px; padding: 10px 20px; color: #ffffff; outline: none; font-size: 15px; }
         
-        /* Mod: Sticker Icon Add */
+        /* Sticker Icon Add */
         .gallery-icon-label { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; cursor: pointer; width: 45px; }
         .gallery-icon-label i { font-size: 22px; transition: 0.2s; margin-bottom: 2px; }
         .gallery-icon-label span { font-size: 11px; font-weight: 600; color: #b0b3b8; }
@@ -162,7 +115,7 @@
         .hidden { display: none; } input[type="file"] { display: none; }
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 10px 20px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 2000; }
 
-        /* --- NEW: Premium Sticker Modal CSS --- */
+        /* Premium Sticker Modal CSS */
         .sticker-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 4000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .sticker-modal-box { background: #01160b; border: 1px solid #0a2e1a; border-radius: 20px; padding: 15px; width: 90%; max-width: 400px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
         .sticker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #0a2e1a; padding-bottom: 10px; }
@@ -179,7 +132,7 @@
         .sticker-item img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
         .sticker-item:hover, .sticker-item:active { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); transform: scale(0.95); }
 
-        /* --- NEW: FB Style Post Options Menu (Bottom Sheet) --- */
+        /* FB Style Post Options Menu (Bottom Sheet) */
         .post-menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 4000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(2px); }
         .post-menu-box { background: #242526; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px 15px; animation: slideUp 0.3s ease-out; display: flex; flex-direction: column; gap: 10px; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -191,8 +144,7 @@
 
         /* Delete Post Button Style */
         .post-menu-delete { background: rgba(255, 71, 87, 0.1); border-color: rgba(255, 71, 87, 0.3); }
-        .post-menu-delete i { color: #ff4757; }
-        .post-menu-delete span { color: #ff4757; }
+        .post-menu-delete i, .post-menu-delete span { color: #ff4757; }
 
     </style>
 </head>
@@ -219,9 +171,7 @@
             <div class="follower-count" id="followerCountDisplay"></div>
             
             <div class="friend-actions" id="friendActionContainer">
-                <button class="btn-friend" id="friendBtn"><i class="fa-solid fa-user-plus"></i> Add Friend</button>
-                <button class="btn-message" id="messageBtn"><i class="fa-brands fa-facebook-messenger"></i> Message</button>
-            </div>
+                </div>
         </div>
 
         <div class="profile-body">
@@ -341,19 +291,17 @@
     </div>
 
     <script>
-        // NEW: Bottom Sheet Post Menu Logic
+        // Post Menu Bottom Sheet Logic
         window.currentPostMenuId = null;
         
         window.openPostMenu = (postId, postOwnerId, authorName) => {
             window.currentPostMenuId = postId;
             const deleteBtn = document.getElementById('postMenuDeleteBtn');
             
-            // Check Admin Power globally
             const myName = window.currentUserNameGlobal ? window.currentUserNameGlobal.toLowerCase() : "";
             const amISobujMia = myName.includes("sobuj mia");
             const myUid = window.currentUserGlobal ? window.currentUserGlobal.uid : null;
             
-            // Show Delete if I own the post OR if I am Sobuj Mia
             if (myUid === postOwnerId || amISobujMia) {
                 deleteBtn.style.display = 'flex';
                 deleteBtn.onclick = () => { window.deletePost(); };
@@ -378,7 +326,7 @@
             });
         };
 
-        // NEW: Sticker UI Logic
+        // Sticker UI Logic
         const stickerLibrary = {
             emojis: ["https://media.giphy.com/media/l4pTfx2qLszoacZRS/giphy.gif", "https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif", "https://media.giphy.com/media/26AHONQ79FdWZhAI0/giphy.gif", "https://media.giphy.com/media/3o6ozh46EBu2EQeIGQ/giphy.gif", "https://media.giphy.com/media/l0HlO4vdchLBZNxYc/giphy.gif", "https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif"],
             greetings: ["https://media.giphy.com/media/3o7TKrEzvLbgzG1k0E/giphy.gif", "https://media.giphy.com/media/l4Ho0At2UD2d7WyD6/giphy.gif", "https://media.giphy.com/media/11tTNkNy1SdXGg/giphy.gif", "https://media.giphy.com/media/Is1O1TWV0IGM0M65Dl/giphy.gif", "https://media.giphy.com/media/blSTtZehjAZ8I/giphy.gif", "https://media.giphy.com/media/ZfK4cXKJTTay1SmRbP/giphy.gif"],
@@ -392,7 +340,7 @@
             (stickerLibrary[category] || []).forEach(url => { grid.innerHTML += `<div class="sticker-item" onclick="window.selectSticker('${url}')"><img src="${url}"></div>`; });
         };
 
-        // NEW: Comment Reply System Logic (Same as Home)
+        // Comment Reply System Logic
         window.commentTimeAgo = (ts) => {
             if(!ts) return "";
             const diffMins = Math.round((Date.now() - ts) / 60000);
@@ -434,7 +382,6 @@
         let postImageFile = null, selectedStickerUrl = null;
         window.openComments = {};
 
-        // Expose Post Delete function to module scope
         window.deletePost = async () => {
             if(!window.currentPostMenuId) return;
             const confirmDel = confirm("আপনি কি সত্যিই এই পোস্টটি ডিলিট করতে চান?");
@@ -458,7 +405,6 @@
             return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
         }
 
-        // Toggle Post Button Logic Update
         const postInputBox = document.getElementById('newPostText');
         window.togglePostActions = () => {
             const hasText = postInputBox.value.trim().length > 0;
@@ -469,10 +415,11 @@
 
         postInputBox.addEventListener('input', () => { window.togglePostActions(); });
 
+        // --- AUTH AND PAGE LOAD ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user; 
-                window.currentUserGlobal = user; // Global expose for Admin check
+                window.currentUserGlobal = user; 
                 
                 targetUserId = urlId || currentUser.uid; 
                 isOwnProfile = (targetUserId === currentUser.uid);
@@ -480,7 +427,7 @@
                 const myDoc = await getDoc(doc(db, "users", currentUser.uid));
                 if(myDoc.exists()){ 
                     currentUserName = myDoc.data().displayName || "User"; 
-                    window.currentUserNameGlobal = currentUserName; // Global expose
+                    window.currentUserNameGlobal = currentUserName;
                     currentUserPhoto = myDoc.data().profilePic || ""; 
                     const avatarBox = document.getElementById('profilePostAvatar');
                     if(currentUserPhoto) avatarBox.innerHTML = `<img src="${currentUserPhoto}">`; else avatarBox.innerText = currentUserName.charAt(0);
@@ -492,18 +439,17 @@
         function setupUI() {
             if(!isOwnProfile) {
                 document.querySelectorAll('.own-profile-only').forEach(el => el.style.display = 'none');
-                document.getElementById('friendActionContainer').style.display = 'flex';
                 document.getElementById('headerTitle').innerText = "Timeline";
-                checkFriendStatus();
-            } else { document.getElementById('friendActionContainer').style.display = 'none'; }
+            }
+            // Show Friend Actions for both own and others (Logic will change buttons dynamically inside checkFriendStatus)
+            document.getElementById('friendActionContainer').style.display = 'flex';
         }
 
         async function loadProfileData() {
             onSnapshot(doc(db, "users", targetUserId), (userDoc) => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data(); const dName = userData.displayName || "User";
-                    let verifiedHTML = ""; let followerHTML = "";
-                    let adminTag = "";
+                    let verifiedHTML = ""; let followerHTML = ""; let adminTag = "";
                     
                     const followersCount = userData.followers ? userData.followers.length : 0;
                     const followingCount = userData.following ? userData.following.length : 0;
@@ -512,7 +458,7 @@
                     // --- VIP ADMIN MAGIC START ---
                     if (dName.toLowerCase().includes("sobuj mia")) {
                         verifiedHTML = verifiedSvg;
-                        followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>0</span> following`;
+                        followerHTML = `<span>218M</span> followers &nbsp; • &nbsp; <span>${followingCount}</span> following`;
                         adminTag = `<span class="admin-badge-tag"><i class="fa-solid fa-crown"></i> Admin</span>`;
                         document.getElementById('profilePicDisplay').classList.add('admin-glow-avatar');
                         
@@ -560,10 +506,82 @@
                         document.getElementById('loc-text').innerText = userData.loc || "Not added";
                         document.getElementById('loc-input').value = userData.loc || "";
                     }
+                    
+                    // Call check friend status to set up action buttons properly
+                    checkFriendStatus();
                 }
             });
         }
 
+        // --- NEW: DYNAMIC FOLLOW & FRIEND BUTTON LOGIC ---
+        async function checkFriendStatus() {
+            const myDoc = await getDoc(doc(db, "users", currentUser.uid));
+            if(!myDoc.exists()) return;
+            const myData = myDoc.data();
+            
+            const container = document.getElementById('friendActionContainer');
+
+            // If it's my own profile
+            if (targetUserId === currentUser.uid) {
+                container.innerHTML = `
+                    <button class="btn-friend" style="background: #3a3b3c;" onclick="window.location.href='settings.html'"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+                    <button class="btn-follow" onclick="alert('You cannot follow yourself!')"><i class="fa-solid fa-rss"></i> Follow</button>
+                `;
+                return;
+            }
+
+            // If it's someone else's profile
+            const friends = myData.friends || []; 
+            const sentRequests = myData.sentRequests || []; 
+            const receivedRequests = myData.receivedRequests || [];
+            const following = myData.following || [];
+
+            // Friend Button Logic
+            let friendBtnHTML = "";
+            if(friends.includes(targetUserId)) { 
+                friendBtnHTML = `<button class="btn-friend friends" onclick="alert('আপনারা আগে থেকেই ফ্রেন্ড!')"><i class="fa-solid fa-user-check"></i> Friends</button>`; 
+            } else if(sentRequests.includes(targetUserId)) { 
+                friendBtnHTML = `<button class="btn-friend cancel" onclick="window.cancelRequest()"><i class="fa-solid fa-user-xmark"></i> Cancel</button>`; 
+            } else if(receivedRequests.includes(targetUserId)) { 
+                friendBtnHTML = `<button class="btn-friend" onclick="window.acceptRequest()"><i class="fa-solid fa-user-check"></i> Accept</button>`; 
+            } else { 
+                friendBtnHTML = `<button class="btn-friend" onclick="window.sendRequest()"><i class="fa-solid fa-user-plus"></i> Add Friend</button>`; 
+            }
+
+            // Follow Button Logic
+            let followBtnHTML = "";
+            if (following.includes(targetUserId)) {
+                followBtnHTML = `<button class="btn-follow following" onclick="window.toggleProfilePageFollow()"><i class="fa-solid fa-user-check"></i> Following</button>`;
+            } else {
+                followBtnHTML = `<button class="btn-follow" onclick="window.toggleProfilePageFollow()"><i class="fa-solid fa-rss"></i> Follow</button>`;
+            }
+
+            // Message Button Logic
+            let messageBtnHTML = `<button class="btn-message" onclick="window.location.href='messages.html'"><i class="fa-brands fa-facebook-messenger"></i> Message</button>`;
+
+            container.innerHTML = friendBtnHTML + followBtnHTML + messageBtnHTML;
+        }
+
+        // Action Functions for Buttons
+        window.sendRequest = async () => { await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); await setDoc(doc(db, "users", targetUserId, "notifications", `req_${currentUser.uid}`), { type: 'friend_request', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); checkFriendStatus(); }
+        window.cancelRequest = async () => { await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) }); checkFriendStatus(); }
+        window.acceptRequest = async () => { await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(targetUserId), friends: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
+        
+        window.toggleProfilePageFollow = async () => {
+            const myRef = doc(db, "users", currentUser.uid); const targetRef = doc(db, "users", targetUserId);
+            const myDoc = await getDoc(myRef); if(!myDoc.exists()) return;
+            const myData = myDoc.data(); const isFollowing = myData.following && myData.following.includes(targetUserId);
+
+            if (isFollowing) {
+                await updateDoc(myRef, { following: arrayRemove(targetUserId) }); await updateDoc(targetRef, { followers: arrayRemove(currentUser.uid) });
+            } else {
+                await updateDoc(myRef, { following: arrayUnion(targetUserId) }); await updateDoc(targetRef, { followers: arrayUnion(currentUser.uid) });
+                await setDoc(doc(db, "users", targetUserId, "notifications", `follow_${currentUser.uid}`), { type: 'follow', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() });
+            }
+            checkFriendStatus();
+        };
+
+        // --- Other Setup ---
         document.getElementById('edit-bio-btn').onclick = () => { document.getElementById('bio-display-area').classList.add('hidden'); document.getElementById('bio-edit-area').classList.remove('hidden'); };
         document.getElementById('save-bio-btn').onclick = async () => { const newBio = document.getElementById('bio-input').value; document.getElementById('bio-text').innerText = newBio || "নিজের সম্পর্কে কিছু লিখুন..."; document.getElementById('bio-display-area').classList.remove('hidden'); document.getElementById('bio-edit-area').classList.add('hidden'); await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio }); };
         document.getElementById('edit-details-btn').onclick = () => { document.getElementById('details-display-area').classList.add('hidden'); document.getElementById('details-edit-area').classList.remove('hidden'); };
@@ -587,24 +605,6 @@
         document.getElementById('profileUpload').addEventListener('change', (e) => { if (e.target.files.length > 0) uploadProfileCoverImage(e.target.files[0], 'profile'); });
         document.getElementById('coverUpload').addEventListener('change', (e) => { if (e.target.files.length > 0) uploadProfileCoverImage(e.target.files[0], 'cover'); });
 
-        async function checkFriendStatus() {
-            const myDoc = await getDoc(doc(db, "users", currentUser.uid));
-            if(!myDoc.exists()) return;
-            const myData = myDoc.data();
-            const friends = myData.friends || []; const sentRequests = myData.sentRequests || []; const receivedRequests = myData.receivedRequests || [];
-            const btn = document.getElementById('friendBtn');
-            if(friends.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Friends`; btn.className = "btn-friend friends"; btn.onclick = () => alert("আপনারা আগে থেকেই ফ্রেন্ড!"); } 
-            else if(sentRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-xmark"></i> Cancel Request`; btn.className = "btn-friend cancel"; btn.onclick = () => cancelRequest(); } 
-            else if(receivedRequests.includes(targetUserId)) { btn.innerHTML = `<i class="fa-solid fa-user-check"></i> Accept`; btn.className = "btn-friend"; btn.onclick = () => acceptRequest(); } 
-            else { btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Friend`; btn.className = "btn-friend"; btn.onclick = () => sendRequest(); }
-            document.getElementById('messageBtn').onclick = () => { window.location.href = "messages.html"; };
-        }
-
-        async function sendRequest() { document.getElementById('friendBtn').innerText = "Sending..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayUnion(currentUser.uid) }); await setDoc(doc(db, "users", targetUserId, "notifications", `req_${currentUser.uid}`), { type: 'friend_request', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, isRead: false, timestamp: serverTimestamp() }); checkFriendStatus(); }
-        async function cancelRequest() { document.getElementById('friendBtn').innerText = "Canceling..."; await updateDoc(doc(db, "users", currentUser.uid), { sentRequests: arrayRemove(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { receivedRequests: arrayRemove(currentUser.uid) }); checkFriendStatus(); }
-        async function acceptRequest() { document.getElementById('friendBtn').innerText = "Accepting..."; await updateDoc(doc(db, "users", currentUser.uid), { receivedRequests: arrayRemove(targetUserId), friends: arrayUnion(targetUserId) }); await updateDoc(doc(db, "users", targetUserId), { sentRequests: arrayRemove(currentUser.uid), friends: arrayUnion(currentUser.uid) }); checkFriendStatus(); }
-
-        // Make sure preview logic handles Sticker selection globally defined
         window.selectSticker = (url) => {
             selectedStickerUrl = url; postImageFile = null; document.getElementById('postImageUpload').value = "";
             document.getElementById('preview-img').src = url; document.getElementById('post-image-preview').style.display = 'block';
@@ -638,52 +638,23 @@
         
         window.toggleCommentSection = (id) => { 
             const el = document.getElementById(`comments-${id}`); 
-            if(el.style.display === 'block') { 
-                el.style.display = 'none'; 
-                window.openComments[id] = false; 
-                window.cancelCommentReply(id); 
-            } else { 
-                el.style.display = 'block'; 
-                window.openComments[id] = true; 
-            } 
+            if(el.style.display === 'block') { el.style.display = 'none'; window.openComments[id] = false; window.cancelCommentReply(id); } 
+            else { el.style.display = 'block'; window.openComments[id] = true; } 
         };
 
         window.sendComment = async (id, postUid) => { 
-            const input = document.getElementById(`comment-input-${id}`); 
-            const txt = input.value.trim(); 
-            if(!txt) return; 
-            window.openComments[id] = true; 
-            
+            const input = document.getElementById(`comment-input-${id}`); const txt = input.value.trim(); if(!txt) return; window.openComments[id] = true; 
             const replyToName = window.replyingToCommentMap[id] || null;
-            const newComment = { 
-                author: currentUserName, 
-                authorPhoto: currentUserPhoto, 
-                text: txt, 
-                timestamp: Date.now() 
-            };
+            const newComment = { author: currentUserName, authorPhoto: currentUserPhoto, text: txt, timestamp: Date.now() };
             if(replyToName) newComment.replyTo = replyToName;
-
             try { 
                 await updateDoc(doc(db, "posts", id), { comments: arrayUnion(newComment) }); 
-                
-                let notifText = txt;
-                if(replyToName) notifText = `Replied to ${replyToName}: ${txt}`;
-
+                let notifText = txt; if(replyToName) notifText = `Replied to ${replyToName}: ${txt}`;
                 if(postUid && postUid !== 'undefined' && postUid !== currentUser.uid) { 
-                    await addDoc(collection(db, "users", postUid, "notifications"), { 
-                        type: 'comment', 
-                        senderId: currentUser.uid, 
-                        senderName: currentUserName, 
-                        senderPhoto: currentUserPhoto, 
-                        commentText: notifText, 
-                        isRead: false, 
-                        timestamp: serverTimestamp() 
-                    }); 
+                    await addDoc(collection(db, "users", postUid, "notifications"), { type: 'comment', senderId: currentUser.uid, senderName: currentUserName, senderPhoto: currentUserPhoto, commentText: notifText, isRead: false, timestamp: serverTimestamp() }); 
                 } 
             } catch(e) { alert("Error: " + e.message); } 
-            
-            input.value = ""; 
-            window.cancelCommentReply(id);
+            input.value = ""; window.cancelCommentReply(id);
         };
 
         function loadProfilePosts() {
@@ -747,7 +718,6 @@
                         const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
                         const timeText = timeAgo(post.timestamp);
 
-                        // --- NEW: 3 Dot Menu Icon added in Header ---
                         const postHTML = `
                             <div class="feed-post">
                                 <div class="post-header">
@@ -788,12 +758,10 @@
                                 </div>
                                 
                                 <div class="comments-section" id="comments-${postId}" style="display: ${isCommentOpen};">
-                                    
                                     <div id="reply-preview-${postId}" style="display:none; font-size:12px; color:#2ecc71; margin-bottom:8px; padding-left:5px; align-items:center; gap:5px; background: rgba(46, 204, 113, 0.1); padding: 5px; border-radius: 5px;">
                                         <i class="fa-solid fa-reply"></i> Replying to <span id="reply-name-${postId}" style="font-weight:bold; color:white;"></span>
                                         <i class="fa-solid fa-xmark" style="color:#ff4757; cursor:pointer; margin-left:auto;" onclick="cancelCommentReply('${postId}')"></i>
                                     </div>
-                                    
                                     <div class="comment-input-area">
                                         <input type="text" id="comment-input-${postId}" placeholder="Write a comment...">
                                         <button class="comment-btn" onclick="sendComment('${postId}', '${post.uid}')">Send</button>
