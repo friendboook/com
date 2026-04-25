@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FriendBook Vids</title>
+    <title>FriendPlay - Videos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,7 +12,8 @@
         /* Header Styling */
         header { background-color: #01160b; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #0a2e1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .back-btn { color: #ffffff; font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer;}
-        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;}
+        .header-title { color: #2ecc71; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px;}
+        .header-title img { height: 26px; object-fit: contain; border-radius: 4px; }
         
         .upload-btn-header { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .upload-btn-header:active { transform: scale(0.95); background: #2ecc71; color: #000; }
@@ -71,13 +72,17 @@
         /* Video Player Modal */
         .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #01160b; border-bottom: 1px solid #0a2e1a; }
-        .player-close { color: white; font-size: 24px; cursor: pointer; }
         
-        /* Iframe and Native Player Styling */
-        .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; position: relative; }
+        .player-back-btn { color: #2ecc71; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .player-back-btn:active { transform: scale(0.95); }
+        .player-close { color: white; font-size: 24px; cursor: pointer; transition: 0.2s; }
+        .player-close:active { transform: scale(0.8); }
+
+        .iframe-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden;}
         .iframe-wrapper iframe, .iframe-wrapper video { width: 100%; height: 100%; border: none; outline: none; }
-        .iframe-wrapper iframe.drive-fallback { height: calc(100% + 55px); margin-top: -55px; } /* Fallback crop if needed */
         
+        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; background: #000; color: #2ecc71; z-index: 5; }
+
         .player-info { padding: 15px; flex: 1; overflow-y: auto; background: #000a05;}
         .player-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; line-height: 1.4;}
         .player-meta { color: #b0b3b8; font-size: 13px; margin-bottom: 15px; border-bottom: 1px solid #0a2e1a; padding-bottom: 15px; }
@@ -91,7 +96,10 @@
 
     <header>
         <div class="back-btn" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i></div>
-        <div class="header-title">FRIENDBOOK VIDS</div>
+        <div class="header-title">
+            <img src="FriendPlay.png" alt="FriendPlay" onerror="this.src='https://via.placeholder.com/26/2ecc71/000?text=FP'"> 
+            FriendPlay
+        </div>
         <button class="upload-btn-header" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i> Upload</button>
     </header>
 
@@ -143,13 +151,20 @@
 
     <div class="player-modal" id="playerModal">
         <div class="player-header">
-            <div style="color: #2ecc71; font-weight: bold;"><i class="fa-solid fa-play"></i> Player</div>
-            <i class="fa-solid fa-angle-down player-close" onclick="closePlayer()"></i>
+            <div class="player-back-btn" onclick="closePlayer()">
+                <i class="fa-solid fa-arrow-left"></i> ফিরে যান
+            </div>
+            <i class="fa-solid fa-xmark player-close" onclick="closePlayer()"></i>
         </div>
+        
         <div class="iframe-wrapper">
+            <div class="loading-overlay" id="videoLoadingText">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 35px;"></i>
+            </div>
             <video id="nativeVideo" controls autoplay playsinline style="display: none;"></video>
             <iframe id="videoIframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
+        
         <div class="player-info">
             <div class="player-title" id="pTitle">Video Title</div>
             <div class="player-meta" id="pMeta">0 Views • Just now</div>
@@ -163,7 +178,7 @@
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
-        // Modal Logic & Smart Back Button
+        // Smart Back Button Logic
         function handleBack() {
             const playerModal = document.getElementById('playerModal');
             const uploadModal = document.getElementById('uploadModal');
@@ -177,6 +192,7 @@
             }
         }
 
+        // Modal Logic
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
         
@@ -192,7 +208,7 @@
             nativeVideo.src = '';
         }
 
-        // Open Player & Link Processor
+        // 1-Click Open Player & Link Processor
         function openVideoPlayer(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge) {
             document.getElementById('pTitle').innerText = title;
             document.getElementById('pMeta').innerText = `${viewsCount} Views • ${timeText}`;
@@ -201,28 +217,33 @@
             
             const iframe = document.getElementById('videoIframe');
             const nativePlayer = document.getElementById('nativeVideo');
+            const loadingSpinner = document.getElementById('videoLoadingText');
             
             iframe.style.display = 'none';
             nativePlayer.style.display = 'none';
             nativePlayer.pause();
             iframe.src = '';
+            
+            // Show Loading Spinner to prevent double clicks
+            loadingSpinner.style.display = 'flex';
 
             // Check if it's Google Drive
             if (rawUrl.includes('drive.google.com')) {
                 const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                    // Use Direct Stream Link to avoid Popout Icon and enable AutoPlay
+                    // Direct Stream Link avoids Popout Icon and enables fast AutoPlay
                     const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
                     nativePlayer.src = directUrl;
                     nativePlayer.style.display = 'block';
                     
-                    nativePlayer.play().catch(e => {
-                        // Very rare fallback if the video is huge and Google requires virus scan confirmation
-                        nativePlayer.style.display = 'none';
-                        iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                        iframe.classList.add('drive-fallback'); // CSS crop to hide icon
-                        iframe.style.display = 'block';
+                    nativePlayer.play().then(() => {
+                        loadingSpinner.style.display = 'none';
+                    }).catch(e => {
+                        loadingSpinner.style.display = 'none';
                     });
+
+                    nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; };
+                    nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
                 }
             } 
             // Check if it's YouTube
@@ -231,15 +252,15 @@
                 const match = rawUrl.match(regExp);
                 if (match && match[2].length === 11) {
                     iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-                    iframe.classList.remove('drive-fallback');
                     iframe.style.display = 'block';
+                    loadingSpinner.style.display = 'none';
                 }
             } 
             // Fallback for any other links
             else {
                 iframe.src = rawUrl;
-                iframe.classList.remove('drive-fallback');
                 iframe.style.display = 'block';
+                loadingSpinner.style.display = 'none';
             }
             
             document.getElementById('playerModal').style.display = 'flex';
@@ -298,13 +319,13 @@
             const title = document.getElementById('videoTitle').value.trim();
             const link = document.getElementById('videoLink').value.trim();
             
-            if(!title || !link) { alert("Please enter both Title and Link!"); return; }
+            if(!title || !link) { window.alert("Please enter both Title and Link!"); return; }
             
             const statusText = document.getElementById('upload-status'); 
             statusText.style.display = 'block'; statusText.innerText = "Publishing..."; 
             document.getElementById('submitVideoBtn').disabled = true;
             
-            let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80"; // Default abstract thumb
+            let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80"; 
             
             try {
                 if(thumbFile) { 
@@ -371,22 +392,3 @@
                                 <i class="fa-solid fa-circle-play play-icon-overlay"></i>
                             </div>
                             <div class="video-info">
-                                <div class="channel-avatar">${avatar}</div>
-                                <div class="video-details">
-                                    <div class="video-title">${vid.title}</div>
-                                    <div class="channel-name">${vid.author}${badge}</div>
-                                    <div class="video-meta">${viewsCount} Views • ${timeText}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                    grid.innerHTML += cardHTML;
-                });
-                
-                if(count === 0) {
-                    grid.innerHTML = '<div style="text-align: center; color: #8c9e94; grid-column: 1 / -1; padding: 20px;">কোনো ভিডিও নেই। নতুন ভিডিও আপলোড করুন!</div>';
-                }
-            });
-        }
-    </script>
-</body>
-</html>
