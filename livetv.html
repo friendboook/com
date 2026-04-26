@@ -316,15 +316,7 @@
                 nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
                 nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; }; nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
             }
-            else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = rawUrl.match(regExp);
-                if (match && match[2].length === 11) {
-                    iframe.src = `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-                    iframe.className = ''; iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } else {
+            else {
                 iframe.src = rawUrl; iframe.className = ''; iframe.style.display = 'block';
                 iframe.onload = () => { loadingSpinner.style.display = 'none'; };
             }
@@ -494,36 +486,63 @@
             } 
         };
 
+        // --- CHUNKED UPLOAD LOGIC ---
         document.getElementById('submitVideoBtn').onclick = async () => {
             const title = document.getElementById('videoTitle').value.trim();
             
             if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
-            
-            // --- UPDATED: Limit changed from 100MB to 1GB ---
-            if(selectedVideoFile.size > 1024 * 1024 * 1024) { 
-                window.alert("ভিডিও ফাইল ১ জিবি (1GB) এর কম হতে হবে!"); return; 
-            }
+            if(selectedVideoFile.size > 1024 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১ জিবি (1GB) এর কম হতে হবে!"); return; }
             
             const statusText = document.getElementById('upload-status'); 
             statusText.style.display = 'block'; 
             statusText.innerHTML = "ভিডিও আপলোড হচ্ছে...<br><span style='font-size:11px;font-weight:normal;'>এতে কয়েক মিনিট সময় লাগতে পারে, পেজটি কাটবেন না।</span>"; 
             document.getElementById('submitVideoBtn').disabled = true;
             
-            let finalVideoUrl = ""; let finalThumbUrl = "";
+            let finalVideoUrl = ""; 
+            let finalThumbUrl = "";
 
             try {
-                const vidFormData = new FormData(); 
-                vidFormData.append("file", selectedVideoFile); 
-                vidFormData.append("upload_preset", CLOUDINARY_PRESET);
+                // Cloudinary Chunked Upload Implementation
+                const chunkSize = 20 * 1024 * 1024; // 20 MB chunks
+                const totalSize = selectedVideoFile.size;
+                const uniqueUploadId = "fb_vid_" + Date.now() + Math.random().toString(36).substring(2);
 
-                const vidRes = await fetch(CLOUDINARY_URL, { method: "POST", body: vidFormData }); 
-                const vidData = await vidRes.json();
-                
-                if(vidData.secure_url) {
-                    finalVideoUrl = vidData.secure_url;
-                    finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
-                } else { throw new Error("Cloudinary Upload Failed"); }
+                for (let start = 0; start < totalSize; start += chunkSize) {
+                    const end = Math.min(start + chunkSize, totalSize);
+                    const chunk = selectedVideoFile.slice(start, end);
+                    
+                    const vidFormData = new FormData();
+                    vidFormData.append("file", chunk);
+                    vidFormData.append("upload_preset", CLOUDINARY_PRESET);
+                    
+                    const percent = Math.round((end / totalSize) * 100);
+                    statusText.innerHTML = `ভিডিও আপলোড হচ্ছে... (${percent}%)<br><span style='font-size:11px;font-weight:normal;'>বড় ভিডিও তাই সময় লাগবে, পেজটি কাটবেন না।</span>`;
+                    
+                    const vidRes = await fetch(CLOUDINARY_URL, { 
+                        method: "POST", 
+                        headers: {
+                            "X-Unique-Upload-Id": uniqueUploadId,
+                            "Content-Range": `bytes ${start}-${end - 1}/${totalSize}`
+                        },
+                        body: vidFormData 
+                    });
+                    
+                    if (!vidRes.ok) {
+                        const errBody = await vidRes.text();
+                        console.error("Chunk Error:", errBody);
+                        throw new Error("Upload Failed at chunk");
+                    }
+                    
+                    const vidData = await vidRes.json();
+                    if (vidData.secure_url) {
+                        finalVideoUrl = vidData.secure_url;
+                        finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
+                    }
+                }
 
+                if(!finalVideoUrl) throw new Error("Could not retrieve secure URL");
+
+                // Thumbnail Upload (if given)
                 if(thumbFile) { 
                     statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
                     const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
@@ -546,6 +565,7 @@
                 closeUploadModal();
                 statusText.innerText = "সফলভাবে আপলোড হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2500);
             } catch (e) { 
+                console.error(e);
                 statusText.innerText = "আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; setTimeout(() => statusText.style.display = 'none', 3000); 
             }
             finally { document.getElementById('submitVideoBtn').disabled = false; }
