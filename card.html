@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>App Supported ID Card Maker</title>
+<title>App Supported ID Card Maker Pro</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
@@ -285,7 +285,7 @@
     margin-top: 10px;
   }
 
-  /* নতুন পপ-আপ মডাল ডিজাইন (যাতে অ্যাপে সেভ করা যায়) */
+  /* পপ-আপ মডাল ডিজাইন */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -293,7 +293,7 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    display: none; /* প্রথমে লুকানো থাকবে */
+    display: none; 
     justify-content: center;
     align-items: center;
     z-index: 9999;
@@ -302,7 +302,7 @@
 
   .modal-content {
     background: white;
-    padding: 20px;
+    padding: 25px;
     border-radius: 12px;
     text-align: center;
     max-width: 90%;
@@ -310,37 +310,69 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    overflow-y: auto;
+  }
+
+  .modal-instruction {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modal-instruction strong {
+    color: #28a745;
   }
 
   .modal-content img {
     max-width: 100%;
-    max-height: 60vh;
+    height: auto;
     border-radius: 8px;
     border: 2px solid #ddd;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
 
-  .modal-instruction {
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    padding: 12px 20px;
+    background: #007bff; /* Blue for Download/Share */
+    color: white;
+    border: none;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
-    color: #8b0000;
-    margin-bottom: 15px;
-    background: #fff3f3;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px dashed #8b0000;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    flex: 1;
+    min-width: 150px;
   }
 
   .close-modal-btn {
-    padding: 10px 30px;
-    background: #333;
+    padding: 12px 20px;
+    background: #dc3545; /* Red for Close */
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    flex: 1;
+    min-width: 100px;
   }
 </style>
 </head>
@@ -420,16 +452,21 @@
 <div class="modal-overlay" id="resultModal">
   <div class="modal-content">
     <div class="modal-instruction">
-      ✅ কার্ডটি সফলভাবে তৈরি হয়েছে!<br>
-      ⬇️ <strong>নিচের ছবির উপর চেপে ধরে (Long Press) 'Save Image' বা 'Download' এ ক্লিক করুন।</strong>
+      <strong>✅ কার্ডটি সফলভাবে তৈরি হয়েছে!</strong><br><br>
+      ⬇️ নিচের <strong>'ডাউনলোড / শেয়ার করুন'</strong> বাটনে ক্লিক করুন।<br><br>
+      <em>(যদি বাটন কাজ না করে, তবে ছবির উপর চেপে ধরে (Long Press) 'Save Image' বা 'Download' এ ক্লিক করুন)</em>
     </div>
+    
     <img id="finalGeneratedImage" src="" alt="Generated ID Card">
-    <button class="close-modal-btn" onclick="closeModal()">বন্ধ করুন</button>
+    
+    <div class="action-buttons">
+      <button id="shareBtn" class="share-btn">📥 ডাউনলোড / শেয়ার করুন</button>
+      <button class="close-modal-btn" onclick="closeModal()">বন্ধ করুন</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // সাইজ ঠিক রাখার লজিক
   function adjustCardSize() {
     const wrapper = document.getElementById('previewWrapper');
     const card = document.getElementById('idCard');
@@ -452,7 +489,6 @@
   window.addEventListener('load', adjustCardSize);
   window.addEventListener('resize', adjustCardSize);
 
-  // টেক্সট ও কালার আপডেট
   document.getElementById('themeColor').addEventListener('input', function(e) {
     document.documentElement.style.setProperty('--theme-color', e.target.value);
   });
@@ -477,7 +513,6 @@
   bindText('val1', 'c-val1'); bindText('val2', 'c-val2');
   bindText('val3', 'c-val3'); bindText('val4', 'c-val4');
 
-  // ছবি আপলোড
   function handleImageUpload(inputId, imgId, placeholderId = null) {
     document.getElementById(inputId).addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -497,40 +532,39 @@
   handleImageUpload('instLogoInput', 'cardLogo');
   handleImageUpload('profilePhotoInput', 'cardPhoto', 'noPhotoText');
 
-  // মডাল ক্লোজ করার ফাংশন
   function closeModal() {
     document.getElementById('resultModal').style.display = 'none';
   }
 
-  // পপ-আপ বেসড ডাউনলোড লজিক (অ্যাপের জন্য পারফেক্ট)
+  let generatedFile = null;
+  let finalImgUrl = "";
+
   document.getElementById('downloadBtn').addEventListener('click', function() {
     const card = document.getElementById('idCard');
     const loadingMsg = document.getElementById('loadingMsg');
     
     loadingMsg.style.display = 'block';
     
-    // স্কেল সাময়িকভাবে রিসেট করে ছবি রেন্ডার করা
     const originalTransform = card.style.transform;
     card.style.transform = 'scale(1)';
 
     html2canvas(card, {
-      scale: 2, // মেমোরি ফ্রেন্ডলি হাই-কোয়ালিটি
+      scale: 2, 
       useCORS: true,
       allowTaint: true,
       backgroundColor: null
     }).then(canvas => {
-      // ক্যানভাস থেকে ছবি ডাটা তৈরি
-      let imgData = canvas.toDataURL("image/png");
       
-      // সেই ডাটা পপ-আপের ইমেজে বসিয়ে দেওয়া
-      document.getElementById('finalGeneratedImage').src = imgData;
-      
-      // পপ-আপ শো করা
-      document.getElementById('resultModal').style.display = 'flex';
-      
-      // আগের অবস্থায় ফেরত নেওয়া
-      card.style.transform = originalTransform;
-      loadingMsg.style.display = 'none';
+      canvas.toBlob(function(blob) {
+        generatedFile = new File([blob], "Student_ID_Card.png", { type: "image/png" });
+        finalImgUrl = URL.createObjectURL(blob);
+        
+        document.getElementById('finalGeneratedImage').src = finalImgUrl;
+        document.getElementById('resultModal').style.display = 'flex';
+        
+        card.style.transform = originalTransform;
+        loadingMsg.style.display = 'none';
+      }, 'image/png');
       
     }).catch(err => {
       console.error("Error:", err);
@@ -539,6 +573,31 @@
       loadingMsg.style.display = 'none';
     });
   });
+
+  // শেয়ার বা ডাউনলোড ফলব্যাক লজিক
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+      // প্রথমে শেয়ার সাপোর্ট করে কিনা চেক করবে
+      if (generatedFile && navigator.canShare && navigator.canShare({ files: [generatedFile] })) {
+          try {
+              await navigator.share({
+                  files: [generatedFile],
+                  title: 'Student ID Card',
+                  text: 'আপনার তৈরি করা আইডি কার্ডটি সেভ করুন।'
+              });
+          } catch (error) {
+              console.log('Share failed:', error);
+          }
+      } else {
+          // শেয়ার সাপোর্ট না করলে ডিরেক্ট ডাউনলোডের চেষ্টা করবে
+          const link = document.createElement('a');
+          link.href = finalImgUrl;
+          link.download = 'Student_ID_Card.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      }
+  });
+
 </script>
 
 </body>
