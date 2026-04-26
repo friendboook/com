@@ -85,7 +85,6 @@
         .player-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; line-height: 1.4;}
         .player-meta { color: #b0b3b8; font-size: 13px; margin-bottom: 15px; }
 
-        /* Premium Glass Button Effect for Profile */
         .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .player-channel-name { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 5px;}
         
@@ -95,7 +94,7 @@
 
         .player-divider { height: 1px; background: #0a2e1a; margin: 15px 0; }
 
-        /* Comment Section Styles */
+        /* Comment Section */
         .suggested-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #e4e6eb; }
         .video-comment-box { display: flex; gap: 10px; margin-bottom: 15px; }
         .video-comment-box input { flex-grow: 1; background: #022112; border: 1px solid #0f4024; color: white; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px;}
@@ -111,7 +110,7 @@
         .comment-content { font-size: 14px; color: #e4e6eb; }
         .comment-time { font-size: 11px; color: #8c9e94; margin-top: 4px; margin-left: 8px; }
 
-        /* Suggested Videos Section */
+        /* Suggested Videos */
         .suggested-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
         .suggested-card { display: flex; gap: 10px; cursor: pointer; background: #01160b; padding: 8px; border-radius: 10px; border: 1px solid #0a2e1a; transition: 0.2s;}
         .suggested-card:active { background: #022112; transform: scale(0.98); }
@@ -167,7 +166,7 @@
                     <span id="videoUploadText">Click to select video (MP4, MOV)</span>
                 </label>
                 <input type="file" id="videoUploadInput" accept="video/*" style="display: none;">
-                <span class="helper-text">ভিডিও গ্যালারি থেকে সিলেক্ট করুন।</span>
+                <span class="helper-text">ভিডিও গ্যালারি থেকে সিলেক্ট করুন (১ জিবি পর্যন্ত)।</span>
             </div>
 
             <div class="input-group">
@@ -242,7 +241,6 @@
         window.currentOpenedVideoId = null;
         window.currentOpenedAuthorUid = null;
 
-        // Make timeAgo globally available so the Player Modal can use it
         window.timeAgoFromMs = function(ms) {
             if(!ms) return "সবেমাত্র";
             const diffMins = Math.round((Date.now() - ms) / 60000);
@@ -254,7 +252,6 @@
             return `${diffDays} days ago`;
         };
 
-        // Make openVideoPlayer globally available
         window.openVideoPlayer = function(id, rawUrl, title, author, authorPhoto, viewsCount, timeText, badge, authorUid) {
             window.currentOpenedVideoId = id;
             window.currentOpenedAuthorUid = authorUid;
@@ -319,14 +316,6 @@
                 nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
                 nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; }; nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
             }
-            else if (rawUrl.includes('drive.google.com')) {
-                const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    iframe.src = `https://drive.google.com/file/d/${match[1]}/preview`;
-                    iframe.className = 'drive-mode'; iframe.style.display = 'block';
-                    iframe.onload = () => { loadingSpinner.style.display = 'none'; };
-                }
-            } 
             else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = rawUrl.match(regExp);
@@ -387,7 +376,6 @@
         let currentUser = null, currentUserName = "User", currentUserPhoto = "";
         let thumbFile = null, selectedVideoFile = null;
 
-        // SAFE DELETE FUNCTION
         window.deleteVideo = async (videoId, event) => {
             event.stopPropagation(); 
             const confirmDel = confirm("আপনি কি সত্যিই এই ভিডিওটি ডিলিট করতে চান?");
@@ -405,7 +393,7 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                window.currentUserGlobal = user; // Set for global functions
+                window.currentUserGlobal = user;
                 onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data(); 
@@ -418,7 +406,6 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // Realtime Comments Listener Registration
         window.attachCommentListener = (id) => {
             window.currentVideoCommentUnsub = onSnapshot(doc(db, "videos", id), (docSnap) => {
                 if(docSnap.exists()){
@@ -509,8 +496,13 @@
 
         document.getElementById('submitVideoBtn').onclick = async () => {
             const title = document.getElementById('videoTitle').value.trim();
+            
             if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
-            if(selectedVideoFile.size > 100 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১০০ এমবির কম হতে হবে!"); return; }
+            
+            // --- UPDATED: Limit changed from 100MB to 1GB ---
+            if(selectedVideoFile.size > 1024 * 1024 * 1024) { 
+                window.alert("ভিডিও ফাইল ১ জিবি (1GB) এর কম হতে হবে!"); return; 
+            }
             
             const statusText = document.getElementById('upload-status'); 
             statusText.style.display = 'block'; 
@@ -612,7 +604,6 @@
 
                         const timeText = timeAgo(vid.timestamp);
 
-                        // SAFE PERMISSION CHECK
                         const safeCurrentName = String(currentUserName || 'User');
                         const canDelete = (vid.uid === currentUser.uid) || safeCurrentName.toLowerCase().includes("sobuj mia");
                         const deleteBtnHTML = canDelete ? `<div class="delete-video-btn" onclick="window.deleteVideo('${vid.id}', event)"><i class="fa-solid fa-trash"></i></div>` : '';
