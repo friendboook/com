@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premium ID Card Maker</title>
+<title>Premium Student ID Card Maker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
@@ -12,7 +12,7 @@
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e2e6eb; /* বডির ব্যাকগ্রাউন্ড একটু কুল গ্রে করা হয়েছে */
+    background-color: #e2e6eb;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -91,12 +91,12 @@
     max-width: 200px;
   }
 
-  /* কার্ডের বডি (উপরের দিকে তুলে দেওয়া হয়েছে) */
+  /* কার্ডের বডি */
   .card-body {
     display: flex;
     width: 100%;
     height: 100%;
-    padding-top: 80px; /* ১১০ থেকে কমিয়ে ৮০ করা হয়েছে ফাঁকা জায়গা কমানোর জন্য */
+    padding-top: 80px; 
     padding-bottom: 50px;
     z-index: 5;
   }
@@ -150,7 +150,7 @@
     font-weight: 900;
     text-transform: uppercase;
     color: #000;
-    margin-bottom: 12px; /* টাইটেল এবং ডাটা ব্লকের গ্যাপ কমানো হয়েছে */
+    margin-bottom: 12px; 
     letter-spacing: 1px;
   }
 
@@ -173,6 +173,7 @@
     margin-bottom: 0;
   }
 
+  /* এগুলো এখন ফিক্সড থাকবে */
   .data-item .label {
     width: 90px;
     font-weight: 700;
@@ -188,7 +189,7 @@
     font-weight: 600;
   }
 
-  /* নিচের শেপ ডিজাইন এবং ডার্ক ডিভাইডার */
+  /* ফুটার ডিজাইন */
   .footer-wrapper {
     position: absolute;
     bottom: 0;
@@ -196,7 +197,6 @@
     width: 100%;
     height: 40px;
     z-index: 10;
-    /* এই ফিল্টারটি কার্ডের বডি এবং ফুটারের মাঝে একটি সুন্দর ডার্ক বর্ডার তৈরি করবে */
     filter: drop-shadow(0px -2px 1.5px rgba(0,0,0,0.3)); 
   }
 
@@ -218,9 +218,9 @@
     clip-path: polygon(0 0, 80% 0, 100% 100%, 0 100%);
   }
 
-  /* ফর্ম সেকশন - ক্রিমি ও মেটালিক প্রিমিয়াম লুক */
+  /* ফর্ম সেকশন - ক্রিমি ও মেটালিক লুক */
   .input-section {
-    background: linear-gradient(145deg, #fdfcfb 0%, #e2dfd8 100%); /* ক্রিমি মেটালিক গ্রেডিয়েন্ট */
+    background: linear-gradient(145deg, #fdfcfb 0%, #e2dfd8 100%);
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,255,255,0.9);
@@ -242,19 +242,8 @@
     font-size: 26px;
   }
 
-  .form-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 18px;
-  }
-
   .form-group {
-    flex: 1;
     margin-bottom: 18px;
-  }
-
-  .form-row .form-group {
-    margin-bottom: 0;
   }
 
   .form-group label {
@@ -269,7 +258,7 @@
   .form-group input {
     width: 100%;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.7); /* হালকা গ্লাস ইফেক্ট */
+    background: rgba(255, 255, 255, 0.7); 
     border: 1px solid #c8c3b9;
     border-radius: 8px;
     box-sizing: border-box;
@@ -285,11 +274,12 @@
     box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
   }
 
+  /* ডাউনলোড বাটন - থিম কালার এবং সাদা লেখা */
   .download-btn {
     width: 100%;
     padding: 15px;
     background-color: var(--theme-color);
-    color: white;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 18px;
@@ -305,6 +295,15 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
   }
+  
+  /* লোডিং টেক্সট */
+  #loadingMsg {
+    display: none;
+    text-align: center;
+    color: var(--theme-color);
+    font-weight: bold;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
@@ -315,7 +314,7 @@
       <div class="card-top">
         <div class="top-logo-area">
           <img id="cardLogo" class="top-logo" src="https://cdn-icons-png.flaticon.com/512/4033/4033031.png" alt="Logo">
-          <div class="inst-name" id="cardInstName">KOLSINDUR SCHOOL AND COLLEGE</div>
+          <div class="inst-name" id="cardInstName">KOLSINDUR<br>SCHOOL AND COLLEGE</div>
         </div>
       </div>
       
@@ -331,16 +330,16 @@
           <div class="main-title" id="cardTitle">STUDENT ID CARD</div>
           <div class="data-block">
             <div class="data-item">
-              <span class="label" id="c-lbl1">Name</span><span class="colon">:</span><span class="value" id="c-val1">Sobuj Mia</span>
+              <span class="label">Name</span><span class="colon">:</span><span class="value" id="c-val1">Richard Sanchez</span>
             </div>
             <div class="data-item">
-              <span class="label" id="c-lbl2">ID</span><span class="colon">:</span><span class="value" id="c-val2">123-456-7890</span>
+              <span class="label">ID</span><span class="colon">:</span><span class="value" id="c-val2">123-456-7890</span>
             </div>
             <div class="data-item">
-              <span class="label" id="c-lbl3">D.O.B</span><span class="colon">:</span><span class="value" id="c-val3">07/06/2005</span>
+              <span class="label">D.O.B</span><span class="colon">:</span><span class="value" id="c-val3">07/06/2005</span>
             </div>
             <div class="data-item">
-              <span class="label" id="c-lbl4">Address</span><span class="colon">:</span><span class="value" id="c-val4">Dhobaura, Mymensingh</span>
+              <span class="label">Address</span><span class="colon">:</span><span class="value" id="c-val4">123 Anywhere St., Any City</span>
             </div>
           </div>
         </div>
@@ -362,17 +361,17 @@
   </div>
 
   <div class="form-group">
-    <label for="instLogoInput">প্রতিষ্ঠানের লোগো:</label>
+    <label for="instLogoInput">প্রতিষ্ঠানের লোগো আপলোড:</label>
     <input type="file" id="instLogoInput" accept="image/*">
   </div>
 
   <div class="form-group">
-    <label for="instNameInput">প্রতিষ্ঠানের নাম:</label>
+    <label for="instNameInput">প্রতিষ্ঠানের নাম লিখুন:</label>
     <input type="text" id="instNameInput" value="KOLSINDUR SCHOOL AND COLLEGE">
   </div>
 
   <div class="form-group">
-    <label for="cardTitleInput">কার্ডের শিরোনাম:</label>
+    <label for="cardTitleInput">কার্ডের শিরোনাম দিন:</label>
     <input type="text" id="cardTitleInput" value="STUDENT ID CARD">
   </div>
 
@@ -383,59 +382,35 @@
 
   <hr style="border: 0; border-top: 1px solid #dcd8d0; border-bottom: 1px solid #fff; margin: 25px 0;">
 
-  <div class="form-row">
-    <div class="form-group">
-      <label>১ম লেবেল:</label>
-      <input type="text" id="lbl1" value="Name">
-    </div>
-    <div class="form-group">
-      <label>তথ্য:</label>
-      <input type="text" id="val1" value="Richard Sanchez">
-    </div>
+  <div class="form-group">
+    <label>আপনার সম্পূর্ণ নাম লিখুন:</label>
+    <input type="text" id="val1" value="Richard Sanchez">
   </div>
 
-  <div class="form-row">
-    <div class="form-group">
-      <label>২য় লেবেল:</label>
-      <input type="text" id="lbl2" value="ID">
-    </div>
-    <div class="form-group">
-      <label>তথ্য:</label>
-      <input type="text" id="val2" value="123-456-7890">
-    </div>
+  <div class="form-group">
+    <label>আইডি নাম্বার দিন:</label>
+    <input type="text" id="val2" value="123-456-7890">
   </div>
 
-  <div class="form-row">
-    <div class="form-group">
-      <label>৩য় লেবেল:</label>
-      <input type="text" id="lbl3" value="D.O.B">
-    </div>
-    <div class="form-group">
-      <label>তথ্য:</label>
-      <input type="text" id="val3" value="07/06/2005">
-    </div>
+  <div class="form-group">
+    <label>জন্ম তারিখ লিখুন (যেমন- 07/06/2005):</label>
+    <input type="text" id="val3" value="07/06/2005">
   </div>
 
-  <div class="form-row">
-    <div class="form-group">
-      <label>৪র্থ লেবেল:</label>
-      <input type="text" id="lbl4" value="Address">
-    </div>
-    <div class="form-group">
-      <label>তথ্য:</label>
-      <input type="text" id="val4" value="123 Anywhere St., Any City">
-    </div>
+  <div class="form-group">
+    <label>ঠিকানা লিখুন:</label>
+    <input type="text" id="val4" value="123 Anywhere St., Any City">
   </div>
 
   <button class="download-btn" id="downloadBtn">কার্ড ডাউনলোড করুন</button>
+  <div id="loadingMsg">কার্ড ডাউনলোড হচ্ছে, দয়া করে অপেক্ষা করুন...</div>
 </div>
 
 <script>
-  // স্ক্রিন অটো-স্কেলিং লজিক
+  // অটো-স্কেলিং লজিক
   function adjustCardSize() {
     const wrapper = document.getElementById('previewWrapper');
     const card = document.getElementById('idCard');
-    
     const screenWidth = window.innerWidth - 30; 
     const originalWidth = 650;
     const originalHeight = 400;
@@ -455,7 +430,7 @@
   window.addEventListener('load', adjustCardSize);
   window.addEventListener('resize', adjustCardSize);
 
-  // থিম কালার পরিবর্তন
+  // থিম কালার পরিবর্তন (বাটন কালারও অটো চেঞ্জ হবে সিএসএস ভেরিয়েবলের কারণে)
   document.getElementById('themeColor').addEventListener('input', function(e) {
     document.documentElement.style.setProperty('--theme-color', e.target.value);
   });
@@ -464,7 +439,6 @@
   function bindText(inputId, targetId) {
     document.getElementById(inputId).addEventListener('input', function() {
       if(inputId === 'instNameInput') {
-          // লাইন ব্রেকের জন্য লজিক
           let words = this.value.split(' ');
           if(words.length > 1) {
               let firstWord = words.shift();
@@ -480,10 +454,10 @@
 
   bindText('instNameInput', 'cardInstName');
   bindText('cardTitleInput', 'cardTitle');
-  bindText('lbl1', 'c-lbl1'); bindText('val1', 'c-val1');
-  bindText('lbl2', 'c-lbl2'); bindText('val2', 'c-val2');
-  bindText('lbl3', 'c-lbl3'); bindText('val3', 'c-val3');
-  bindText('lbl4', 'c-lbl4'); bindText('val4', 'c-val4');
+  bindText('val1', 'c-val1');
+  bindText('val2', 'c-val2');
+  bindText('val3', 'c-val3');
+  bindText('val4', 'c-val4');
 
   // ছবি আপলোড
   function handleImageUpload(inputId, imgId, placeholderId = null) {
@@ -505,10 +479,15 @@
   handleImageUpload('instLogoInput', 'cardLogo');
   handleImageUpload('profilePhotoInput', 'cardPhoto', 'noPhotoText');
 
-  // ডাউনলোড বাটন লজিক
+  // ক্র্যাশ-ফ্রি মোবাইল ডাউনলোড লজিক (Blob Method)
   document.getElementById('downloadBtn').addEventListener('click', function() {
     const card = document.getElementById('idCard');
+    const loadingMsg = document.getElementById('loadingMsg');
     
+    // ডাউনলোড শুরু হওয়ার মেসেজ
+    loadingMsg.style.display = 'block';
+    
+    // স্কেল রিসেট
     const originalTransform = card.style.transform;
     card.style.transform = 'scale(1)';
 
@@ -517,12 +496,30 @@
       useCORS: true,
       backgroundColor: null
     }).then(canvas => {
-      const link = document.createElement('a');
-      link.download = 'Student_ID_Card.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      
+      // Blob মেথড ব্যবহার করে ডাউনলোড (মোবাইল ব্রাউজার ক্র্যাশ এড়াতে)
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'Student_ID_Card.png';
+        link.href = url;
+        
+        // Link বডিতে যুক্ত করে ক্লিক করা (অ্যান্ড্রয়েডের জন্য ভালো কাজ করে)
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // মেমোরি ক্লিন করা
+        URL.revokeObjectURL(url);
+        
+        // সব আগের অবস্থায় ফিরিয়ে আনা
+        card.style.transform = originalTransform;
+        loadingMsg.style.display = 'none';
+      }, 'image/png');
+    }).catch(err => {
+      console.error("Error generating image:", err);
+      alert("ডাউনলোড করার সময় একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
       card.style.transform = originalTransform;
+      loadingMsg.style.display = 'none';
     });
   });
 </script>
