@@ -165,7 +165,7 @@
         .post-menu-delete i { color: #ff4757; }
         .post-menu-delete span { color: #ff4757; }
 
-        /* Friends List Tab (Fixed Display Issue) */
+        /* Friends List Tab */
         .friends-list-container { max-width: 600px; margin: 0 auto; display: none; padding-bottom: 20px; }
         .friends-header-title { padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #0a2e1a; }
         .friend-list-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #0a2e1a; transition: 0.2s; }
@@ -290,9 +290,14 @@
             <div class="menu-card" onclick="window.location.href='game.html'">
                 <i class="fa-solid fa-gamepad" style="color: #e84393;"></i><span>Games</span>
             </div>
+            
+            <div class="menu-card" onclick="window.location.href='card.html'">
+                <i class="fa-solid fa-id-card" style="color: #00cec9;"></i><span>Student ID</span>
+            </div>
+            
         </div>
         <div class="menu-list-btn" onclick="showCustomAlert('সাপোর্ট অপশনটি খুব শীঘ্রই চালু হবে আমরা এটি নিয়ে কাজ করছি 😊')">
-            <i class="fa-solid fa-circle-question" style="color: #00cec9;"></i><span>Help & Support</span>
+            <i class="fa-solid fa-circle-question" style="color: #00b894;"></i><span>Help & Support</span>
         </div>
         <div class="menu-list-btn logout-btn" onclick="showLogoutConfirm()">
             <i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span>
@@ -431,24 +436,18 @@
         window.showLogoutConfirm = () => { document.getElementById('customConfirmModal').style.display = 'flex'; };
         window.closeLogoutConfirm = () => { document.getElementById('customConfirmModal').style.display = 'none'; };
 
-        // =====================================
-        // Post Menu Bottom Sheet Logic (FIXED)
-        // =====================================
         window.currentPostMenuId = null;
         
         window.openPostMenu = (postId, postOwnerId, authorName) => {
             window.currentPostMenuId = postId;
             const deleteBtn = document.getElementById('postMenuDeleteBtn');
             
-            // Check Admin Power globally
             const myName = window.currentUserNameGlobal ? window.currentUserNameGlobal.toLowerCase() : "";
             const amISobujMia = myName.includes("sobuj mia");
             const myUid = window.currentUserGlobal ? window.currentUserGlobal.uid : null;
             
-            // Show Delete if I own the post OR if I am Sobuj Mia
             if (myUid === postOwnerId || amISobujMia) {
                 deleteBtn.style.display = 'flex';
-                // Attach the delete function dynamically
                 deleteBtn.onclick = () => { window.deletePost(); };
             } else {
                 deleteBtn.style.display = 'none';
@@ -527,9 +526,6 @@
 
         window.executeLogout = () => { signOut(auth).then(() => { window.location.href = "index.html"; }).catch((e) => { window.showCustomAlert("লগ আউট করতে সমস্যা হয়েছে!"); }); };
 
-        // =====================================
-        // Post & Story Delete System (FIXED FOR MODULE)
-        // =====================================
         window.deletePost = async () => {
             if(!window.currentPostMenuId) return;
             const confirmDel = confirm("আপনি কি সত্যিই এই পোস্টটি ডিলিট করতে চান?");
@@ -566,14 +562,13 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                // Expose to global window so the menu can check admin power
                 window.currentUserGlobal = user; 
                 
                 onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data(); currentUserName = data.displayName || "User"; currentUserPhoto = data.profilePic || "";
                         
-                        window.currentUserNameGlobal = currentUserName; // Global expose
+                        window.currentUserNameGlobal = currentUserName; 
                         window.currentUserFollowing = data.following || []; 
                         
                         const display = document.getElementById('profileDisplay');
@@ -590,7 +585,6 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // Real-time Post Creation
         const postInputBox = document.getElementById('newPostText');
         window.togglePostActions = () => {
             const hasText = postInputBox.value.trim().length > 0;
@@ -787,9 +781,6 @@
                     const isCommentOpen = window.openComments[postId] ? 'block' : 'none';
                     const timeText = timeAgo(post.timestamp);
 
-                    // =====================================
-                    // FIXED GAP FOR FOLLOW BUTTON
-                    // =====================================
                     const postHTML = `
                         <div class="feed-post">
                             <div class="post-header">
