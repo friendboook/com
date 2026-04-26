@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium ID Card Maker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --theme-color: #8b0000;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e2e6eb; /* বডির ব্যাকগ্রাউন্ড একটু কুল গ্রে করা হয়েছে */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+    gap: 30px;
+  }
+
+  /* ডান পাশের কার্ড প্রিভিউ সেকশন */
+  .preview-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden; 
+  }
+
+  .preview-wrapper {
+    position: relative;
+    margin: 0 auto; 
+  }
+
+  /* কার্ডের মূল ডিজাইন */
+  .id-card {
+    width: 650px;
+    height: 400px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    color: #333;
+    transform-origin: top left; 
+  }
+
+  /* উপরের শেপ ডিজাইন */
+  .card-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: var(--theme-color);
+    clip-path: polygon(0 0, 100% 0, 100% 60%, 45% 100%, 0 100%);
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10;
+  }
+
+  .top-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .top-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+  }
+
+  .inst-name {
+    font-weight: 800;
+    font-size: 22px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    max-width: 200px;
+  }
+
+  /* কার্ডের বডি (উপরের দিকে তুলে দেওয়া হয়েছে) */
+  .card-body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding-top: 80px; /* ১১০ থেকে কমিয়ে ৮০ করা হয়েছে ফাঁকা জায়গা কমানোর জন্য */
+    padding-bottom: 50px;
+    z-index: 5;
+  }
+
+  /* বামের ছবি */
+  .body-left {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .profile-photo-container {
+    width: 190px;
+    height: 210px;
+    border: 8px solid var(--theme-color);
+    border-radius: 25px; 
+    overflow: hidden;
+    background-color: #e2e8f0;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #64748b;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  /* ডানের ডাটা অংশ */
+  .body-right {
+    width: 60%;
+    padding: 0 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .main-title {
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 12px; /* টাইটেল এবং ডাটা ব্লকের গ্যাপ কমানো হয়েছে */
+    letter-spacing: 1px;
+  }
+
+  .data-block {
+    background-color: var(--theme-color);
+    color: white;
+    border-radius: 12px;
+    padding: 22px 20px;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+
+  .data-item {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+
+  .data-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .data-item .label {
+    width: 90px;
+    font-weight: 700;
+  }
+
+  .data-item .colon {
+    margin-right: 15px;
+    font-weight: 700;
+  }
+
+  .data-item .value {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  /* নিচের শেপ ডিজাইন এবং ডার্ক ডিভাইডার */
+  .footer-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    z-index: 10;
+    /* এই ফিল্টারটি কার্ডের বডি এবং ফুটারের মাঝে একটি সুন্দর ডার্ক বর্ডার তৈরি করবে */
+    filter: drop-shadow(0px -2px 1.5px rgba(0,0,0,0.3)); 
+  }
+
+  .card-footer {
+    width: 100%;
+    height: 100%;
+    background-color: #34495e;
+    clip-path: polygon(0 40%, 20% 0%, 100% 0%, 100% 100%, 0 100%);
+  }
+  
+  .card-footer::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    background-color: var(--theme-color);
+    clip-path: polygon(0 0, 80% 0, 100% 100%, 0 100%);
+  }
+
+  /* ফর্ম সেকশন - ক্রিমি ও মেটালিক প্রিমিয়াম লুক */
+  .input-section {
+    background: linear-gradient(145deg, #fdfcfb 0%, #e2dfd8 100%); /* ক্রিমি মেটালিক গ্রেডিয়েন্ট */
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,255,255,0.9);
+    border: 1px solid #dcd8d0;
+    width: 100%;
+    max-width: 550px;
+    box-sizing: border-box;
+  }
+
+  .input-section h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    text-align: center;
+    border-bottom: 2px solid #bbaea0;
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
+    font-weight: 800;
+    font-size: 26px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 18px;
+  }
+
+  .form-group {
+    flex: 1;
+    margin-bottom: 18px;
+  }
+
+  .form-row .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #4a4a4a;
+    font-size: 14px;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.7); /* হালকা গ্লাস ইফেক্ট */
+    border: 1px solid #c8c3b9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+  }
+
+  .form-group input:focus {
+    background: #ffffff;
+    border-color: var(--theme-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+  }
+
+  .download-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--theme-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .download-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-container">
+  <div class="preview-wrapper" id="previewWrapper">
+    <div class="id-card" id="idCard">
+      <div class="card-top">
+        <div class="top-logo-area">
+          <img id="cardLogo" class="top-logo" src="https://cdn-icons-png.flaticon.com/512/4033/4033031.png" alt="Logo">
+          <div class="inst-name" id="cardInstName">KOLSINDUR SCHOOL AND COLLEGE</div>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="body-left">
+          <div class="profile-photo-container">
+            <img id="cardPhoto" class="profile-photo" style="display:none;" alt="Profile">
+            <div class="placeholder-text" id="noPhotoText">ছবি<br>আপলোড করুন</div>
+          </div>
+        </div>
+        
+        <div class="body-right">
+          <div class="main-title" id="cardTitle">STUDENT ID CARD</div>
+          <div class="data-block">
+            <div class="data-item">
+              <span class="label" id="c-lbl1">Name</span><span class="colon">:</span><span class="value" id="c-val1">Sobuj Mia</span>
+            </div>
+            <div class="data-item">
+              <span class="label" id="c-lbl2">ID</span><span class="colon">:</span><span class="value" id="c-val2">123-456-7890</span>
+            </div>
+            <div class="data-item">
+              <span class="label" id="c-lbl3">D.O.B</span><span class="colon">:</span><span class="value" id="c-val3">07/06/2005</span>
+            </div>
+            <div class="data-item">
+              <span class="label" id="c-lbl4">Address</span><span class="colon">:</span><span class="value" id="c-val4">Dhobaura, Mymensingh</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-wrapper">
+        <div class="card-footer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-section">
+  <h2>স্টুডেন্ট আইডি কার্ড</h2>
+  
+  <div class="form-group">
+    <label for="themeColor">কার্ডের থিম কালার পরিবর্তন করুন:</label>
+    <input type="color" id="themeColor" value="#8b0000" style="height: 45px; padding: 2px; cursor: pointer;">
+  </div>
+
+  <div class="form-group">
+    <label for="instLogoInput">প্রতিষ্ঠানের লোগো:</label>
+    <input type="file" id="instLogoInput" accept="image/*">
+  </div>
+
+  <div class="form-group">
+    <label for="instNameInput">প্রতিষ্ঠানের নাম:</label>
+    <input type="text" id="instNameInput" value="KOLSINDUR SCHOOL AND COLLEGE">
+  </div>
+
+  <div class="form-group">
+    <label for="cardTitleInput">কার্ডের শিরোনাম:</label>
+    <input type="text" id="cardTitleInput" value="STUDENT ID CARD">
+  </div>
+
+  <div class="form-group">
+    <label for="profilePhotoInput">শিক্ষার্থীর ছবি আপলোড:</label>
+    <input type="file" id="profilePhotoInput" accept="image/*">
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #dcd8d0; border-bottom: 1px solid #fff; margin: 25px 0;">
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>১ম লেবেল:</label>
+      <input type="text" id="lbl1" value="Name">
+    </div>
+    <div class="form-group">
+      <label>তথ্য:</label>
+      <input type="text" id="val1" value="Richard Sanchez">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>২য় লেবেল:</label>
+      <input type="text" id="lbl2" value="ID">
+    </div>
+    <div class="form-group">
+      <label>তথ্য:</label>
+      <input type="text" id="val2" value="123-456-7890">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>৩য় লেবেল:</label>
+      <input type="text" id="lbl3" value="D.O.B">
+    </div>
+    <div class="form-group">
+      <label>তথ্য:</label>
+      <input type="text" id="val3" value="07/06/2005">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>৪র্থ লেবেল:</label>
+      <input type="text" id="lbl4" value="Address">
+    </div>
+    <div class="form-group">
+      <label>তথ্য:</label>
+      <input type="text" id="val4" value="123 Anywhere St., Any City">
+    </div>
+  </div>
+
+  <button class="download-btn" id="downloadBtn">কার্ড ডাউনলোড করুন</button>
+</div>
+
+<script>
+  // স্ক্রিন অটো-স্কেলিং লজিক
+  function adjustCardSize() {
+    const wrapper = document.getElementById('previewWrapper');
+    const card = document.getElementById('idCard');
+    
+    const screenWidth = window.innerWidth - 30; 
+    const originalWidth = 650;
+    const originalHeight = 400;
+
+    if (screenWidth < originalWidth) {
+      const scaleValue = screenWidth / originalWidth;
+      card.style.transform = `scale(${scaleValue})`;
+      wrapper.style.width = `${screenWidth}px`;
+      wrapper.style.height = `${originalHeight * scaleValue}px`;
+    } else {
+      card.style.transform = 'scale(1)';
+      wrapper.style.width = `${originalWidth}px`;
+      wrapper.style.height = `${originalHeight}px`;
+    }
+  }
+
+  window.addEventListener('load', adjustCardSize);
+  window.addEventListener('resize', adjustCardSize);
+
+  // থিম কালার পরিবর্তন
+  document.getElementById('themeColor').addEventListener('input', function(e) {
+    document.documentElement.style.setProperty('--theme-color', e.target.value);
+  });
+
+  // টেক্সট আপডেট
+  function bindText(inputId, targetId) {
+    document.getElementById(inputId).addEventListener('input', function() {
+      if(inputId === 'instNameInput') {
+          // লাইন ব্রেকের জন্য লজিক
+          let words = this.value.split(' ');
+          if(words.length > 1) {
+              let firstWord = words.shift();
+              document.getElementById(targetId).innerHTML = firstWord + '<br>' + words.join(' ');
+          } else {
+              document.getElementById(targetId).innerText = this.value;
+          }
+      } else {
+          document.getElementById(targetId).innerText = this.value;
+      }
+    });
+  }
+
+  bindText('instNameInput', 'cardInstName');
+  bindText('cardTitleInput', 'cardTitle');
+  bindText('lbl1', 'c-lbl1'); bindText('val1', 'c-val1');
+  bindText('lbl2', 'c-lbl2'); bindText('val2', 'c-val2');
+  bindText('lbl3', 'c-lbl3'); bindText('val3', 'c-val3');
+  bindText('lbl4', 'c-lbl4'); bindText('val4', 'c-val4');
+
+  // ছবি আপলোড
+  function handleImageUpload(inputId, imgId, placeholderId = null) {
+    document.getElementById(inputId).addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imgEl = document.getElementById(imgId);
+          imgEl.src = event.target.result;
+          imgEl.style.display = 'block';
+          if(placeholderId) document.getElementById(placeholderId).style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  handleImageUpload('instLogoInput', 'cardLogo');
+  handleImageUpload('profilePhotoInput', 'cardPhoto', 'noPhotoText');
+
+  // ডাউনলোড বাটন লজিক
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    const card = document.getElementById('idCard');
+    
+    const originalTransform = card.style.transform;
+    card.style.transform = 'scale(1)';
+
+    html2canvas(card, {
+      scale: 3, 
+      useCORS: true,
+      backgroundColor: null
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'Student_ID_Card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      card.style.transform = originalTransform;
+    });
+  });
+</script>
+
+</body>
+</html>
