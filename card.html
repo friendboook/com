@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>App Supported ID Card Maker Pro</title>
+<title>ID Card Maker - Cloud Upload Pro</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
@@ -283,6 +283,10 @@
     color: var(--theme-color);
     font-weight: bold;
     margin-top: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
 
   /* পপ-আপ মডাল ডিজাইন */
@@ -306,73 +310,82 @@
     border-radius: 12px;
     text-align: center;
     max-width: 90%;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 400px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    overflow-y: auto;
   }
 
   .modal-instruction {
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
     color: #2c3e50;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    background: #f0fdf4;
+    border: 1px solid #c3e6cb;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+  }
+
+  .modal-instruction h3 {
+    margin: 0 0 12px 0;
+    color: #198754;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .modal-instruction p {
+    margin: 0;
+    font-size: 15px;
+    color: #495057;
+  }
+
+  .link-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
     border: 1px solid #dee2e6;
-    text-align: left;
+  }
+
+  .link-input {
     width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    color: #333;
     box-sizing: border-box;
   }
 
-  .modal-instruction strong {
-    color: #28a745;
-  }
-
-  .modal-content img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    border: 2px solid #ddd;
-    margin-bottom: 20px;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .share-btn {
-    padding: 12px 20px;
-    background: #007bff; /* Blue for Download/Share */
+  .copy-btn {
+    padding: 12px;
+    background: #007bff;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-    flex: 1;
-    min-width: 150px;
+    font-size: 16px;
+  }
+
+  .copy-btn:active {
+    background: #0056b3;
   }
 
   .close-modal-btn {
-    padding: 12px 20px;
-    background: #dc3545; /* Red for Close */
+    padding: 12px 30px;
+    background: #dc3545; 
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    flex: 1;
-    min-width: 100px;
+    width: 100%;
   }
 </style>
 </head>
@@ -446,27 +459,33 @@
   <div class="form-group"><label>ঠিকানা লিখুন:</label><input type="text" id="val4" value="123 Anywhere St., Any City"></div>
 
   <button class="download-btn" id="downloadBtn">কার্ড তৈরি করুন</button>
-  <div id="loadingMsg">কার্ড তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...</div>
+  <div id="loadingMsg">ছবি তৈরি ও সার্ভারে আপলোড হচ্ছে... দয়া করে অপেক্ষা করুন।</div>
 </div>
 
 <div class="modal-overlay" id="resultModal">
   <div class="modal-content">
+    
     <div class="modal-instruction">
-      <strong>✅ কার্ডটি সফলভাবে তৈরি হয়েছে!</strong><br><br>
-      ⬇️ নিচের <strong>'ডাউনলোড / শেয়ার করুন'</strong> বাটনে ক্লিক করুন।<br><br>
-      <em>(যদি বাটন কাজ না করে, তবে ছবির উপর চেপে ধরে (Long Press) 'Save Image' বা 'Download' এ ক্লিক করুন)</em>
+      <h3>✅ কার্ডটি সফলভাবে তৈরি হয়েছে!</h3>
+      <p>
+        ⬇️ নিচের লিংকটি কপি করে ক্রোম (Chrome) ব্রাউজারে পেস্ট করে<br>
+        <strong>ছবির উপর চেপে ধরে (Long Press)</strong> 'Save Image' বা 'Download' এ ক্লিক করুন।
+      </p>
     </div>
     
-    <img id="finalGeneratedImage" src="" alt="Generated ID Card">
-    
-    <div class="action-buttons">
-      <button id="shareBtn" class="share-btn">📥 ডাউনলোড / শেয়ার করুন</button>
-      <button class="close-modal-btn" onclick="closeModal()">বন্ধ করুন</button>
+    <div class="link-box">
+      <input type="text" id="generatedLink" class="link-input" readonly>
+      <button class="copy-btn" onclick="copyLink()">📋 লিংক কপি করুন</button>
     </div>
+    
+    <button class="close-modal-btn" onclick="closeModal()">বন্ধ করুন</button>
   </div>
 </div>
 
 <script>
+  // আপনার দেওয়া ImgBB API Key
+  const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0"; 
+
   function adjustCardSize() {
     const wrapper = document.getElementById('previewWrapper');
     const card = document.getElementById('idCard');
@@ -536,8 +555,22 @@
     document.getElementById('resultModal').style.display = 'none';
   }
 
-  let generatedFile = null;
-  let finalImgUrl = "";
+  function copyLink() {
+    const linkInput = document.getElementById('generatedLink');
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); 
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+      const copyBtn = document.querySelector('.copy-btn');
+      copyBtn.innerText = "✅ কপি করা হয়েছে!";
+      copyBtn.style.background = "#28a745";
+      setTimeout(() => {
+        copyBtn.innerText = "📋 লিংক কপি করুন";
+        copyBtn.style.background = "#007bff";
+      }, 2500);
+    }).catch(err => {
+      alert("লিংক কপি করতে সমস্যা হয়েছে। দয়া করে নিজে সিলেক্ট করে কপি করুন।");
+    });
+  }
 
   document.getElementById('downloadBtn').addEventListener('click', function() {
     const card = document.getElementById('idCard');
@@ -555,49 +588,41 @@
       backgroundColor: null
     }).then(canvas => {
       
-      canvas.toBlob(function(blob) {
-        generatedFile = new File([blob], "Student_ID_Card.png", { type: "image/png" });
-        finalImgUrl = URL.createObjectURL(blob);
-        
-        document.getElementById('finalGeneratedImage').src = finalImgUrl;
-        document.getElementById('resultModal').style.display = 'flex';
-        
-        card.style.transform = originalTransform;
-        loadingMsg.style.display = 'none';
-      }, 'image/png');
+      let imgData = canvas.toDataURL("image/png");
+      let base64Data = imgData.split(',')[1];
+      
+      let formData = new FormData();
+      formData.append("image", base64Data);
+
+      fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+          if(result.success) {
+              document.getElementById('generatedLink').value = result.data.url;
+              document.getElementById('resultModal').style.display = 'flex';
+          } else {
+              alert("সার্ভারে আপলোড করতে সমস্যা হয়েছে।");
+          }
+      })
+      .catch(error => {
+          console.error("Upload Error:", error);
+          alert("ইন্টারনেট সংযোগ চেক করুন অথবা পরে আবার চেষ্টা করুন।");
+      })
+      .finally(() => {
+          card.style.transform = originalTransform;
+          loadingMsg.style.display = 'none';
+      });
       
     }).catch(err => {
-      console.error("Error:", err);
-      alert("ছবি তৈরি করতে সমস্যা হচ্ছে। দয়া করে আবার চেষ্টা করুন।");
+      console.error("Error generating canvas:", err);
+      alert("ছবি তৈরি করতে সমস্যা হচ্ছে।");
       card.style.transform = originalTransform;
       loadingMsg.style.display = 'none';
     });
   });
-
-  // শেয়ার বা ডাউনলোড ফলব্যাক লজিক
-  document.getElementById('shareBtn').addEventListener('click', async () => {
-      // প্রথমে শেয়ার সাপোর্ট করে কিনা চেক করবে
-      if (generatedFile && navigator.canShare && navigator.canShare({ files: [generatedFile] })) {
-          try {
-              await navigator.share({
-                  files: [generatedFile],
-                  title: 'Student ID Card',
-                  text: 'আপনার তৈরি করা আইডি কার্ডটি সেভ করুন।'
-              });
-          } catch (error) {
-              console.log('Share failed:', error);
-          }
-      } else {
-          // শেয়ার সাপোর্ট না করলে ডিরেক্ট ডাউনলোডের চেষ্টা করবে
-          const link = document.createElement('a');
-          link.href = finalImgUrl;
-          link.download = 'Student_ID_Card.png';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-      }
-  });
-
 </script>
 
 </body>
