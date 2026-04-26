@@ -71,6 +71,12 @@
         .submit-btn { width: 100%; background: #2ecc71; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px;}
         .submit-btn:disabled { background: #8c9e94; cursor: not-allowed; }
 
+        /* Divider inside Modal */
+        .modal-divider { display: flex; align-items: center; text-align: center; color: #8c9e94; margin: 15px 0; font-size: 12px; font-weight: bold;}
+        .modal-divider::before, .modal-divider::after { content: ''; flex: 1; border-bottom: 1px solid #0a2e1a; }
+        .modal-divider:not(:empty)::before { margin-right: .5em; }
+        .modal-divider:not(:empty)::after { margin-left: .5em; }
+
         /* Video Player Modal */
         .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #01160b; border-bottom: 1px solid #0a2e1a; }
@@ -119,6 +125,9 @@
         .suggested-title-text { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;}
         .suggested-meta { font-size: 12px; color: #b0b3b8; }
 
+        /* Drive Crop Hack */
+        .iframe-wrapper iframe.drive-mode { top: -55px; height: calc(100% + 55px); }
+
         #upload-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; padding: 12px 25px; border-radius: 30px; color: black; font-weight: bold; display: none; z-index: 5000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; width: 80%; max-width: 300px;}
     </style>
 </head>
@@ -160,13 +169,20 @@
             </div>
             
             <div class="input-group">
-                <label>Upload Video File</label>
+                <label>Upload Short Video (Max 100MB)</label>
                 <label for="videoUploadInput" class="file-upload-btn" id="videoUploadLabel">
                     <i class="fa-solid fa-cloud-arrow-up"></i><br>
                     <span id="videoUploadText">Click to select video (MP4, MOV)</span>
                 </label>
                 <input type="file" id="videoUploadInput" accept="video/*" style="display: none;">
-                <span class="helper-text">ভিডিও গ্যালারি থেকে সিলেক্ট করুন (১ জিবি পর্যন্ত)।</span>
+            </div>
+
+            <div class="modal-divider">অথবা বড় মুভি/নাটকের জন্য</div>
+
+            <div class="input-group">
+                <label>Video Link (Google Drive / YouTube)</label>
+                <input type="text" id="videoLink" placeholder="Paste link here instead of uploading...">
+                <span class="helper-text">গুগল ড্রাইভ লিংক দিলে অবশ্যই 'Anyone with the link' করে দেবেন।</span>
             </div>
 
             <div class="input-group">
@@ -177,7 +193,6 @@
                 </label>
                 <input type="file" id="thumbUpload" accept="image/*" style="display: none;">
                 <img id="thumbPreview" src="">
-                <span class="helper-text">না দিলে ভিডিও প্লেয়ার থেকে অটোমেটিক তৈরি হবে।</span>
             </div>
 
             <button class="submit-btn" id="submitVideoBtn">Publish Video</button>
@@ -234,6 +249,9 @@
     <div id="upload-status">প্রসেসিং হচ্ছে...</div>
 
     <script>
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dinle5vhi/video/upload";
+        const CLOUDINARY_PRESET = "Shuvofrn";
+
         window.allLoadedVideos = [];
         window.currentOpenedVideoId = null;
         window.currentOpenedAuthorUid = null;
@@ -308,8 +326,10 @@
             iframe.style.display = 'none'; nativePlayer.style.display = 'none';
             nativePlayer.pause(); iframe.src = ''; loadingSpinner.style.display = 'flex';
 
-            // ADDED firebasestorage check so the Firebase native video plays!
-            if (rawUrl.includes('res.cloudinary.com') || rawUrl.includes('firebasestorage.googleapis.com') || rawUrl.includes('.mp4') || rawUrl.includes('.mov')) {
+            if (!rawUrl) {
+                iframe.style.display = 'block'; loadingSpinner.style.display = 'none';
+            }
+            else if (rawUrl.includes('res.cloudinary.com') || rawUrl.endsWith('.mp4') || rawUrl.endsWith('.mov')) {
                 nativePlayer.src = rawUrl; nativePlayer.style.display = 'block';
                 nativePlayer.play().then(() => { loadingSpinner.style.display = 'none'; }).catch(e => { loadingSpinner.style.display = 'none'; });
                 nativePlayer.onplaying = () => { loadingSpinner.style.display = 'none'; }; nativePlayer.onwaiting = () => { loadingSpinner.style.display = 'flex'; };
@@ -373,16 +393,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        
-        // NEW: Imported Firebase Storage
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCaVLWhU_R3Pdqvm_DgG7cEI9n488xqFr4", authDomain: "friendbook-e9569.firebaseapp.com", projectId: "friendbook-e9569", storageBucket: "friendbook-e9569.firebasestorage.app", messagingSenderId: "459682436919", appId: "1:459682436919:web:fadd189936f5ae73ec6cb2" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
-        
-        // Initialize Storage
-        const storage = getStorage(app); 
-        
         const IMGBB_API_KEY = "9f5aeefecfb7dcb8325725caa75734a0";
         const verifiedSvg = `<svg fill="#1877F2" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 4px; vertical-align: middle;"><path d="M12.53 1.83c-.31-.22-.75-.22-1.06 0l-1.89 1.34c-.16.12-.37.16-.57.11l-2.26-.64c-.37-.1-.76.08-.91.43l-1.05 2.1c-.09.18-.26.3-.46.34l-2.31.42c-.38.07-.65.41-.61.79l.23 2.33c.02.2-.05.4-.18.55l-1.57 1.77c-.26.29-.26.73 0 1.02l1.57 1.77c.13.15.2.35.18.55l-.23 2.33c-.04.38.23.72.61.79l2.31.42c.2.04.37.16.46.34l1.05 2.1c.15.35.54.53.91.43l2.26-.64c.2-.05.41-.01.57.11l1.89 1.34c.31.22.75.22 1.06 0l1.89-1.34c.16-.12.37-.16.57-.11l2.26.64c.37.1.76-.08.91-.43l1.05-2.1c.09-.18.26-.3.46-.34l2.31-.42c.38-.07.65-.41.61-.79l-.23-2.33c-.02-.2.05-.4.18-.55l1.57-1.77c.26-.29.26-.73 0-1.02l-1.57-1.77c-.13-.15-.2-.35-.18-.55l.23-2.33c.04-.38-.23-.72-.61-.79l-2.31-.42c-.2-.04-.37-.16-.46-.34l-1.05-2.1c-.15-.35-.54-.53-.91-.43l-2.26.64c-.2.05-.41.01-.57-.11l-1.89-1.34z"/><path fill="#FFF" d="M10.13 15.65c-.24 0-.48-.09-.66-.27l-2.82-2.82c-.37-.37-.37-.96 0-1.33.37-.37.96-.37 1.33 0l2.15 2.15 5.56-5.56c.37-.37.96-.37 1.33 0 .37.37.37.96 0 1.33l-6.22 6.22c-.19.19-.43.28-.67.28z"/></svg>`;
 
@@ -507,78 +520,91 @@
             } 
         };
 
-        // --- NEW: FIREBASE STORAGE UPLOAD LOGIC ---
+        // --- NEW HYBRID UPLOAD LOGIC ---
         document.getElementById('submitVideoBtn').onclick = async () => {
             const title = document.getElementById('videoTitle').value.trim();
-            if(!title || !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল এবং টাইটেল দিন!"); return; }
-            if(selectedVideoFile.size > 1024 * 1024 * 1024) { window.alert("ভিডিও ফাইল ১ জিবি (1GB) এর কম হতে হবে!"); return; }
+            const link = document.getElementById('videoLink').value.trim();
+            
+            if(!title) { window.alert("দয়া করে ভিডিওর টাইটেল দিন!"); return; }
+            if(!link && !selectedVideoFile) { window.alert("দয়া করে ভিডিও ফাইল সিলেক্ট করুন অথবা ভিডিও লিংক দিন!"); return; }
+            
+            if(selectedVideoFile && selectedVideoFile.size > 100 * 1024 * 1024) { 
+                window.alert("সরাসরি আপলোডের ক্ষেত্রে ভিডিও ফাইল ১০০ এমবির কম হতে হবে। বড় মুভি/নাটকের জন্য ইউটিউব বা গুগল ড্রাইভের লিংক ব্যবহার করুন!"); 
+                return; 
+            }
             
             const statusText = document.getElementById('upload-status'); 
             statusText.style.display = 'block'; 
-            statusText.innerHTML = "ভিডিও আপলোডের প্রস্তুতি চলছে..."; 
+            statusText.innerHTML = "পাবলিশ করা হচ্ছে...<br><span style='font-size:11px;font-weight:normal;'>দয়া করে অপেক্ষা করুন, পেজটি কাটবেন না।</span>"; 
             document.getElementById('submitVideoBtn').disabled = true;
+            
+            let finalVideoUrl = link; // Default to link if provided
+            let finalThumbUrl = "";
 
             try {
-                // 1. Upload Video to Firebase Storage
-                const fileExt = selectedVideoFile.name.split('.').pop();
-                const videoRef = ref(storage, `videos/${currentUser.uid}_${Date.now()}.${fileExt}`);
-                const uploadTask = uploadBytesResumable(videoRef, selectedVideoFile);
+                // 1. Upload Video to Cloudinary if file exists
+                if(selectedVideoFile) {
+                    const vidFormData = new FormData(); 
+                    vidFormData.append("file", selectedVideoFile); 
+                    vidFormData.append("upload_preset", CLOUDINARY_PRESET);
 
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        statusText.innerHTML = `ভিডিও আপলোড হচ্ছে... (${Math.round(progress)}%)<br><span style='font-size:11px;font-weight:normal;'>বড় ভিডিও তাই সময় লাগবে, পেজটি কাটবেন না।</span>`;
-                    }, 
-                    (error) => {
-                        console.error("Upload Error:", error);
-                        statusText.innerText = "আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; 
-                        setTimeout(() => statusText.style.display = 'none', 3000);
-                        document.getElementById('submitVideoBtn').disabled = false;
-                    }, 
-                    async () => {
-                        // 2. Get Video URL
-                        statusText.innerHTML = "লিংক তৈরি হচ্ছে...";
-                        const finalVideoUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                    const vidRes = await fetch(CLOUDINARY_URL, { method: "POST", body: vidFormData }); 
+                    const vidData = await vidRes.json();
+                    
+                    if(vidData.secure_url) {
+                        finalVideoUrl = vidData.secure_url;
+                        if(!thumbFile) finalThumbUrl = finalVideoUrl.replace(/\.(mp4|mov|avi|webm|mkv)$/i, '.jpg');
+                    } else { throw new Error("Cloudinary Upload Failed"); }
+                }
 
-                        let finalThumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80"; 
+                // 2. Upload Custom Thumbnail to ImgBB (If provided)
+                if(thumbFile) { 
+                    statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
+                    const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
+                    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
+                    const data = await res.json(); 
+                    if(data.success) finalThumbUrl = data.data.display_url; 
+                }
 
-                        // 3. Upload Thumbnail to ImgBB (If provided)
-                        if(thumbFile) { 
-                            statusText.innerHTML = "থাম্বনেইল আপলোড হচ্ছে...";
-                            const fd = new FormData(); fd.append("image", thumbFile); fd.append("key", IMGBB_API_KEY); 
-                            const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: fd }); 
-                            const data = await res.json(); 
-                            if(data.success) finalThumbUrl = data.data.display_url; 
-                        }
-                        
-                        // 4. Save to Firestore DB
-                        statusText.innerHTML = "ফিনিশিং হচ্ছে...";
-                        await addDoc(collection(db, "videos"), { 
-                            uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, 
-                            title: title, videoUrl: finalVideoUrl, thumbnail: finalThumbUrl, views: [], comments: [], timestamp: serverTimestamp() 
-                        });
-                        
-                        // Reset Form
-                        document.getElementById('videoTitle').value = ""; document.getElementById('videoUploadInput').value = ""; 
-                        document.getElementById('videoUploadLabel').classList.remove('video-selected');
-                        document.getElementById('videoUploadText').innerText = "Click to select video (MP4, MOV)";
-                        selectedVideoFile = null; thumbFile = null;
-                        document.getElementById('thumbPreview').style.display = 'none'; document.getElementById('thumbUpload').value = "";
-                        closeUploadModal();
-                        
-                        statusText.innerText = "সফলভাবে আপলোড হয়েছে!"; 
-                        setTimeout(() => statusText.style.display = 'none', 2500);
-                        document.getElementById('submitVideoBtn').disabled = false;
-                    }
-                );
-
+                // Fallback for Thumbnail if link was used without custom thumb
+                if(!finalThumbUrl) {
+                    finalThumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80";
+                }
+                
+                // 3. Save to Firestore DB
+                statusText.innerHTML = "ফিনিশিং হচ্ছে...";
+                await addDoc(collection(db, "videos"), { 
+                    uid: currentUser.uid, author: currentUserName, authorPhoto: currentUserPhoto, 
+                    title: title, videoUrl: finalVideoUrl, thumbnail: finalThumbUrl, views: [], comments: [], timestamp: serverTimestamp() 
+                });
+                
+                // Reset Form
+                document.getElementById('videoTitle').value = ""; 
+                document.getElementById('videoLink').value = ""; 
+                document.getElementById('videoUploadInput').value = ""; 
+                document.getElementById('videoUploadLabel').classList.remove('video-selected');
+                document.getElementById('videoUploadText').innerText = "Click to select video (MP4, MOV)";
+                selectedVideoFile = null; thumbFile = null;
+                document.getElementById('thumbPreview').style.display = 'none'; document.getElementById('thumbUpload').value = "";
+                closeUploadModal();
+                
+                statusText.innerText = "সফলভাবে পাবলিশ হয়েছে!"; setTimeout(() => statusText.style.display = 'none', 2500);
             } catch (e) { 
                 console.error(e);
-                statusText.innerText = "আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; 
-                setTimeout(() => statusText.style.display = 'none', 3000); 
-                document.getElementById('submitVideoBtn').disabled = false;
+                statusText.innerText = "ব্যর্থ হয়েছে! আবার চেষ্টা করুন।"; setTimeout(() => statusText.style.display = 'none', 3000); 
             }
+            finally { document.getElementById('submitVideoBtn').disabled = false; }
         };
+
+        function timeAgo(timestamp) {
+            if (!timestamp) return "সবেমাত্র";
+            try {
+                const now = new Date(); const past = timestamp.toDate(); const diffMs = now - past;
+                const diffMins = Math.round(diffMs / 60000); const diffHrs = Math.round(diffMs / 3600000); const diffDays = Math.round(diffMs / 86400000);
+                if (diffMins < 1) return "Just now"; if (diffMins < 60) return `${diffMins} mins ago`; if (diffHrs < 24) return `${diffHrs} hours ago`; if (diffDays < 7) return `${diffDays} days ago`;
+                return past.toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' });
+            } catch(e) { return "সবেমাত্র"; }
+        }
 
         function loadVideos() {
             onSnapshot(collection(db, "videos"), (snapshot) => {
