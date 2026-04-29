@@ -58,7 +58,7 @@
             display: flex; 
             flex-direction: column; 
             gap: 12px; 
-            scroll-behavior: smooth;
+            scroll-behavior: smooth; /* Smooth auto-scrolling */
         }
         .chat-box::-webkit-scrollbar { width: 4px; }
         .chat-box::-webkit-scrollbar-thumb { background: #0a2e1a; border-radius: 10px; }
@@ -369,6 +369,13 @@
         const userInput = document.getElementById("userInput");
         const sendBtn = document.getElementById("sendBtn");
 
+        // Helper function to auto-scroll to the bottom smoothly
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 50);
+        }
+
         function appendMessage(text, isUser) {
             const msgDiv = document.createElement("div");
             msgDiv.className = `message ${isUser ? 'user-msg' : 'bot-msg'}`;
@@ -380,7 +387,7 @@
             }
             
             chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
         }
 
         function showTypingIndicator() {
@@ -396,7 +403,7 @@
                 </div>
             `;
             chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
         }
 
         function removeTypingIndicator() {
@@ -410,15 +417,18 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // User Message
+            // 1. Hide Keyboard immediately (Blur the input field)
+            userInput.blur();
+
+            // 2. User Message
             appendMessage(text, true);
             userInput.value = "";
             sendBtn.disabled = true;
 
-            // Generate Bot Response
+            // 3. Generate Bot Response
             const botResponse = findBestResponse(text);
 
-            // Typing Animation
+            // 4. Typing Animation
             showTypingIndicator();
 
             // Dynamic delay based on length of response
@@ -432,15 +442,16 @@
                 chatBox.appendChild(msgDiv);
                 
                 msgDiv.innerHTML = botResponse; 
-                chatBox.scrollTop = chatBox.scrollHeight;
+                scrollToBottom();
                 
                 sendBtn.disabled = false;
-                userInput.focus();
+                // Note: Not calling userInput.focus() here so the keyboard stays hidden 
+                // until the user manually clicks the input box again.
                 
             }, readingDelay);
         }
 
-        // Handle Enter key
+        // Handle Enter key (for PC or mobile keyboards with an Enter button)
         userInput.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
