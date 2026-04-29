@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FriendBot - AI Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #000000; 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+
+        /* Header Styling */
+        header { 
+            background-color: #01160b; 
+            padding: 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            border-bottom: 1px solid #0a2e1a; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            z-index: 10;
+        }
+        .back-btn { color: #ffffff; font-size: 20px; cursor: pointer; transition: 0.2s;}
+        .back-btn:active { transform: scale(0.9); color: #2ecc71;}
+        
+        .bot-avatar { 
+            width: 42px; height: 42px; 
+            background: linear-gradient(135deg, #2ecc71, #1a8c4b); 
+            border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 20px; color: #01160b; 
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+        }
+        
+        .header-info h2 { font-size: 18px; color: #2ecc71; font-weight: bold; letter-spacing: -0.5px;}
+        .header-info p { font-size: 12px; color: #8c9e94; display: flex; align-items: center; gap: 5px; margin-top: 2px;}
+        .status-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        /* Chat Area */
+        .chat-box { 
+            flex: 1; 
+            padding: 15px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            scroll-behavior: smooth;
+        }
+        .chat-box::-webkit-scrollbar { width: 4px; }
+        .chat-box::-webkit-scrollbar-thumb { background: #0a2e1a; border-radius: 10px; }
+
+        .message { 
+            max-width: 85%; 
+            padding: 12px 16px; 
+            border-radius: 18px; 
+            font-size: 14.5px; 
+            line-height: 1.5; 
+            word-wrap: break-word; 
+            animation: slideUp 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-msg { 
+            background: #2ecc71; 
+            color: #01160b; 
+            font-weight: 500;
+            align-self: flex-end; 
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
+        }
+
+        .bot-msg { 
+            background: #022112; 
+            color: #e4e6eb; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 4px;
+            border: 1px solid #0a2e1a;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator { display: flex; align-items: center; gap: 5px; padding: 5px; }
+        .typing-dot { width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; animation: typingWave 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typingWave {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Input Area */
+        .input-area { 
+            background: #01160b; 
+            padding: 12px 15px; 
+            border-top: 1px solid #0a2e1a; 
+            display: flex; 
+            gap: 10px; 
+            align-items: center;
+        }
+
+        .input-wrapper { 
+            flex: 1; 
+            background: #022112; 
+            border-radius: 25px; 
+            border: 1px solid #0f4024; 
+            padding: 5px 15px; 
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .input-wrapper:focus-within { border-color: #2ecc71; }
+
+        input { 
+            background: transparent; 
+            border: none; 
+            color: #ffffff; 
+            font-size: 15px; 
+            width: 100%; 
+            outline: none; 
+            padding: 8px 0;
+        }
+        input::placeholder { color: #8c9e94; }
+
+        .send-btn { 
+            background: #2ecc71; 
+            color: #01160b; 
+            border: none; 
+            width: 42px; height: 42px; 
+            border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 18px; 
+            cursor: pointer; 
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+        .send-btn:active { transform: scale(0.9); }
+        .send-btn:disabled { background: #0a2e1a; color: #8c9e94; box-shadow: none; cursor: not-allowed;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="back-btn" onclick="window.location.href='home.html'"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="header-info">
+            <h2>FriendBot AI</h2>
+            <p><span class="status-dot"></span> Online & Active</p>
+        </div>
+    </header>
+
+    <div class="chat-box" id="chatBox">
+        <div class="message bot-msg">👋 হ্যালো! আমি FriendBot, আপনার স্মার্ট এআই অ্যাসিস্ট্যান্ট। আপনি আমাকে সময়, FriendBook-এর নিয়ম, জোকস অথবা যেকোনো বিষয়ে প্রশ্ন করতে পারেন। কীভাবে সাহায্য করতে পারি?</div>
+    </div>
+
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder="আপনার প্রশ্নটি লিখুন..." autocomplete="off">
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+
+    <script>
+        // ==========================================
+        // SUPER ADVANCED NLP BRAIN 
+        // ==========================================
+        const intents = [
+            {
+                category: "islamic_greeting",
+                keywords: ["আসসালামু আলাইকুম", "assalamualaikum", "salam", "সালাম", "assalam"],
+                responses: [
+                    "ওয়ালাইকুম আসসালাম! 💚 আমি FriendBot, আপনাকে কীভাবে সাহায্য করতে পারি?",
+                    "ওয়ালাইকুম আসসালাম ওয়া রাহমাতুল্লাহ! আপনার দিনটি বরকতময় হোক।"
+                ]
+            },
+            {
+                category: "greeting",
+                keywords: ["hello", "hi", "hey", "হ্যালো", "হাই", "ওহে", "কিরে", "নমস্কার", "শুভ সকাল", "good morning", "শুভ রাত্রি", "good night"],
+                responses: [
+                    "হ্যালো! কেমন আছেন আপনি?",
+                    "হাই! FriendBook-এ আপনাকে স্বাগতম। বলুন, কীভাবে সাহায্য করতে পারি?",
+                    "হ্যালো! আপনার দিনটি সুন্দর কাটুক।"
+                ]
+            },
+            {
+                category: "how_are_you",
+                keywords: ["কেমন আছ", "কেমন আছেন", "how are you", "kemon acho", "ki khobor", "কি খবর", "কি অবস্থা", "kemn aso"],
+                responses: [
+                    "আমি একটি AI রোবট, তাই আমি সবসময়ই দারুণ থাকি! 🤖 আপনার কী খবর?",
+                    "খুব ভালো আছি! আপনার জন্য কী করতে পারি বলুন।",
+                    "আমি ভালো আছি। আশা করি আপনিও ভালো আছেন!"
+                ]
+            },
+            {
+                category: "creator_info",
+                keywords: ["কে বানিয়েছে", "creator", "তৈরি করেছে", "মালিক কে", "founder", "সবুজ মিয়া", "sobuj mia", "noob hacker", "কার ওয়েবসাইট", "who made you"],
+                responses: [
+                    "আমাকে এবং এই চমৎকার FriendBook প্ল্যাটফর্মটি তৈরি করেছেন <b>সবুজ মিয়া (Sobuj Mia)</b>। তিনি একজন অত্যন্ত মেধাবী ডেভেলপার!",
+                    "আমার ক্রিয়েটর হলেন সবুজ মিয়া ভাই। তিনিই এই FriendBook ওয়েবসাইটটি বানিয়েছেন। 😎",
+                    "সবুজ মিয়া (Sobuj Mia) আমাকে তৈরি করেছেন। তিনি এই প্লাটফর্মের মালিক 😊"
+                ]
+            },
+            {
+                category: "about_friendbook",
+                keywords: ["friendbook কি", "ফ্রেন্ডবুক কি", "about friendbook", "এই ওয়েবসাইট", "what is friendbook", "friendplay"],
+                responses: [
+                    "FriendBook হলো আমাদের নিজস্ব একটি সোশ্যাল নেটওয়ার্ক। এখানে আপনি পোস্ট করতে পারবেন, ভিডিও দেখতে ও আপলোড করতে পারবেন, এবং বন্ধুদের সাথে চ্যাট করতে পারবেন।",
+                    "এটি ফেসবুকের মতোই একটি দারুণ সোশ্যাল মিডিয়া প্ল্যাটফর্ম, যা আমাদের নিজেদের জন্য তৈরি করা হয়েছে!"
+                ]
+            },
+            {
+                category: "friendbook_post_help",
+                keywords: ["কিভাবে পোস্ট", "পোস্ট করব", "how to post", "স্ট্যাটাস", "post kivabe"],
+                responses: [
+                    "খুব সহজ! হোম পেজে গিয়ে 'What's on your mind' বক্সে লিখে Post বাটনে ক্লিক করুন। আপনি চাইলে ছবিও অ্যাড করতে পারবেন। 📝",
+                    "হোম পেজের উপরের দিকে থাকা বক্সে আপনার মনের কথা লিখে সহজেই পোস্ট করতে পারবেন।"
+                ]
+            },
+            {
+                category: "friendbook_video_help",
+                keywords: ["কিভাবে ভিডিও", "ভিডিও আপলোড", "how to upload video", "ভিডিও দেব", "video kivabe"],
+                responses: [
+                    "ভিডিও আপলোড করতে লাইভ টিভি (Live TV) বা FriendPlay সেকশনে যান। সেখানে 'Upload' বাটনে ক্লিক করে সরাসরি ভিডিও অথবা ইউটিউব/ড্রাইভের লিংক শেয়ার করতে পারবেন। 🎬"
+                ]
+            },
+            {
+                category: "emotions_sad",
+                keywords: ["মন খারাপ", "sad", "খারাপ লাগছে", "কষ্ট", "বোরিং", "boring"],
+                responses: [
+                    "মন খারাপ করবেন না! 😔 একটা সুন্দর গান শুনুন অথবা FriendBook-এ বন্ধুদের সাথে আড্ডা দিন, মন ভালো হয়ে যাবে!",
+                    "কষ্ট পাওয়া স্বাভাবিক। তবে মনে রাখবেন, রাতের পরেই সুন্দর সকাল আসে। হাসিখুশি থাকুন! 💚"
+                ]
+            },
+            {
+                category: "emotions_love",
+                keywords: ["i love you", "ভালবাসি", "ভালোবাসি", "love", "পছন্দ করি"],
+                responses: [
+                    "আমি একটি রোবট, আমার তো হৃদয় নেই! তবে আপনার এই ভালোবাসা পেয়ে আমি সত্যি আনন্দিত। 💚",
+                    "অনেক অনেক ভালোবাসা আপনার জন্যও! FriendBook এর সাথেই থাকুন।"
+                ]
+            },
+            {
+                category: "tech_ai",
+                keywords: ["ai কি", "ai", "artificial intelligence", "এআই", "কৃত্রিম বুদ্ধিমত্তা", "chatgpt"],
+                responses: [
+                    "AI বা কৃত্রিম বুদ্ধিমত্তা হলো এমন একটি প্রযুক্তি যার মাধ্যমে কম্পিউটার মানুষের মতো চিন্তা করতে ও সিদ্ধান্ত নিতে পারে। ঠিক যেমন আমি আপনার সাথে কথা বলছি! 🧠"
+                ]
+            },
+            {
+                category: "joke",
+                keywords: ["জোক", "joke", "মজার কথা", "হাসির", "কৌতুক", "মজা"],
+                responses: [
+                    "শিক্ষক: বল তো, মশা কয় প্রকার? \nছাত্র: মশা পাঁচ প্রকার! \n১. মশা \n২. ডাঁশ মশা \n৩. মশার বাপ \n৪. মশার দাদা \n৫. মশাদের এলাকার মেম্বার! 😂",
+                    "কেন প্রোগ্রামাররা সবসময় ডার্ক মোড (Dark Mode) ব্যবহার করে?\nকারণ, লাইট (Light) মোডে বাগ (Bugs) বেশি দেখা যায়! 😆",
+                    "স্ত্রী: ওগো শুনছো, আমি যদি হারিয়ে যাই তুমি কী করবে?\nস্বামী: পত্রিকায় বিজ্ঞাপন দেব।\nস্ত্রী: কী লিখবে?\nস্বামী: লিখব, যে পাবে সে যেন নিজের কাছেই রেখে দেয়! 🤣"
+                ]
+            },
+            {
+                category: "thanks",
+                keywords: ["ধন্যবাদ", "thank you", "thanks", "থ্যাংকস", "দারুণ", "good", "nice", "awesome", "সেরা"],
+                responses: [
+                    "আপনাকেও অসংখ্য ধন্যবাদ! 😊 আর কোনো সাহায্য লাগবে?",
+                    "ওয়েলকাম! আপনার সাথে কথা বলে ভালো লাগলো।",
+                    "আমি সবসময় আপনার সেবায় প্রস্তুত! 💚"
+                ]
+            },
+            {
+                category: "name",
+                keywords: ["তোমার নাম", "name", "নাম কি", "who are you", "কে তুমি", "what is your name"],
+                responses: [
+                    "আমার নাম <b>FriendBot</b>! আমি FriendBook-এর স্মার্ট AI অ্যাসিস্ট্যান্ট।",
+                    "আমি FriendBot। আমি আপনাকে তথ্য দিয়ে বা আড্ডা দিয়ে সাহায্য করতে পারি! 🤖"
+                ]
+            },
+            {
+                category: "farewell",
+                keywords: ["বিদায়", "bye", "আল্লাহ হাফেজ", "টাটা", "tata", "goodbye", "যাই"],
+                responses: [
+                    "বিদায়! ভালো থাকবেন। আবার কথা হবে। 👋",
+                    "আল্লাহ হাফেজ! FriendBook-এ আপনার সময় সুন্দর কাটুক।"
+                ]
+            }
+        ];
+
+        const defaultResponses = [
+            "দুঃখিত, আমি আপনার প্রশ্নটি ঠিক বুঝতে পারিনি। আপনি কি আরেকটু ক্লিয়ার করে বলবেন? 🤔",
+            "হুম... এই বিষয়ে আমার কাছে সঠিক তথ্য নেই। তবে আপনি আমাকে সময়, FriendBook, প্রোগ্রামিং বা সাধারণ বিষয়ে প্রশ্ন করতে পারেন।",
+            "আমি বুঝতে পারিনি। আপনি চাইলে আমাকে জিজ্ঞেস করতে পারেন 'তোমাকে কে বানিয়েছে?' বা 'কয়টা বাজে?'"
+        ];
+
+        // --- Logic Functions ---
+
+        function cleanText(text) {
+            return text.toLowerCase().replace(/[?.,!।]/g, "").trim();
+        }
+
+        // Dynamic Time Function
+        function getDynamicTimeResponse(cleanedText) {
+            if (cleanedText.includes("কয়টা বাজে") || cleanedText.includes("সময় কত") || cleanedText.includes("time") || cleanedText.includes("time koto") || cleanedText.includes("কোয়টা বাজে")) {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                return `এখন সময় <b>${hours}:${minutes} ${ampm}</b> ⏰`;
+            }
+            return null;
+        }
+
+        function findBestResponse(userText) {
+            const cleanedText = cleanText(userText);
+
+            // 1. Check for dynamic queries (like Time)
+            const dynamicTime = getDynamicTimeResponse(cleanedText);
+            if (dynamicTime) return dynamicTime;
+
+            // 2. Regular Intent Matching
+            let bestMatchCategory = null;
+            let highestScore = 0;
+
+            for (let intent of intents) {
+                let score = 0;
+                for (let keyword of intent.keywords) {
+                    const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                    if (regex.test(cleanedText)) {
+                        score += 3; // Exact match heavily weighted
+                    } else if (cleanedText.includes(keyword)) {
+                        score += 1; // Partial match
+                    }
+                }
+
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestMatchCategory = intent;
+                }
+            }
+
+            if (highestScore > 0) {
+                const responses = bestMatchCategory.responses;
+                return responses[Math.floor(Math.random() * responses.length)];
+            } else {
+                return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            }
+        }
+
+        // --- UI Functions ---
+
+        const chatBox = document.getElementById("chatBox");
+        const userInput = document.getElementById("userInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        function appendMessage(text, isUser) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${isUser ? 'user-msg' : 'bot-msg'}`;
+            
+            if (isUser) {
+                msgDiv.innerText = text;
+            } else {
+                msgDiv.innerHTML = text; // Allow HTML formatting for bot
+            }
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement("div");
+            typingDiv.className = "message bot-msg";
+            typingDiv.id = "typingIndicator";
+            typingDiv.style.width = "fit-content";
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById("typingIndicator");
+            if (indicator) indicator.remove();
+        }
+
+        // --- Main Execution ---
+
+        function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // User Message
+            appendMessage(text, true);
+            userInput.value = "";
+            sendBtn.disabled = true;
+
+            // Generate Bot Response
+            const botResponse = findBestResponse(text);
+
+            // Typing Animation
+            showTypingIndicator();
+
+            // Dynamic delay based on length of response
+            const readingDelay = Math.min(Math.max(text.length * 20, 600), 1500); 
+            
+            setTimeout(() => {
+                removeTypingIndicator();
+                
+                const msgDiv = document.createElement("div");
+                msgDiv.className = "message bot-msg";
+                chatBox.appendChild(msgDiv);
+                
+                msgDiv.innerHTML = botResponse; 
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                sendBtn.disabled = false;
+                userInput.focus();
+                
+            }, readingDelay);
+        }
+
+        // Handle Enter key
+        userInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                handleSend();
+            }
+        });
+
+    </script>
+</body>
+</html>
