@@ -49,6 +49,68 @@
         .menu-list-btn i { font-size: 22px; width: 30px; text-align: center; }
         .logout-btn { color: #ff4757; } .logout-btn i { color: #ff4757; }
 
+        /* --- CAPCUT PRO View Styles --- */
+        .capcut-box-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .capcut-icon {
+            font-size: 60px;
+            color: #ff6b81;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 10px rgba(255, 107, 129, 0.4));
+        }
+        .link-display {
+            background: #022112;
+            border: 1px solid #0f4024;
+            color: #2ecc71;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            word-break: break-all;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .copy-link-btn {
+            background: #2ecc71;
+            color: #01160b;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-link-btn:active { transform: scale(0.95); }
+        .highlight-text {
+            color: #f1c40f;
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.5;
+            background: rgba(241, 196, 15, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(241, 196, 15, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            margin-top: 5px;
+        }
+
         /* General Post Box */
         .create-post-box { background-color: #01160b; padding: 12px 15px; margin-bottom: 8px; }
         .post-input-top { display: flex; align-items: center; gap: 8px; }
@@ -268,6 +330,19 @@
         </div>
     </div>
 
+    <div class="main-content" id="capcut-view" style="display: none;">
+        <div class="menu-header">CapCut Pro Download</div>
+        <div class="capcut-box-container">
+            <i class="fa-solid fa-mobile-screen-button capcut-icon"></i>
+            <h3 style="color: #fff; font-size: 20px;">Get CAPCUT PRO Now!</h3>
+            <div class="link-display">https://sobujmiashuvo.github.io/Capcut</div>
+            <button class="copy-link-btn" onclick="copyCapcutLink()">
+                <i class="fa-solid fa-copy"></i> লিংক কপি করুন
+            </button>
+            <div class="highlight-text">ডাউনলোড করতে এই লিংকটি ক্রোম ব্রাউজারে পেস্ট করে অপেন করুন।</div>
+        </div>
+    </div>
+
     <div class="main-content" id="menu-view" style="display: none;">
         <div class="menu-header">Menu</div>
         <div class="menu-grid">
@@ -296,6 +371,10 @@
 
             <div class="menu-card" onclick="window.location.href='chatbot.html'">
                 <i class="fa-solid fa-robot" style="color: #2ecc71;"></i><span>Chatbot</span>
+            </div>
+
+            <div class="menu-card" onclick="switchTab('capcut')">
+                <i class="fa-solid fa-mobile-screen-button" style="color: #ff6b81;"></i><span>CAPCUT PRO</span>
             </div>
             
         </div>
@@ -417,6 +496,7 @@
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('friends-view').style.display = 'none';
             document.getElementById('menu-view').style.display = 'none';
+            document.getElementById('capcut-view').style.display = 'none'; // NEW
             
             if(tab === 'home') {
                 document.getElementById('tab-home').classList.add('active');
@@ -427,7 +507,20 @@
                 if(window.renderFriendsList) window.renderFriendsList();
             } else if (tab === 'menu') {
                 document.getElementById('menu-view').style.display = 'block';
+            } else if (tab === 'capcut') {
+                // NEW TAB LOGIC
+                document.getElementById('capcut-view').style.display = 'block';
             }
+        };
+
+        // NEW: Copy Capcut Link Function
+        window.copyCapcutLink = () => {
+            const linkText = "https://sobujmiashuvo.github.io/Capcut";
+            navigator.clipboard.writeText(linkText).then(() => {
+                window.showCustomAlert("লিংক কপি করা হয়েছে!");
+            }).catch(err => {
+                window.showCustomAlert("লিংক কপি করতে সমস্যা হয়েছে!");
+            });
         };
 
         // Alert & Logout Logic
