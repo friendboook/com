@@ -661,7 +661,7 @@
                 currentUser = user;
                 window.currentUserGlobal = user; 
                 
-                onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
+                onSnapshot(doc(db, "users", currentUser.uid), async (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data(); currentUserName = data.displayName || "User"; currentUserPhoto = data.profilePic || "";
                         
@@ -675,9 +675,30 @@
                         const unreads = data.unreadCounts || {}; let count = 0; for(let k in unreads) count += unreads[k];
                         const badge = document.getElementById('msg-badge');
                         if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.style.display = 'block'; } else badge.style.display = 'none';
+                    } else {
+                        // NEW FIX: Create default DB document so profile editing works for new users
+                        currentUserName = user.displayName || "User";
+                        window.currentUserNameGlobal = currentUserName; 
+                        window.currentUserFollowing = [];
                         
-                        if(!isFeedLoaded) { loadAllPosts(); loadAllUsersForSearch(); loadStories(); isFeedLoaded = true; }
+                        const display = document.getElementById('profileDisplay');
+                        display.innerText = currentUserName.charAt(0); 
+                        document.getElementById('storyMyBg').innerText = currentUserName.charAt(0);
+                        
+                        try {
+                            await setDoc(doc(db, "users", currentUser.uid), {
+                                displayName: currentUserName,
+                                email: user.email || "",
+                                profilePic: "",
+                                following: [],
+                                followers: [],
+                                unreadCounts: {}
+                            });
+                        } catch(e) { console.error("Error creating user doc", e); }
                     }
+                    
+                    // FIX: Load feed and users outside the exists() check so it always runs
+                    if(!isFeedLoaded) { loadAllPosts(); loadAllUsersForSearch(); loadStories(); isFeedLoaded = true; }
                 });
             } else { window.location.href = "index.html"; }
         });
