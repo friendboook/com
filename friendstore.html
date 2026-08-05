@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Store</title>
+    <title>Premium App Store</title>
     <style>
-        /* বেসিক রিসেট */
         * {
             margin: 0;
             padding: 0;
@@ -13,227 +12,380 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* ব্যাকগ্রাউন্ড এবং সেন্টারিং */
         body {
-            background-color: #f4f7f6;
+            background-color: #a8ff78;
+            background: linear-gradient(to right, #a8ff78, #78ffd6);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        /* হেডার ডিজাইন */
+        /* মূল মোবাইল কনটেইনার */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #03082b;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        /* হেডার সেকশন */
         header {
-            background: linear-gradient(180deg, #ffffff 0%, #e0f7fa 100%);
-            height: 60px;
+            background-color: #ffffff;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 12px 15px;
+            border-bottom: 2px solid #ddd;
         }
 
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #333;
+        .logo {
             display: flex;
             align-items: center;
+            gap: 10px;
+        }
+
+        /* গোল বক্সে লোগো */
+        .logo-box {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #f2f2f2;
+            display: flex;
             justify-content: center;
-            padding: 5px;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid #0a113a;
         }
 
-        .icon-btn svg {
-            width: 26px;
-            height: 26px;
-            transition: fill 0.3s;
-        }
-
-        .icon-btn:hover svg {
-            fill: #007bff;
-        }
-
-        .logo img {
-            height: 35px; /* লোগোর সাইজ মানানসই করা হয়েছে */
-            object-fit: contain;
-        }
-
-        /* সার্চ বার (ডিফল্টভাবে লুকানো থাকবে) */
-        .search-container {
-            display: none;
-            padding: 10px 15px;
-            background: #e0f7fa;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .search-container input {
+        .logo-box img {
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            color: #0a113a;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 9px;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        /* সার্চ বক্স */
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #f2f2f2;
+            border-radius: 25px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 8px 15px;
             outline: none;
+            background: transparent;
+            width: 110px;
+            font-size: 13px;
+        }
+
+        .search-box button {
+            background-color: #0a113a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
             font-size: 14px;
         }
 
-        .search-container input:focus {
-            border-color: #007bff;
-        }
-
-        /* বডি বা অ্যাপ গ্রিড সেকশন */
-        .main-content {
-            padding: 20px 10px;
-            max-width: 800px; /* ডেস্কটপেও সুন্দর দেখানোর জন্য */
-            margin: 0 auto;
-        }
-
-        .app-grid {
+        /* অ্যাপ গ্রিড */
+        main {
+            flex-grow: 1;
+            padding: 15px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* এক লাইনে ৪টা সারি */
-            gap: 12px; 
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        /* অ্যাপ কার্ড ডিজাইন */
+        /* প্রতিটি অ্যাপের কার্ড */
         .app-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 10px;
+            background-color: #171d4f;
+            border-radius: 15px;
+            padding: 15px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #232b69;
         }
 
         .app-icon {
-            width: 100%;
-            max-width: 70px;
-            aspect-ratio: 1 / 1;
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 15px;
             object-fit: cover;
-            border-radius: 22%; /* চারকোনা কিন্তু কোণাগুলো রাউন্ড */
-            margin-bottom: 8px;
-            background: #f0f0f0; /* ইমেজ লোড না হলে এই কালার দেখাবে */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: white;
         }
 
         .app-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-
-        /* ডাউনলোড বাটন */
-        .download-btn {
-            text-decoration: none;
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-            color: white;
+            color: #ffffff;
             font-size: 11px;
             font-weight: bold;
-            padding: 6px 0;
-            width: 100%;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .app-price {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: #ffea00;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 12px;
             border-radius: 20px;
-            transition: opacity 0.3s;
-            display: inline-block;
+            margin-bottom: 15px;
         }
 
-        .download-btn:hover {
-            opacity: 0.8;
+        /* বাটন ডিজাইন */
+        .btn-details {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 8px;
+            width: 100%;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        /* মোবাইলের জন্য ছোট রেসপন্সিভ ফিক্স */
-        @media (max-width: 400px) {
-            .app-grid {
-                gap: 8px;
-            }
-            .app-icon {
-                border-radius: 18%;
-            }
-            .download-btn {
-                font-size: 10px;
-                padding: 5px 0;
-            }
+        .btn-details:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn-buy {
+            background-color: #26de61;
+            color: #ffffff;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-buy:hover {
+            background-color: #21c455;
+        }
+
+        /* ফুটার */
+        footer {
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+        }
+
+        /* মডাল (বিস্তারিত পপ-আপ) ডিজাইন */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #171d4f;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 350px;
+            border: 2px solid #232b69;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #ff5252;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: #78ffd6;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .modal-content ul {
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #d1d8ff;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <button class="icon-btn">
-            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-        </button>
+    <div class="app-container">
+        <!-- হেডার -->
+        <header>
+            <div class="logo">
+                <div class="logo-box">
+                    <!-- ডিফল্ট স্টোর লোগো -->
+                    <img src="https://cdn-icons-png.flaticon.com/512/3003/3003986.png" alt="Store Logo">
+                </div>
+                <div class="logo-text">
+                    PREMIUM
+                    <span>APP STORE</span>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="সার্চ করুন...">
+                <button>&#128269;</button>
+            </div>
+        </header>
 
-        <div class="logo">
-            <img src="friendapp.png" alt="App Store Logo">
+        <!-- অ্যাপ লিস্ট -->
+        <main>
+            <!-- MOVIEBOX -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/RT60b08m/unnamed-1.webp" alt="MovieBox" class="app-icon">
+                <div class="app-title">Moviebox Premium</div>
+                <div class="app-price">মাত্র ২৫০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('Moviebox Premium', ['যেকোনো মুভি ফ্রিতে দেখুন', 'বিজ্ঞাপন মুক্ত অভিজ্ঞতা (No Ads)', 'হাই কোয়ালিটি ৪কে ভিডিও রেজুলেশন', 'আনলিমিটেড অফলাইন ডাউনলোড'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('Moviebox Premium')">কিনুন</button>
+            </div>
+
+            <!-- TRUE CALLER -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/DHZd0MFc/unnamed.png" alt="True Caller" class="app-icon">
+                <div class="app-title">True Caller Gold</div>
+                <div class="app-price">মাত্র ২৫০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('True Caller Gold', ['প্রিমিয়াম গোল্ড কলার আইডি', 'কোনো বিরক্তিকর বিজ্ঞাপন নেই', 'অটোমেটিক কল রেকর্ডিং ফিচার', 'প্রোফাইল কে কে দেখেছে তা জানার সুবিধা'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('True Caller Gold')">কিনুন</button>
+            </div>
+
+            <!-- PICSART -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/VYYCF28j/unnamed-1.png" alt="Picsart" class="app-icon">
+                <div class="app-title">Picsart Gold</div>
+                <div class="app-price">মাত্র ২৫০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('Picsart Gold', ['সব প্রিমিয়াম টুলস এবং ফিল্টার আনলকড', 'ওয়াটারমার্ক রিমুভ করা হয়েছে', 'অ্যাড-ফ্রি স্মুথ এক্সপেরিয়েন্স', 'হাজার হাজার প্রিমিয়াম টেমপ্লেট ও স্টিকার'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('Picsart Gold')">কিনুন</button>
+            </div>
+
+            <!-- YOUTUBE PREMIUM (Replaced Netflix) -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/k2vFd6MK/images-3-24.jpg" alt="YouTube" class="app-icon">
+                <div class="app-title">YouTube Premium</div>
+                <div class="app-price">মাত্র ১০০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('YouTube Premium', ['সম্পূর্ণ বিজ্ঞাপন-মুক্ত ভিডিও', 'স্ক্রিন অফ করে ব্যাকগ্রাউন্ড প্লে সাপোর্ট', 'ইউটিউব মিউজিক প্রিমিয়াম একদম ফ্রি', 'স্মার্ট ডাউনলোড ফিচার'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('YouTube premium')">কিনুন</button>
+            </div>
+
+            <!-- SNAPTUBE -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/39dGSr3H/Snap-Tube-Icon-Resized-Original-APK.png" alt="Snaptube" class="app-icon">
+                <div class="app-title">Snaptube Premium</div>
+                <div class="app-price">মাত্র ১০০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('Snaptube Premium', ['কোনো প্রকার বিজ্ঞাপন নেই', '4K এবং 8K রেজুলেশনে ভিডিও ডাউনলোড', 'একসাথে একাধিক ফাইল ব্যাচ ডাউনলোড', 'VIP ফিচার পুরোপুরি আনলকড'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('Snaptube Premium')">কিনুন</button>
+            </div>
+
+            <!-- HOME WORK -->
+            <div class="app-card">
+                <img src="https://i.ibb.co.com/PZNpGktq/unnamed-2.png" alt="Home Work" class="app-icon">
+                <div class="app-title">Home Work Premium</div>
+                <div class="app-price">মাত্র ১০০ টাকা</div>
+                <button class="btn-details" onclick="showDetails('Home Work Premium', ['সব বিষয়ের আনলকড সলিউশন', 'কোনো বিজ্ঞাপন বা লিমিটেশন নেই', 'স্টেপ-বাই-স্টেপ ম্যাথ সলভার', 'আনলিমিটেড এআই (AI) এসিস্ট্যান্ট সাপোর্ট'])">বিস্তারিত</button>
+                <button class="btn-buy" onclick="buyApp('Home Work Premium')">কিনুন</button>
+            </div>
+        </main>
+
+        <!-- ফুটার -->
+        <footer>
+            &copy; 2026 Copyright Protected <strong>Sobuj Mia Shuvo</strong>
+        </footer>
+
+        <!-- মডাল (বিস্তারিত দেখার জন্য) -->
+        <div class="modal-overlay" id="detailsModal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h3 id="modalTitle">App Name</h3>
+                <ul id="modalFeatures">
+                    <!-- ফিচারগুলো জাভাস্ক্রিপ্ট দিয়ে এখানে আসবে -->
+                </ul>
+            </div>
         </div>
-
-        <button class="icon-btn" onclick="toggleSearch()">
-            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        </button>
-    </header>
-
-    <div class="search-container" id="searchBar">
-        <input type="text" id="searchInput" onkeyup="searchApp()" placeholder="অ্যাপ খুঁজুন...">
     </div>
 
-    <main class="main-content">
-        <div class="app-grid" id="appGrid">
-            </div>
-    </main>
-
+    <!-- জাভাস্ক্রিপ্ট (ফিচার দেখানো এবং হোয়াটসঅ্যাপে রিডাইরেক্ট করার জন্য) -->
     <script>
-        // সার্চ বার অন/অফ করার ফাংশন
-        function toggleSearch() {
-            const searchBar = document.getElementById('searchBar');
-            if (searchBar.style.display === "block") {
-                searchBar.style.display = "none";
-            } else {
-                searchBar.style.display = "block";
-                document.getElementById('searchInput').focus();
-            }
-        }
-
-        // অ্যাপ সার্চ ফাংশন
-        function searchApp() {
-            let filter = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.getElementsByClassName('app-card');
+        // বিস্তারিত মডাল ওপেন করা
+        function showDetails(appName, featuresList) {
+            document.getElementById('modalTitle').innerText = appName + " এর ফিচারসমূহ";
             
-            for (let i = 0; i < cards.length; i++) {
-                let title = cards[i].querySelector('.app-title').innerText.toLowerCase();
-                if (title.indexOf(filter) > -1) {
-                    cards[i].style.display = "flex";
-                } else {
-                    cards[i].style.display = "none";
-                }
-            }
+            let ul = document.getElementById('modalFeatures');
+            ul.innerHTML = ''; // আগের লিস্ট ক্লিয়ার করা
+            
+            featuresList.forEach(function(feature) {
+                let li = document.createElement('li');
+                li.innerText = feature;
+                ul.appendChild(li);
+            });
+            
+            document.getElementById('detailsModal').style.display = 'flex';
         }
 
-        // ২০টি অ্যাপ ডায়নামিক ভাবে জেনারেট করার স্ক্রিপ্ট (৫ লাইন x ৪ সারি)
-        const appGrid = document.getElementById('appGrid');
-        let appsHTML = '';
-
-        for (let i = 1; i <= 20; i++) {
-            appsHTML += `
-                <div class="app-card">
-                    <img src="icon.png" class="app-icon" alt="App Icon ${i}">
-                    <div class="app-title">App ${i}</div>
-                    <a href="#download-link-${i}" class="download-btn">Download</a>
-                </div>
-            `;
+        // মডাল ক্লোজ করা
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
         }
-        
-        // গ্রিডের ভেতর অ্যাপগুলো যুক্ত করা
-        appGrid.innerHTML = appsHTML;
 
+        // সরাসরি হোয়াটসঅ্যাপে রিডাইরেক্ট করা
+        function buyApp(appName) {
+            let phoneNumber = "8801759623887"; // আপনার নাম্বার
+            let message = "আসসালামু আলাইকুম, ভাইজান আমি " + appName + " এপটি কিনতে চাই";
+            let encodedMessage = encodeURIComponent(message);
+            
+            let whatsappUrl = "https://wa.me/" + phoneNumber + "?text=" + encodedMessage;
+            window.open(whatsappUrl, '_blank'); // নতুন ট্যাবে হোয়াটসঅ্যাপ ওপেন হবে
+        }
     </script>
+
 </body>
 </html>
