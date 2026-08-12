@@ -106,10 +106,10 @@
         <div class="error-msg" id="loginError"></div>
 
         <div class="input-group">
-            <label>ইমেইল (Email)</label>
+            <label>ইমেইল বা ফোন নাম্বার</label>
             <div class="input-wrapper">
-                <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="loginEmail" placeholder="আপনার ইমেইল দিন">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="loginEmail" placeholder="ইমেইল বা ফোন নাম্বার দিন">
             </div>
         </div>
 
@@ -146,10 +146,10 @@
         </div>
 
         <div class="input-group">
-            <label>ইমেইল (Email)</label>
+            <label>ইমেইল বা ফোন নাম্বার</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="signupEmail" placeholder="আপনার ইমেইল দিন">
+                <input type="text" id="signupEmail" placeholder="ইমেইল বা ফোন নাম্বার দিন">
             </div>
         </div>
 
@@ -257,26 +257,32 @@
 
         // LOGIN LOGIC
         document.getElementById('loginBtn').addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value.trim();
+            let inputVal = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPassword').value.trim();
             
             document.getElementById('loginError').style.display = 'none';
 
-            if (!email || !pass) {
-                showError('loginError', 'দয়া করে ইমেইল এবং পাসওয়ার্ড দিন!');
+            if (!inputVal || !pass) {
+                showError('loginError', 'দয়া করে ইমেইল/ফোন নাম্বার এবং পাসওয়ার্ড দিন!');
                 return;
+            }
+
+            // Phone Number logic: convert to fake email if only numbers
+            let firebaseEmail = inputVal;
+            if (/^[0-9+]+$/.test(inputVal) && !inputVal.includes('@')) {
+                firebaseEmail = inputVal + "@friendbook.com";
             }
 
             showLoader('লগইন হচ্ছে...');
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                await signInWithEmailAndPassword(auth, firebaseEmail, pass);
                 window.location.href = "home.html";
             } catch (error) {
                 hideLoader();
-                let errMsg = "লগইন ব্যর্থ হয়েছে! ইমেইল বা পাসওয়ার্ড ভুল।";
-                if(error.code === 'auth/user-not-found') errMsg = "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি!";
+                let errMsg = "লগইন ব্যর্থ হয়েছে! ইমেইল/ফোন বা পাসওয়ার্ড ভুল।";
+                if(error.code === 'auth/user-not-found') errMsg = "এই ইমেইল বা ফোন নাম্বারে কোনো অ্যাকাউন্ট পাওয়া যায়নি!";
                 if(error.code === 'auth/wrong-password') errMsg = "পাসওয়ার্ড ভুল হয়েছে!";
-                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল এর ফরম্যাট ঠিক নেই!";
+                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল বা ফোন নাম্বার এর ফরম্যাট ঠিক নেই!";
                 showError('loginError', errMsg);
             }
         });
@@ -284,12 +290,12 @@
         // SIGNUP LOGIC
         document.getElementById('signupBtn').addEventListener('click', async () => {
             const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
+            let inputVal = document.getElementById('signupEmail').value.trim();
             const pass = document.getElementById('signupPassword').value.trim();
             
             document.getElementById('signupError').style.display = 'none';
 
-            if (!name || !email || !pass) {
+            if (!name || !inputVal || !pass) {
                 showError('signupError', 'সবগুলো ঘর পূরণ করা আবশ্যক!');
                 return;
             }
@@ -298,16 +304,29 @@
                 return;
             }
 
+            // Admin Name Protection
+            const checkName = name.toLowerCase().replace(/\s+/g, ' ').trim();
+            if (checkName === "sobuj mia") {
+                showError('signupError', 'এই নামটি এডমিনের জন্য সংরক্ষিত। দয়া করে অন্য নাম ব্যবহার করুন!');
+                return;
+            }
+
+            // Phone Number logic: convert to fake email if only numbers
+            let firebaseEmail = inputVal;
+            if (/^[0-9+]+$/.test(inputVal) && !inputVal.includes('@')) {
+                firebaseEmail = inputVal + "@friendbook.com";
+            }
+
             showLoader('অ্যাকাউন্ট তৈরি হচ্ছে...');
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const userCredential = await createUserWithEmailAndPassword(auth, firebaseEmail, pass);
                 const user = userCredential.user;
 
-                // Save user profile data in Firestore
+                // Save user profile data in Firestore (store original inputVal so user sees their phone/email)
                 await setDoc(doc(db, "users", user.uid), {
                     uid: user.uid,
                     displayName: name,
-                    email: email,
+                    email: inputVal,
                     profilePic: "",
                     coverPic: "",
                     bio: "",
@@ -323,8 +342,8 @@
             } catch (error) {
                 hideLoader();
                 let errMsg = "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে!";
-                if(error.code === 'auth/email-already-in-use') errMsg = "এই ইমেইল দিয়ে আগে থেকেই অ্যাকাউন্ট আছে!";
-                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল এর ফরম্যাট ঠিক নেই!";
+                if(error.code === 'auth/email-already-in-use') errMsg = "এই ইমেইল বা ফোন নাম্বার দিয়ে আগে থেকেই অ্যাকাউন্ট আছে!";
+                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল বা ফোন নাম্বার এর ফরম্যাট ঠিক নেই!";
                 showError('signupError', errMsg);
             }
         });
