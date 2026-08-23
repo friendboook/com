@@ -9,7 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; overflow: hidden; }
         
-        /* --- NEW: Splash Screen Animation --- */
+        /* --- Splash Screen Animation --- */
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #01160b; z-index: 9999;
@@ -71,7 +71,6 @@
 
         .error-msg { color: #ff4757; font-size: 13px; margin-bottom: 15px; display: none; background: rgba(255, 71, 87, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 71, 87, 0.3); }
 
-        /* General Loader Overlay */
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { font-size: 40px; color: #2ecc71; margin-bottom: 15px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -200,7 +199,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = { 
@@ -220,14 +219,13 @@
         let authDetermined = false;
         let isUserLoggedIn = false;
         let splashTimeFinished = false;
+        window.isAuthAction = false; // Prevents auto-redirect during signup/login
 
-        // Minimum 2.5 seconds showing the splash screen for cool effect
         setTimeout(() => {
             splashTimeFinished = true;
             processRedirect();
         }, 2500);
 
-        // Firebase Auth listener checks session automatically
         onAuthStateChanged(auth, (user) => {
             authDetermined = true;
             isUserLoggedIn = !!user;
@@ -235,28 +233,25 @@
         });
 
         function processRedirect() {
-            // Only proceed if both the splash animation time is done AND Firebase told us the login status
-            if (splashTimeFinished && authDetermined) {
+            if (splashTimeFinished && authDetermined && !window.isAuthAction) {
                 if (isUserLoggedIn) {
-                    // Auto-Login: User is already saved, go directly to home!
                     window.location.href = "home.html";
                 } else {
-                    // Not logged in: Hide splash screen and show login box
                     const splash = document.getElementById('splashScreen');
                     splash.style.opacity = '0';
                     splash.style.visibility = 'hidden';
-                    
                     setTimeout(() => {
                         splash.style.display = 'none';
-                        document.body.style.overflow = 'auto'; // allow scrolling if needed
+                        document.body.style.overflow = 'auto'; 
                         document.getElementById('loginBox').style.display = 'block';
-                    }, 600); // Wait for CSS fade out transition
+                    }, 600); 
                 }
             }
         }
 
         // LOGIN LOGIC
         document.getElementById('loginBtn').addEventListener('click', async () => {
+            window.isAuthAction = true;
             let inputVal = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPassword').value.trim();
             
@@ -267,7 +262,6 @@
                 return;
             }
 
-            // Phone Number logic: convert to fake email if only numbers
             let firebaseEmail = inputVal;
             if (/^[0-9+]+$/.test(inputVal) && !inputVal.includes('@')) {
                 firebaseEmail = inputVal + "@friendbook.com";
@@ -280,15 +274,15 @@
             } catch (error) {
                 hideLoader();
                 let errMsg = "লগইন ব্যর্থ হয়েছে! ইমেইল/ফোন বা পাসওয়ার্ড ভুল।";
-                if(error.code === 'auth/user-not-found') errMsg = "এই ইমেইল বা ফোন নাম্বারে কোনো অ্যাকাউন্ট পাওয়া যায়নি!";
+                if(error.code === 'auth/user-not-found') errMsg = "এই অ্যাকাউন্টের কোনো অস্তিত্ব নেই!";
                 if(error.code === 'auth/wrong-password') errMsg = "পাসওয়ার্ড ভুল হয়েছে!";
-                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল বা ফোন নাম্বার এর ফরম্যাট ঠিক নেই!";
                 showError('loginError', errMsg);
             }
         });
 
         // SIGNUP LOGIC
         document.getElementById('signupBtn').addEventListener('click', async () => {
+            window.isAuthAction = true;
             const name = document.getElementById('signupName').value.trim();
             let inputVal = document.getElementById('signupEmail').value.trim();
             const pass = document.getElementById('signupPassword').value.trim();
@@ -299,19 +293,13 @@
                 showError('signupError', 'সবগুলো ঘর পূরণ করা আবশ্যক!');
                 return;
             }
-            if (pass.length < 6) {
-                showError('signupError', 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!');
-                return;
-            }
 
-            // Admin Name Protection
             const checkName = name.toLowerCase().replace(/\s+/g, ' ').trim();
             if (checkName === "sobuj mia") {
                 showError('signupError', 'এই নামটি এডমিনের জন্য সংরক্ষিত। দয়া করে অন্য নাম ব্যবহার করুন!');
                 return;
             }
 
-            // Phone Number logic: convert to fake email if only numbers
             let firebaseEmail = inputVal;
             if (/^[0-9+]+$/.test(inputVal) && !inputVal.includes('@')) {
                 firebaseEmail = inputVal + "@friendbook.com";
@@ -322,11 +310,13 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, firebaseEmail, pass);
                 const user = userCredential.user;
 
-                // Save user profile data in Firestore (store original inputVal so user sees their phone/email)
+                // Fix: Update profile display name immediately
+                await updateProfile(user, { displayName: name });
+
                 await setDoc(doc(db, "users", user.uid), {
                     uid: user.uid,
                     displayName: name,
-                    email: inputVal,
+                    email: inputVal, 
                     profilePic: "",
                     coverPic: "",
                     bio: "",
@@ -343,7 +333,6 @@
                 hideLoader();
                 let errMsg = "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে!";
                 if(error.code === 'auth/email-already-in-use') errMsg = "এই ইমেইল বা ফোন নাম্বার দিয়ে আগে থেকেই অ্যাকাউন্ট আছে!";
-                if(error.code === 'auth/invalid-email') errMsg = "ইমেইল বা ফোন নাম্বার এর ফরম্যাট ঠিক নেই!";
                 showError('signupError', errMsg);
             }
         });

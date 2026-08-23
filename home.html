@@ -302,7 +302,6 @@
         </div>
     </div>
 
-    <!-- NEW: Help & Support View -->
     <div class="main-content" id="support-view" style="display: none;">
         <div class="menu-header">Help & Support</div>
         <div class="support-container">
@@ -640,7 +639,7 @@
                         const badge = document.getElementById('msg-badge');
                         if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.style.display = 'block'; } else badge.style.display = 'none';
                     } else {
-                        // NEW FIX: Create default DB document so profile editing works for new users
+                        // FIX: Safely retrieve from Auth profile and use merge to not destroy DB
                         currentUserName = user.displayName || "User";
                         window.currentUserNameGlobal = currentUserName; 
                         window.currentUserFollowing = [];
@@ -657,11 +656,10 @@
                                 following: [],
                                 followers: [],
                                 unreadCounts: {}
-                            });
+                            }, { merge: true });
                         } catch(e) { console.error("Error creating user doc", e); }
                     }
                     
-                    // FIX: Load feed and users outside the exists() check so it always runs
                     if(!isFeedLoaded) { loadAllPosts(); loadAllUsersForSearch(); loadStories(); isFeedLoaded = true; }
                 });
             } else { window.location.href = "index.html"; }

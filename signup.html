@@ -100,7 +100,7 @@
             </div>
             
             <div class="single-input">
-                <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" required autocomplete="email">
+                <input type="text" id="emailOrPhone" placeholder="ইমেইল বা ফোন নাম্বার" required>
             </div>
             
             <div class="single-input">
@@ -116,7 +116,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -137,32 +137,38 @@
             const fName = document.getElementById('firstName').value.trim();
             const lName = document.getElementById('lastName').value.trim();
             const fullName = fName + " " + lName;
-            const email = document.getElementById('email').value.trim();
+            let inputVal = document.getElementById('emailOrPhone').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('signupBtn');
             const error = document.getElementById('error-msg');
 
-            // --- NEW ADMIN NAME PROTECTION LOGIC ---
-            // ইউজারের দেওয়া নাম ছোট হাতের করে এবং মাঝের সব স্পেস সরিয়ে চেক করা হচ্ছে
             const checkName = fullName.toLowerCase().replace(/\s+/g, ' ').trim();
             if (checkName === "sobuj mia") {
                 error.innerText = "এই নামটি এডমিনের জন্য সংরক্ষিত। দয়া করে অন্য নাম ব্যবহার করুন!";
                 error.style.display = 'block';
-                return; // এখানেই অ্যাকাউন্ট খোলা বন্ধ করে দেবে
+                return; 
             }
-            // ----------------------------------------
+
+            let firebaseEmail = inputVal;
+            if (/^[0-9+]+$/.test(inputVal) && !inputVal.includes('@')) {
+                firebaseEmail = inputVal + "@friendbook.com";
+            }
 
             btn.innerText = "অ্যাকাউন্ট তৈরি হচ্ছে...";
             btn.disabled = true;
             error.style.display = 'none';
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, firebaseEmail, password);
                 const user = userCredential.user;
 
+                // FIX: Update Auth profile directly before saving to DB
+                await updateProfile(user, { displayName: fullName });
+
                 await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
                     displayName: fullName,
-                    email: email,
+                    email: inputVal,
                     profilePic: "",
                     coverPic: "",
                     bio: "",
@@ -184,7 +190,7 @@
                 error.style.display = 'block';
                 
                 if (err.code === 'auth/email-already-in-use') {
-                    error.innerText = "এই ইমেইল দিয়ে আগে থেকেই একটি অ্যাকাউন্ট আছে!";
+                    error.innerText = "এই ইমেইল বা ফোন নাম্বার দিয়ে আগে থেকেই একটি অ্যাকাউন্ট আছে!";
                 } else if (err.code === 'auth/weak-password') {
                     error.innerText = "পাসওয়ার্ড অন্তত ৬ সংখ্যার হতে হবে!";
                 } else {
